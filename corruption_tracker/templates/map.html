@@ -1,0 +1,42 @@
+{% load leaflet_tags %}
+<head>   
+    {% leaflet_js %}  
+    {% leaflet_css %}<!-- 
+    <script src="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.js"</script>
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.css" rel="stylesheet"> -->
+</head>
+
+<body>    
+<style>
+    .leaflet-container {  /* all maps */
+        width:  1200px;
+        height: 700px;
+    }
+
+    #specialbigmap {
+        height: 800px;
+    }
+</style> 
+    {% leaflet_map "main" callback="main_map_init" %}
+
+    <script type="text/javascript">
+        function main_map_init (map, options) {          
+           
+                // Add GeoJSON layer
+                L.geoJson({{buildings}}).addTo(map);
+				// // create location control and add to map
+				// lc = L.control.locate({
+				//         follow: true,
+				//         strings: {
+				//             title: "подпись"
+				//         }
+				//     }).addTo(map);
+				//  // request location update and set location
+				// lc.locate();
+				          
+				        }
+    </script>
+
+</body>
+
