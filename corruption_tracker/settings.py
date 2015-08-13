@@ -36,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'leaflet',
-    # 'claim',
+    'claim',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -91,13 +91,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-GEOJSON = os.path.join(BASE_DIR, 'buildings.geojson')
-# GEOJSON = os.path.join(BASE_DIR, '30_features.geojson')
+# GEOJSON = os.path.join(BASE_DIR, 'buildings.geojson')
+GEOJSON = os.path.join(BASE_DIR, '30_features.geojson')
 
 
 LEAFLET_CONFIG = {
-    'DEFAULT_CENTER': (50.00, 36.25),
-    'DEFAULT_ZOOM': 12,
+    #Kharkiv
+    # 'DEFAULT_CENTER': (50.00, 36.25),
+    # 'DEFAULT_ZOOM': 12,
+
+    #Alchevsk
+    'DEFAULT_CENTER': (48.47, 38.83),
+    'DEFAULT_ZOOM': 16,
    
 }
 
