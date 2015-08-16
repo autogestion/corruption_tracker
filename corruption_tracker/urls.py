@@ -16,10 +16,16 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
-
-from . import views
+from claim import views as claim_views
+from . import views 
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', views.home, name="home"),
+    url(r'^add_page$', views.add_page, name="add_page"),
+    url(r'^about$', views.about, name="about"),
+
+    #AJAX calls
+    url(r'^get_claims$', claim_views.get_claims, name="get_claims"),
+    url(r'^add_claim$', claim_views.add_claim, name="add_claim"),    
 ]

@@ -24,4 +24,19 @@ def home(request):
         # print(polygons_dict.get(str(polygon["properties"]["OSM_ID"]), 0))
         # print(polygon)
 
-    return render(request, 'map.html', {'buildings': mark_safe(json.dumps(json_data))})
+    return render(request, 'home.html', {'buildings': mark_safe(json.dumps(json_data)),
+                                        'page':'home'})
+
+
+
+def add_page(request):
+    json_file = open(settings.GEOJSON)
+    json_data = json.load(json_file)
+    # print(json_data)
+
+    return render(request, 'add_page.html', {'buildings': mark_safe(json.dumps(json_data)),
+                                        'page':'add_page'})
+
+
+def about(request):    
+    return render(request, 'about.html', {'page':'about'})    
