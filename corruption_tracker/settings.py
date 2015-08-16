@@ -104,7 +104,7 @@ LEAFLET_CONFIG = {
     # 'DEFAULT_ZOOM': 12,
 
     #Alchevsk
-    'DEFAULT_CENTER': (48.47, 38.83),
+    'DEFAULT_CENTER': (48.47, 38.835),
     'DEFAULT_ZOOM': 16,
    
 }

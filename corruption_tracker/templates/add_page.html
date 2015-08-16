@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% load leaflet_tags %}
 
 {% block head %}
@@ -8,6 +9,7 @@
     <script src="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.js"</script>
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.css" rel="stylesheet"> -->
+    <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
 {% endblock %}
 
 {% block map %}
@@ -15,11 +17,19 @@
     .leaflet-container {  /* all maps */
         width:  1200px;
         height: 700px;
+        float: left;
+        margin-right: 5px;        
     }
 
     #specialbigmap {
         height: 800px;
     }
+
+    .right_block {
+        float: right;  
+        margin-right: 300px;
+   }
+
 </style> 
     {% leaflet_map "main" callback="main_map_init" %}
 
@@ -40,4 +50,48 @@
                           
                         }
     </script>
+
+
+<div class="right_block">
+
+<form role="form" id='claim_form'>
+  <div class="form-group">
+    <label for="polygon_id">Polygon ID:</label>
+    <input type="text" class="form-control" id="polygon_id">
+  </div>
+  <div class="form-group">
+    <label for="claim_text">Текст скарги:</label>
+    <input type="text" class="form-control" id="claim_text">
+  </div>
+  <button type="submit" class="btn btn-primary">Вiдправити скаргу</button>
+</form>
+
+<div id='message'></div>
+</div>
+
+
+
+ <script type="text/javascript">
+   $(document).ready(function() {
+       $("#claim_form").submit(function(event){
+       event.preventDefault();
+            $.ajax({
+                 type:"POST",
+                 url:"{% url 'add_claim' %}",
+                 data: {
+                        'polygon_id': $('#polygon_id').val() ,// from form
+                        'claim_text': $('#pclaim_text').val() // from form
+                        },
+                 success: function(){
+                     $('#message').html("<h2>Скаргу додано!</h2>") 
+                    }
+            });
+            return false;
+       });
+
+    });
+</script>
+
+
+
 {% endblock %}

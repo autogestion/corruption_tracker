@@ -9,7 +9,7 @@ from claim.models import Claim
 
 
 def home(request):
-    json_file = open(settings.GEOJSON)
+    json_file = open(settings.GEOJSON, encoding='utf8')
     json_data = json.load(json_file)
     # print(json_data)
 
