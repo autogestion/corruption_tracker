@@ -26,5 +26,14 @@ def get_claims(request, polygon_id):
 
 
 
-def add_claim(request):    
-    return HttpResponse('bu', content_type='application/json')
+def add_claim(request): 
+    results = {'success':False}
+
+    if request.POST['polygon_id'] and request.POST['claim_text']:
+        claim = Claim(text=request.POST['claim_text'],
+                      polygon_id=request.POST['polygon_id'])
+        claim.save()
+        results = {'success':True} 
+
+
+    return HttpResponse(json.dumps(results), content_type='application/json')
