@@ -20,7 +20,7 @@ def home(request):
     print(polygons_dict)
 
     for polygon in json_data["features"]:        
-        polygon['claim_count']=polygons_dict.get(str(polygon["properties"]["OSM_ID"]), 0)
+        polygon['claim_count']=polygons_dict.get(str(polygon["properties"]["ID"]), 0)
         # print(polygons_dict.get(str(polygon["properties"]["OSM_ID"]), 0))
         # print(polygon)
 
@@ -30,7 +30,7 @@ def home(request):
 
 
 def add_page(request):
-    json_file = open(settings.GEOJSON)
+    json_file = open(settings.GEOJSON, encoding='utf8')
     json_data = json.load(json_file)
     # print(json_data)
 

@@ -95,17 +95,15 @@ STATICFILES_DIRS = (
 )
 
 # GEOJSON = os.path.join(BASE_DIR, 'buildings.geojson')
-GEOJSON = os.path.join(BASE_DIR, '30_features.geojson')
+GEOJSON = os.path.join(BASE_DIR, '50_Kharkiv_new.geojson')
 
 
 LEAFLET_CONFIG = {
     #Kharkiv
-    # 'DEFAULT_CENTER': (50.00, 36.25),
-    # 'DEFAULT_ZOOM': 12,
+    'DEFAULT_CENTER': (50.007759, 36.227193),
+    'DEFAULT_ZOOM': 13,
+    'TILES': 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
 
-    #Alchevsk
-    'DEFAULT_CENTER': (48.47, 38.835),
-    'DEFAULT_ZOOM': 16,
    
 }
 
