@@ -62,9 +62,13 @@
     <input type="text" class="form-control" id="polygon_id">
   </div>
   <div class="form-group">
+    <label for="servant">ПІБ службовця:</label>
+    <input type="text" class="form-control" id="servant">
+  </div>
+  <div class="form-group">
     <label for="claim_text">Текст скарги:</label>
     <input type="text" class="form-control" id="claim_text">
-  </div>
+  </div>  
   <button type="submit" class="btn btn-primary">Вiдправити скаргу</button>
 </form>
 
@@ -92,16 +96,19 @@
 
 
        $("#claim_form").submit(function(event){
+        console.log('sending');
        event.preventDefault();
             $.ajax({
                  type:"POST",
                  url:"{% url 'add_claim' %}",
                  data: {
                         'polygon_id': $('#polygon_id').val() ,
-                        'claim_text': $('#claim_text').val() 
+                        'claim_text': $('#claim_text').val() ,
+                        'servant': $('#servant').val()
                         },
                  success: function(data){
-                     $('#message').html("<h2>Скаргу додано!</h2>") 
+                    console.log(data)
+                     $('#message').html("<br><br>" + data.text) 
                     }
             });
             return false;

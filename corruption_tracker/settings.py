@@ -39,7 +39,7 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.facebook',
 
 
     'leaflet',
@@ -111,12 +111,12 @@ AUTHENTICATION_BACKENDS = (
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
-SOCIALACCOUNT_PROVIDERS = {
-    'facebook': {
-        'SCOPE': ['email', 'publish_stream'],
-        'METHOD': 'js_sdk'  # instead of 'oauth2'
-    }
-}
+# SOCIALACCOUNT_PROVIDERS = {
+#     'facebook': {
+#         'SCOPE': ['email', 'publish_stream'],
+#         'METHOD': 'js_sdk'  # instead of 'oauth2'
+#     }
+# }
 
 # GEOJSON = os.path.join(BASE_DIR, 'buildings.geojson')
 GEOJSON = os.path.join(BASE_DIR, '50_Kharkiv_new.geojson')

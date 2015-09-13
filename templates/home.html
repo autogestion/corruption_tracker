@@ -54,36 +54,23 @@
     </script>
 
 <div class="right_block">
-
-<input type='text' id='polygon_id' placeholder="108444421.0" value="108444421.0">
-<!-- Елемент що активує процес -->
-<button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >Запит</button>
-
-<br><br>
-<!-- <a id="test" href="javascript:">Натисни мене ніжно</a> -->
-
-<!-- Елемент, текст якого буде змінено -->
-<div id="target"></div>
-
-
+    <input type='text' id='polygon_id' placeholder="" > 
+    <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >Запит</button>
+    <br><br>
+    <div id="target"></div>
 </div>
 
 
-<script type="text/javascript">
-    // Магія розпочнеться лише після повного завантаження сторінки
-    $(document).ready(function () {
-        // Посилання з id="test" буде тригером події
-        $("#get_claims").click(function() {
-            // AJAX-запит на потрібну адресу
+<script type="text/javascript">   
+    $(document).ready(function () {      
+        $("#get_claims").click(function() {          
             var polygon_id = $('#polygon_id').val();
-            $.get("/get_claims/"  + polygon_id + "/", function(data) {
-                // Замінюємо текст тегу з id="target" на отримані дані
+            $.get("/get_claims/"  + polygon_id + "/", function(data) {              
                 $("#target").html(data.claims);
             });
         });
     });
 </script>
-
 
 
 {% endblock %}
