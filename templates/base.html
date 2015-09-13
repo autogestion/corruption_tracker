@@ -1,0 +1,79 @@
+{% load staticfiles %}
+{% load account %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>   
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href= "{% static "css/bootstrap.min.css" %}"  rel="stylesheet">
+{% block head %}
+{% endblock %}
+
+</head>
+
+<body>    
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">WebSiteName</a>
+    </div>
+    <div>
+      <ul class="nav navbar-nav">
+        <li {% if page == 'home' %} class="active"{% endif %}><a href="{% url 'home' %}">Карта корупції</a></li>
+        <li {% if page == 'add_page' %} class="active"{% endif %}><a href="{% url 'add_page' %}">Додати скаргу</a></li>
+        <li {% if page == 'about' %} class="active"{% endif %}><a href="{% url 'about' %}">Хто тут?</a></li> 
+      
+      </ul>
+
+     <ul class="nav navbar-nav navbar-right">
+          {% if request.user.is_authenticated %}
+             <li><a href="">{% user_display user %}</a></li>
+             <li><a href="{% url 'account_logout' %}">Logout</a></li>
+            {% else %}
+            <li><a href="{% url 'account_signup' %}">Register</a></li>
+            {% endif %}
+          </ul>
+
+          {% if not request.user.is_authenticated and not "/login" in request.get_full_path %}
+            <form class='navbar-form navbar-right login' method='POST' action='{% url "account_login" %}'>{% csrf_token %}
+              <div class='form-group'>
+                  <input id="id_login" type='text' class='form-control' name="login" placeholder='Username' /> 
+              </div>
+              <div class='form-group'>
+                  <input id="id_password" type='password' class='form-control' name='password' placeholder='Password' />
+              </div>
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+              <button type='submit' class='btn btn-default'>Login</button>
+          </form>
+
+          {% endif %}
+
+
+
+    </div>
+  </div>
+</nav>
+    {% if "accounts" in request.get_full_path and messages %}
+    <div>
+      <strong>Messages:</strong>
+      <ul>
+  {% for message in messages %}
+  <li>{{message}}</li>
+  {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+
+{% block content %}
+ {% endblock %}
+
+{% block map %}
+{% endblock %}
+
+</body>
+

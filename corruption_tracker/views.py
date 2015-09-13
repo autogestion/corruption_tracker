@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.db.models import Count
+from django.contrib.auth.decorators import login_required
 
 from claim.models import Claim
 
@@ -28,7 +29,7 @@ def home(request):
                                         'page':'home'})
 
 
-
+@login_required
 def add_page(request):
     json_file = open(settings.GEOJSON, encoding='utf8')
     json_data = json.load(json_file)

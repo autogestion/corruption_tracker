@@ -34,6 +34,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+
 
     'leaflet',
     'claim',
@@ -55,7 +62,9 @@ ROOT_URLCONF = 'corruption_tracker.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR , 'corruption_tracker', 'templates')],
+        # 'DIRS': [os.path.join(BASE_DIR , 'corruption_tracker', 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        # 'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -93,6 +102,21 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),    
 )
+
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',  
+)
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'SCOPE': ['email', 'publish_stream'],
+        'METHOD': 'js_sdk'  # instead of 'oauth2'
+    }
+}
 
 # GEOJSON = os.path.join(BASE_DIR, 'buildings.geojson')
 GEOJSON = os.path.join(BASE_DIR, '50_Kharkiv_new.geojson')

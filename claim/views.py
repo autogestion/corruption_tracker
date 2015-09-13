@@ -1,6 +1,7 @@
 import json
 
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
 from claim.models import Claim
 
@@ -25,7 +26,7 @@ def get_claims(request, polygon_id):
 
 
 
-
+@login_required
 def add_claim(request): 
     results = {'success':False}
 
@@ -33,7 +34,7 @@ def add_claim(request):
         claim = Claim(text=request.POST['claim_text'],
                       polygon_id=request.POST['polygon_id'])
         claim.save()
-        results = {'success':True} 
+        results = {'success':True, 'text': 'Claim added'} 
 
 
     return HttpResponse(json.dumps(results), content_type='application/json')
