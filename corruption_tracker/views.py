@@ -14,19 +14,29 @@ def home(request):
     json_data = json.load(json_file)
     # print(json_data)
 
-    polygons_values = Claim.objects.values('polygon_id').annotate(count=Count('polygon_id'))
+    polygons_values = Claim.objects.values('polygon_id').\
+        annotate(count=Count('polygon_id'))
+
     polygons_dict = {}
     for values_dict in polygons_values:
-        polygons_dict[values_dict['polygon_id']]=values_dict['count']
-    print(polygons_dict)
+        polygons_dict[values_dict['polygon_id']] = values_dict['count']
+    # print(polygons_dict)
 
-    for polygon in json_data["features"]:        
-        polygon['claim_count']=polygons_dict.get(str(polygon["properties"]["ID"]), 0)
-        # print(polygons_dict.get(str(polygon["properties"]["OSM_ID"]), 0))
+    for polygon in json_data["features"]:
+        polygon['claim_count'] = polygons_dict.get(
+            str(polygon["properties"]["ID"]), 0)
+        # print(polygons_dict.get(str(polygon["properties"]["ID"]), 0))
         # print(polygon)
 
-    return render(request, 'home.html', {'buildings': mark_safe(json.dumps(json_data)),
-                                        'page':'home'})
+    places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
+              for b in json_data['features'] if b['properties']['NAME']]
+
+    return render(
+        request,
+        'home.html',
+        {'buildings': mark_safe(json.dumps(json_data)),
+         'page': 'home',
+         'places': mark_safe(json.dumps(places))})
 
 
 @login_required

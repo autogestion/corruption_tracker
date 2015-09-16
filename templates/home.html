@@ -10,6 +10,7 @@
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 	<link href="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.css" rel="stylesheet"> -->
     <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
+    <script src="{% static "js/jquery.autocomplete.min.js" %}"></script>
 
 {% endblock %}
 
@@ -31,30 +32,84 @@
         margin-left: 20px;
    }
 
+   .icon_with_number {
+        margin: 0;
+        padding: 0;
+        height: 2em !important;
+        width: 2em !important;
+        line-height: 2em !important;
+        text-align: center;
+        border-radius: 1em;
+        color: white;
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGO6UAQAAhsBRcwUOXgAAAAASUVORK5CYII=');
+   }
+
+    /* Copypaste from github, just to keep it nicer */
+    .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+    .autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+    .autocomplete-selected { background: #F0F0F0; }
+    .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
+    .autocomplete-group { padding: 2px 5px; }
+    .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
 
 </style> 
     {% leaflet_map "main" callback="main_map_init" %}
 
     <script type="text/javascript">
-        function main_map_init (map, options) {          
-           
-                // Add GeoJSON layer
-                L.geoJson({{buildings}}).addTo(map);
-				// // create location control and add to map
-				// lc = L.control.locate({
-				//         follow: true,
-				//         strings: {
-				//             title: "подпись"
-				//         }
-				//     }).addTo(map);
-				//  // request location update and set location
-				// lc.locate();
-				          
-				        }
+        function select_building (polygon_id) {
+            $.get("/get_claims/"  + polygon_id + "/", function(data) {              
+                $("#target").html(data.claims);
+            });
+        }
+
+        function main_map_init (map, options) {
+            // Add GeoJSON layer
+            var marker, polygon_id;
+            var buildings = {{buildings}};
+
+            // Add building markers with popups to buildings.
+            for (var i = buildings['features'].length - 1; i >= 0; i--) {
+                polygon_id = buildings['features'][i]['properties']['ID'];
+
+                var myIcon = L.divIcon({
+                    className: 'icon_with_number',
+                    html: buildings['features'][i]['claim_count']
+                });
+
+                marker = L.marker(
+                    [
+                        buildings['features'][i]['geometry']['coordinates'][0][0][1],
+                        buildings['features'][i]['geometry']['coordinates'][0][0][0]
+                    ],
+                    {icon: myIcon}
+                )
+
+                function select_building_callback(polygon_id){
+                    return function(){
+                        select_building(polygon_id);
+                    }
+                }
+
+                marker.on('click', select_building_callback(polygon_id));
+                marker.addTo(map).bindPopup(buildings['features'][i]['properties']['NAME']);
+            };
+
+            L.geoJson(buildings).addTo(map);
+
+			// // create location control and add to map
+			// lc = L.control.locate({
+			//         follow: true,
+			//         strings: {
+			//             title: "подпись"
+			//         }
+			//     }).addTo(map);
+			//  // request location update and set location
+			// lc.locate();				          
+        }
     </script>
 
 <div class="right_block">
-    <input type='text' id='polygon_id' placeholder="" > 
+    <input type='text' id='polygon_id' placeholder=""> 
     <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >Запит</button>
     <br><br>
     <div id="target"></div>
@@ -65,10 +120,16 @@
     $(document).ready(function () {      
         $("#get_claims").click(function() {          
             var polygon_id = $('#polygon_id').val();
-            $.get("/get_claims/"  + polygon_id + "/", function(data) {              
-                $("#target").html(data.claims);
-            });
+            select_building(polygon_id);
         });
+
+        $('#polygon_id').autocomplete({
+            lookup: {{places}},
+            onSelect: function (suggestion) {
+                select_building(suggestion.data);
+            }
+        });
+
     });
 </script>
 
