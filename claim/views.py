@@ -34,18 +34,21 @@ def get_claims(request, polygon_id):
     return HttpResponse(json.dumps(results), content_type='application/json')
 
 
-
 @login_required
-def add_claim(request): 
-    results = {'success':False, 'text': 'Claim not added'}
-
+def add_claim(request):
+    code = 500
     if request.POST['polygon_id'] and request.POST['claim_text']:
         claim = Claim(text=request.POST['claim_text'],
                       polygon_id=request.POST['polygon_id'],
                       servant=request.POST['servant'],
+                      # TODO(vegasq) Shouldn't we keep messages anonymously?
+                      #              Privacy in such question really important,
+                      #              if somehow this information will reach
+                      #              incorrect people, it can ruin someones
+                      #              life.
                       complainer=request.user)
         claim.save()
-        results = {'success':True, 'text': 'Claim added'} 
+        # Correct insert code
+        code = 201
 
-
-    return HttpResponse(json.dumps(results), content_type='application/json')
+    return HttpResponse(status=code)
