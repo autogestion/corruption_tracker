@@ -9,140 +9,56 @@
     <script src="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.js"</script>
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.css" rel="stylesheet"> -->
-    <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
-    <script src="{% static "js/jquery.cookie.js" %}"></script>
-    <script src="{% static "js/jquery.autocomplete.min.js" %}"></script>
-
-
-<style>
-    .leaflet-container {  /* all maps */
-        width:  1200px;
-        height: 700px;
-        float: left;
-        margin-right: 5px;        
-    }
-
-    #specialbigmap {
-        height: 800px;
-    }
-
-    .right_block {
-        float: left;
-        min-width: 250px;
-        padding-left: 2em;
-   }
-</style> 
-
-
 {% endblock %}
-
-
-
 
 {% block map %}
 
-<div><p><b>Щоб додати скаргу зробіть клік на будівлі на мапі, або введіть назву закладу в полi "Заклад", 
-вкажiть ПIБ службовця i опишiть проблему та натисніть кнопку "Відправити скаргу"<b></p></div>
+<h5>Щоб додати скаргу зробіть клік на будівлі на мапі, або введіть назву закладу в полi "Заклад", 
+вкажiть ПIБ службовця i опишiть проблему та натисніть кнопку "Відправити скаргу"</h5>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            {% leaflet_map "main" callback="main_map_init" %}
+        </div>
+        <div class="col-md-4">
+            <h3>Додати скаргу</h3>
+
+            <div class="right_block">
+                <form role="form" id='claim_form'>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="organization_name">Заклад:</label>
+                        <input type="text" class="form-control" id="organization_name" placeholder="Назва закладу">
+                    </div>
+                    <div class="form-group">
+                        <label for="polygon_id">Polygon ID:</label>
+                        <input type="text" class="form-control" id="polygon_id" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="servant">ПІБ службовця:</label>
+                        <input type="text" class="form-control" id="servant">
+                    </div>
+                    <div class="form-group">
+                        <label for="claim_text">Текст скарги:</label>
+                        <textarea type="text" class="form-control" id="claim_text"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div id='message'></div>
+                        <button type="submit" class="btn btn-primary">Вiдправити скаргу</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
 <script type="text/javascript">
-    function select_building (polygon_id) {
-        var places = {{places}};
-        $('#polygon_id').val(polygon_id);
-        for (var i = places.length - 1; i >= 0; i--) {
-            if (places[i].data == polygon_id) {
-                $('#organization_name').val(places[i].value);
-                return
-            }
-        };
-    }
-
-    function main_map_init (map, options) {
-        // Add GeoJSON layer
-        var marker, polygon_id;
-        var buildings = {{buildings}};
-
-        // Add building markers with popups to buildings.
-        for (var i = buildings['features'].length - 1; i >= 0; i--) {
-            polygon_id = buildings['features'][i]['properties']['ID'];
-
-            var myIcon = L.divIcon({
-                className: 'icon_with_number',
-                html: buildings['features'][i]['claim_count']
-            });
-
-            marker = L.marker(
-                [
-                    buildings['features'][i]['geometry']['coordinates'][0][0][1],
-                    buildings['features'][i]['geometry']['coordinates'][0][0][0]
-                ],
-                {icon: myIcon}
-            )
-
-            function select_building_callback(polygon_id){
-                return function(){
-                    select_building(polygon_id);
-                }
-            }
-
-            marker.on('click', select_building_callback(polygon_id));
-            marker.addTo(map).bindPopup(buildings['features'][i]['properties']['NAME']);
-        };
-        L.geoJson({{buildings}}).addTo(map);
-        // // create location control and add to map
-        // lc = L.control.locate({
-        //         follow: true,
-        //         strings: {
-        //             title: "подпись"
-        //         }
-        //     }).addTo(map);
-        //  // request location update and set location
-        // lc.locate();
-    }
-</script>
-
-
-
-
-{% leaflet_map "main" callback="main_map_init" %}
-
-
-<div class="right_block">
-
-<form role="form" id='claim_form'>
-{% csrf_token %}
-  <div class="form-group">
-    <label for="organization_name">Заклад</label>
-    <input type="text" class="form-control" id="organization_name" placeholder="Назва закладу">
-  </div>
-  <!--
-  TODO(vegasq): Should we hide/remove polugon id input?
-  -->
-  <div class="form-group">
-    <label for="polygon_id">Polygon ID:</label>
-    <input type="text" class="form-control" id="polygon_id" readonly>
-  </div>
-  <div class="form-group">
-    <label for="servant">ПІБ службовця:</label>
-    <input type="text" class="form-control" id="servant">
-  </div>
-  <div class="form-group">
-    <label for="claim_text">Текст скарги:</label>
-    <textarea type="text" class="form-control" id="claim_text"></textarea>
-  </div>
-    <div class="form-group">
-        <div id='message'></div>
-        <button type="submit" class="btn btn-primary">Вiдправити скаргу</button>
-    </div>
-</form>
-
-
-
- <script type="text/javascript">
-   $(document).ready(function() {
+    $(document).ready(function() {
 
         var csrftoken = $.cookie('csrftoken');
-
         function csrfSafeMethod(method) {
             // these HTTP methods do not require CSRF protection
             return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -182,8 +98,19 @@
             }
         });
     });
-</script>
 
+    function select_building (polygon_id) {
+        var places = {{places}};
+        $('#polygon_id').val(polygon_id);
+        for (var i = places.length - 1; i >= 0; i--) {
+            if (places[i].data == polygon_id) {
+                $('#organization_name').val(places[i].value);
+                return
+            }
+        };
+    }
+
+</script>
 
 
 {% endblock %}

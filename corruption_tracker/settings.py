@@ -15,7 +15,6 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -79,8 +78,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'corruption_tracker.wsgi.application'
 
-    
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
@@ -100,13 +97,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),    
+    os.path.join(BASE_DIR, "static"),
 )
 
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',  
+    'allauth.account.auth_backends.AuthenticationBackend'
 )
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
@@ -123,12 +120,11 @@ GEOJSON = os.path.join(BASE_DIR, '50_Kharkiv_new.geojson')
 
 
 LEAFLET_CONFIG = {
-    #Kharkiv
+    # Kharkiv
     'DEFAULT_CENTER': (50.007759, 36.227193),
     'DEFAULT_ZOOM': 13,
-    'TILES': 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-
-   
+    'TILES': 'http://server.arcgisonline.com/ArcGIS/rest/services/'
+             'World_Imagery/MapServer/tile/{z}/{y}/{x}',
 }
 
 

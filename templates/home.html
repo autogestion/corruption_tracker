@@ -9,98 +9,32 @@
     <script src="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.js"</script>
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 	<link href="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.css" rel="stylesheet"> -->
-    <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
-    <script src="{% static "js/jquery.autocomplete.min.js" %}"></script>
-
-<style>
-    .leaflet-container {  /* all maps */
-        width:  1000px;
-        height: 700px;
-        float: left;
-        margin-right: 50px;
-    }
-
-    #specialbigmap {
-        height: 800px;
-    }
-
-    .right_block {
-        /*float: right;  */
-        margin-left: 20px;
-   }
-
-</style> 
 {% endblock %}
-
-
 
 
 {% block map %}
 
-<div><p><b>Щоб побачии скарги зробіть клік на будівлі на мапі, або введіть назву закладу в поле пошуку<b></p></div>
+<h5>Щоб побачии скарги зробіть клік на будівлі на мапі, або введіть назву закладу в поле пошуку</h5>
 
-
-
-    {% leaflet_map "main" callback="main_map_init" %}
-
-    <script type="text/javascript">
-        function select_building (polygon_id) {
-            $.get("/get_claims/"  + polygon_id + "/", function(data) {              
-                $("#target").html(data.claims);
-            });
-        }
-
-        function main_map_init (map, options) {
-            // Add GeoJSON layer
-            var marker, polygon_id;
-            var buildings = {{buildings}};
-
-            // Add building markers with popups to buildings.
-            for (var i = buildings['features'].length - 1; i >= 0; i--) {
-                polygon_id = buildings['features'][i]['properties']['ID'];
-
-                var myIcon = L.divIcon({
-                    className: 'icon_with_number',
-                    html: buildings['features'][i]['claim_count']
-                });
-
-                marker = L.marker(
-                    [
-                        buildings['features'][i]['geometry']['coordinates'][0][0][1],
-                        buildings['features'][i]['geometry']['coordinates'][0][0][0]
-                    ],
-                    {icon: myIcon}
-                )
-
-                function select_building_callback(polygon_id){
-                    return function(){
-                        select_building(polygon_id);
-                    }
-                }
-
-                marker.on('click', select_building_callback(polygon_id));
-                marker.addTo(map).bindPopup(buildings['features'][i]['properties']['NAME']);
-            };
-
-            L.geoJson(buildings).addTo(map);
-
-			// // create location control and add to map
-			// lc = L.control.locate({
-			//         follow: true,
-			//         strings: {
-			//             title: "подпись"
-			//         }
-			//     }).addTo(map);
-			//  // request location update and set location
-			// lc.locate();				          
-        }
-    </script>
-
-<div class="right_block">
-    <input type='text' id='polygon_id' placeholder="Назва закладу"> 
-    <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >Пошук</button>
-    <br><br>
-    <div id="target"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            {% leaflet_map "main" callback="main_map_init" %}
+        </div>
+        <div class="col-md-4">
+            <h3>Пошук</h3>
+            <div class="right_block">
+                <div class="input-group">
+                    <input type='search' id='polygon_id' placeholder="Назва закладу" class="form-control">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >Пошук</button>
+                    </span>
+                </div>
+                <br><br>
+                <div id="target"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -119,8 +53,23 @@
         });
 
     });
-</script>
 
+    function select_building (polygon_id) {
+        $.get("/get_claims/"  + polygon_id + "/", function(data) {
+            $("#target").html(data.claims);
+
+            var places = {{places}};
+            for (var i = places.length - 1; i >= 0; i--) {
+                if (places[i].data === polygon_id){
+                    $('#polygon_id').val(places[i].value);
+                    return;                    
+                }
+            };
+        });
+    }
+
+
+</script>
 
 {% endblock %}
 
