@@ -9,5 +9,4 @@ class ClaimAdmin(admin.ModelAdmin):
     list_filter = ('polygon_id', 'created')
 
 
-
 admin.site.register(Claim, ClaimAdmin)

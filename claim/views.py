@@ -14,21 +14,21 @@ def get_claims(request, polygon_id):
     if claims:
         claims_list = []
         for claim in claims:
-            details = {'text': claim.text, 'servant': claim.servant,
-                        'complainer': claim.complainer.username,}
-            claim_block = """Службовець: %(servant)s <br>
-                             Скарга: %(text)s    <br>
-                             Вiд: %(complainer)s   <br><br>""" %details
+            details = {'text': claim.text,
+                       'servant': claim.servant,
+                       'complainer': claim.complainer.username}
+            claim_block = """Службовець: %(servant)s<br>
+                             Скарга: %(text)s<br>
+                             Вiд: %(complainer)s<br><br>""" % details
 
             claims_list.append(claim_block)
-            
+
         claims_html = ''.join(claims_list)
 
-        results = {'success':True, 'claims': claims_html}
+        results = {'success': True, 'claims': claims_html}
 
     else:
-        results = {'success':True, 'claims': 'На цей заклад немає скарг'}
-
+        results = {'success': True, 'claims': 'На цей заклад немає скарг'}
 
     return HttpResponse(json.dumps(results), content_type='application/json')
 

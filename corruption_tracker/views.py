@@ -44,5 +44,5 @@ def add_page(request):
          'places': mark_safe(json.dumps(places))})
 
 
-def about(request):    
+def about(request):
     return render(request, 'about.html', {'page': 'about'})
