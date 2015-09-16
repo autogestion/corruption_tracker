@@ -12,9 +12,6 @@
     <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
     <script src="{% static "js/jquery.autocomplete.min.js" %}"></script>
 
-{% endblock %}
-
-{% block map %}
 <style>
     .leaflet-container {  /* all maps */
         width:  1000px;
@@ -33,6 +30,17 @@
    }
 
 </style> 
+{% endblock %}
+
+
+
+
+{% block map %}
+
+<div><p><b>Щоб побачии скарги зробіть клік на будівлі на мапі, або введіть назву закладу в поле пошуку<b></p></div>
+
+
+
     {% leaflet_map "main" callback="main_map_init" %}
 
     <script type="text/javascript">
@@ -89,8 +97,8 @@
     </script>
 
 <div class="right_block">
-    <input type='text' id='polygon_id' placeholder=""> 
-    <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >Запит</button>
+    <input type='text' id='polygon_id' placeholder="Назва закладу"> 
+    <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >Пошук</button>
     <br><br>
     <div id="target"></div>
 </div>

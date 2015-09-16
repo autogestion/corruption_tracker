@@ -12,9 +12,8 @@
     <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
     <script src="{% static "js/jquery.cookie.js" %}"></script>
     <script src="{% static "js/jquery.autocomplete.min.js" %}"></script>
-{% endblock %}
 
-{% block map %}
+
 <style>
     .leaflet-container {  /* all maps */
         width:  1200px;
@@ -32,16 +31,19 @@
         min-width: 250px;
         padding-left: 2em;
    }
-
-    /* Copypaste from github, just to keep it nicer */
-    .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
-    .autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
-    .autocomplete-selected { background: #F0F0F0; }
-    .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
-    .autocomplete-group { padding: 2px 5px; }
-    .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
-
 </style> 
+
+
+{% endblock %}
+
+
+
+
+{% block map %}
+
+<div><p><b>Щоб додати скаргу зробіть клік на будівлі на мапі, або введіть назву закладу в полi "Заклад", 
+вкажiть ПIБ службовця i опишiть проблему та натисніть кнопку "Відправити скаргу"<b></p></div>
+
 
 <script type="text/javascript">
     function select_building (polygon_id) {
@@ -98,6 +100,10 @@
         // lc.locate();
     }
 </script>
+
+
+
+
 {% leaflet_map "main" callback="main_map_init" %}
 
 
@@ -106,8 +112,8 @@
 <form role="form" id='claim_form'>
 {% csrf_token %}
   <div class="form-group">
-    <label for="organization_name">Організація:</label>
-    <input type="text" class="form-control" id="organization_name">
+    <label for="organization_name">Заклад</label>
+    <input type="text" class="form-control" id="organization_name" placeholder="Назва закладу">
   </div>
   <!--
   TODO(vegasq): Should we hide/remove polugon id input?
