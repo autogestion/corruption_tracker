@@ -2,6 +2,7 @@ import json
 
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext_lazy as _
 
 from claim.models import Claim
 
@@ -17,9 +18,9 @@ def get_claims(request, polygon_id):
             details = {'text': claim.text,
                        'servant': claim.servant,
                        'complainer': claim.complainer.username}
-            claim_block = """Службовець: %(servant)s<br>
-                             Скарга: %(text)s<br>
-                             Вiд: %(complainer)s<br><br>""" % details
+            claim_block = _("""Servant: %(servant)s<br>
+                               Claim: %(text)s<br>
+                               From: %(complainer)s<br><br>""") % details
 
             claims_list.append(claim_block)
 

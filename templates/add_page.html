@@ -12,9 +12,9 @@
 {% endblock %}
 
 {% block map %}
+{% load i18n %}
 
-<h5>Щоб додати скаргу зробіть клік на будівлі на мапі, або введіть назву закладу в полi "Заклад", 
-вкажiть ПIБ службовця i опишiть проблему та натисніть кнопку "Відправити скаргу"</h5>
+<h5>{% trans "To add claim please click on building on the map, or enter organization name in searchbox 'Organization', name of servant and describe what was wrong. After it press 'Send claim' button." %}</h5>
 
 <div class="container-fluid">
     <div class="row">
@@ -22,30 +22,30 @@
             {% leaflet_map "main" callback="main_map_init" %}
         </div>
         <div class="col-md-4">
-            <h3>Додати скаргу</h3>
+            <h3>{% trans "Add claim" %}</h3>
 
             <div class="right_block">
                 <form role="form" id='claim_form'>
                     {% csrf_token %}
                     <div class="form-group">
-                        <label for="organization_name">Заклад:</label>
-                        <input type="text" class="form-control" id="organization_name" placeholder="Назва закладу">
+                        <label for="organization_name">{% trans "Organization" %}:</label>
+                        <input type="text" class="form-control" id="organization_name" placeholder='{% trans "Organization name" %}'>
                     </div>
                     <div class="form-group">
-                        <label for="polygon_id">Polygon ID:</label>
+                        <label for="polygon_id">{% trans "Polygon ID" %}:</label>
                         <input type="text" class="form-control" id="polygon_id" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="servant">ПІБ службовця:</label>
+                        <label for="servant">{% trans "Servant name" %}:</label>
                         <input type="text" class="form-control" id="servant">
                     </div>
                     <div class="form-group">
-                        <label for="claim_text">Текст скарги:</label>
+                        <label for="claim_text">{% trans "Claim message" %}:</label>
                         <textarea type="text" class="form-control" id="claim_text"></textarea>
                     </div>
                     <div class="form-group">
                         <div id='message'></div>
-                        <button type="submit" class="btn btn-primary">Вiдправити скаргу</button>
+                        <button type="submit" class="btn btn-primary">{% trans "Send claim" %}</button>
                     </div>
                 </form>
             </div>
@@ -83,7 +83,7 @@
                     'servant': $('#servant').val()
                 },
                 success: function(data){
-                    $('#message').html("Дякуємо за ваше повідомлення.");
+                    $('#message').html('{% trans "Thank you for your message." %}');
                     $('#claim_text').val('');
                     $('#servant').val('');
                 }

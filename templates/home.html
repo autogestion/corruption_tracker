@@ -13,8 +13,9 @@
 
 
 {% block map %}
+{% load i18n %}
 
-<h5>Щоб побачии скарги зробіть клік на будівлі на мапі, або введіть назву закладу в поле пошуку</h5>
+<h5>{% trans "To check claims you should click on building on the map, or enter organization name in searchbox." %}</h5>
 
 <div class="container-fluid">
     <div class="row">
@@ -22,12 +23,12 @@
             {% leaflet_map "main" callback="main_map_init" %}
         </div>
         <div class="col-md-4">
-            <h3>Пошук</h3>
+            <h3>{% trans "Search" %}</h3>
             <div class="right_block">
                 <div class="input-group">
-                    <input type='search' id='polygon_id' placeholder="Назва закладу" class="form-control">
+                    <input type='search' id='polygon_id' placeholder='{% trans "Organization name" %}' class="form-control">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >Пошук</button>
+                        <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >{% trans "Search" %}</button>
                     </span>
                 </div>
                 <br><br>

@@ -26,58 +26,68 @@
 
 <body>    
 <nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#"><img src="{% static "img/logo.png" %}" height="42" width="42"></a>
-    </div>
-    <div>
-      <ul class="nav navbar-nav">
-        <li {% if page == 'home' %} class="active"{% endif %}><a href="{% url 'home' %}">Карта корупції</a></li>
-        <li {% if page == 'add_page' %} class="active"{% endif %}><a href="{% url 'add_page' %}">Додати скаргу</a></li>
-        <li {% if page == 'about' %} class="active"{% endif %}><a href="{% url 'about' %}">Хто тут?</a></li> 
-      
-      </ul>
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#"><img src="{% static "img/logo.png" %}" height="42" width="42"></a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li {% if page == 'home' %} class="active"{% endif %}><a href="{% url 'home' %}">{% trans "Corruption map" %}</a></li>
+            <li {% if page == 'add_page' %} class="active"{% endif %}><a href="{% url 'add_page' %}">{% trans "Add claim" %}</a></li>
+            <li {% if page == 'about' %} class="active"{% endif %}><a href="{% url 'about' %}">{% trans "Who is here?" %}</a></li>
+        </ul>
 
-     <ul class="nav navbar-nav navbar-right">
-          {% if request.user.is_authenticated %}
-             <li><a href="">{% user_display user %}</a></li>
-             <li><a href="{% url 'account_logout' %}">Logout</a></li>
-            {% else %}
-            <li><a href="{% url 'account_signup' %}">Register</a></li>
+         <ul class="nav navbar-nav navbar-right">
+            <li>
+                <form action="{% url 'set_language' %}" method="post" id="language_selector">{% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}" />
+                    <select name="language" onchange="this.form.submit()">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected="selected"{% endif %}>
+                                {{ language.name_local }} ({{ language.code }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </li>
+            {% if request.user.is_authenticated %}
+                <li><a href="">{% user_display user %}</a></li>
+                <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
+                {% else %}
+                <li><a href="{% url 'account_signup' %}">{% trans "Register" %}</a></li>
             {% endif %}
-          </ul>
+        </ul>
 
-          {% if not request.user.is_authenticated and not "/login" in request.get_full_path %}
+        {% if not request.user.is_authenticated and not "/login" in request.get_full_path %}
             <form class='navbar-form navbar-right login' method='POST' action='{% url "account_login" %}'>{% csrf_token %}
-              <div class='form-group'>
-                  <input id="id_login" type='text' class='form-control' name="login" placeholder='Username' /> 
-              </div>
-              <div class='form-group'>
-                  <input id="id_password" type='password' class='form-control' name='password' placeholder='Password' />
-              </div>
-            {% if redirect_field_value %}
-            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-            {% endif %}
-              <button type='submit' class='btn btn-default'>Login</button>
-          </form>
-
-          {% endif %}
-
-
+                <div class='form-group'>
+                    <input id="id_login" type='text' class='form-control' name="login" placeholder='{% trans "Username" %}' /> 
+                </div>
+                <div class='form-group'>
+                    <input id="id_password" type='password' class='form-control' name='password' placeholder='{% trans "Password" %}' />
+                </div>
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+                <button type='submit' class='btn btn-default'>{% trans "Login" %}</button>
+            </form>
+        {% endif %}
 
     </div>
-  </div>
 </nav>
-    {% if "accounts" in request.get_full_path and messages %}
+
+{% if "accounts" in request.get_full_path and messages %}
     <div>
-      <strong>Messages:</strong>
-      <ul>
-  {% for message in messages %}
-  <li>{{message}}</li>
-  {% endfor %}
-      </ul>
+        <strong>{% trans "Messages" %}:</strong>
+        <ul>
+            {% for message in messages %}
+                <li>{% trans message %}</li>
+            {% endfor %}
+        </ul>
     </div>
-    {% endif %}
+{% endif %}
 
 
 {% block content %}

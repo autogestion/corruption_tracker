@@ -1,0 +1,121 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-09-17 11:34+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: claim/views.py:21
+#, python-format
+msgid ""
+"Servant: %(servant)s<br>\n"
+"                               Claim: %(text)s<br>\n"
+"                               From: %(complainer)s<br><br>"
+msgstr ""
+
+#: corruption_tracker/settings.py:98
+msgid "Ukrainian"
+msgstr ""
+
+#: corruption_tracker/settings.py:99
+msgid "English"
+msgstr ""
+
+#: corruption_tracker/settings.py:100
+msgid "Russian"
+msgstr ""
+
+#: templates/add_page.html:17
+msgid ""
+"To add claim please click on building on the map, or enter organization name "
+"in searchbox 'Organization', name of servant and describe what was wrong. "
+"After it press 'Send claim' button."
+msgstr ""
+
+#: templates/add_page.html:25 templates/base.html:35
+msgid "Add claim"
+msgstr ""
+
+#: templates/add_page.html:31
+msgid "Organization"
+msgstr ""
+
+#: templates/add_page.html:32 templates/home.html:29
+msgid "Organization name"
+msgstr ""
+
+#: templates/add_page.html:35
+msgid "Polygon ID"
+msgstr ""
+
+#: templates/add_page.html:39
+msgid "Servant name"
+msgstr ""
+
+#: templates/add_page.html:43
+msgid "Claim message"
+msgstr ""
+
+#: templates/add_page.html:48
+msgid "Send claim"
+msgstr ""
+
+#: templates/add_page.html:86
+msgid "Thank you for your message."
+msgstr ""
+
+#: templates/base.html:34
+msgid "Corruption map"
+msgstr ""
+
+#: templates/base.html:36
+msgid "Who is here?"
+msgstr ""
+
+#: templates/base.html:57
+msgid "Logout"
+msgstr ""
+
+#: templates/base.html:59
+msgid "Register"
+msgstr ""
+
+#: templates/base.html:66
+msgid "Username"
+msgstr ""
+
+#: templates/base.html:69
+msgid "Password"
+msgstr ""
+
+#: templates/base.html:74
+msgid "Login"
+msgstr ""
+
+#: templates/base.html:83
+msgid "Messages"
+msgstr ""
+
+#: templates/home.html:18
+msgid ""
+"To check claims you should click on building on the map, or enter "
+"organization name in searchbox."
+msgstr ""
+
+#: templates/home.html:26 templates/home.html.py:31
+msgid "Search"
+msgstr ""
