@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-17 11:34+0300\n"
+"POT-Creation-Date: 2015-09-17 21:49+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: claim/views.py:21
+#: claim/views.py:33
+msgid "Anonymous"
+msgstr "Анонім"
+
+#: claim/views.py:36
 #, python-format
 msgid ""
 "Servant: %(servant)s<br>\n"
@@ -30,19 +34,19 @@ msgstr ""
 "                               Скарга: %(text)s<br>\n"
 "                               Вiд: %(complainer)s<br><br>"
 
-#: corruption_tracker/settings.py:98
+#: corruption_tracker/settings.py:100
 msgid "Ukrainian"
 msgstr ""
 
-#: corruption_tracker/settings.py:99
+#: corruption_tracker/settings.py:101
 msgid "English"
 msgstr ""
 
-#: corruption_tracker/settings.py:100
+#: corruption_tracker/settings.py:102
 msgid "Russian"
 msgstr ""
 
-#: templates/add_page.html:17
+#: templates/add_page.html:18
 msgid ""
 "To add claim please click on building on the map, or enter organization name "
 "in searchbox 'Organization', name of servant and describe what was wrong. "
@@ -52,35 +56,39 @@ msgstr ""
 "в полi 'Заклад', вкажiть ПIБ службовця i опишiть проблему та натисніть "
 "кнопку 'Відправити скаргу'."
 
-#: templates/add_page.html:25 templates/base.html:35
+#: templates/add_page.html:26 templates/base.html:35
 msgid "Add claim"
 msgstr "Додати скаргу"
 
-#: templates/add_page.html:31
+#: templates/add_page.html:32
 msgid "Organization"
 msgstr "Заклад"
 
-#: templates/add_page.html:32 templates/home.html:29
+#: templates/add_page.html:33 templates/home.html:29
 msgid "Organization name"
 msgstr "Назва закладу"
 
-#: templates/add_page.html:35
+#: templates/add_page.html:36
 msgid "Polygon ID"
 msgstr ""
 
-#: templates/add_page.html:39
+#: templates/add_page.html:40
 msgid "Servant name"
 msgstr "ПІБ службовця"
 
-#: templates/add_page.html:43
+#: templates/add_page.html:44
 msgid "Claim message"
 msgstr "Текст скарги"
 
-#: templates/add_page.html:48
+#: templates/add_page.html:51
+msgid "Keep me anonymously"
+msgstr "Зробити анонімно"
+
+#: templates/add_page.html:62
 msgid "Send claim"
 msgstr "Відправити скаргу"
 
-#: templates/add_page.html:86
+#: templates/add_page.html:96
 msgid "Thank you for your message."
 msgstr "Дякуємо за ваше повідомлення."
 
