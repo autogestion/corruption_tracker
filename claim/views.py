@@ -1,9 +1,6 @@
-import json
 import requests
 
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 from claim.models import Claim
@@ -20,33 +17,8 @@ def get_client_ip(request):
 
 
 def get_claims(request, polygon_id):
-    # results = {'success':False}
-
-    claims = Claim.objects.filter(polygon_id=polygon_id)
-
-    if claims:
-        claims_list = []
-        for claim in claims:
-            details = {
-                'text': claim.text,
-                'servant': claim.servant,
-                'complainer': _("Anonymous") if claim.complainer is None
-                else claim.complainer.username
-            }
-            claim_block = _("""Servant: %(servant)s<br>
-                               Claim: %(text)s<br>
-                               From: %(complainer)s<br><br>""") % details
-
-            claims_list.append(claim_block)
-
-        claims_html = ''.join(claims_list)
-
-        results = {'success': True, 'claims': claims_html}
-
-    else:
-        results = {'success': True, 'claims': 'На цей заклад немає скарг'}
-
-    return HttpResponse(json.dumps(results), content_type='application/json')
+    data = Claim.get_json_by_organization(polygon_id)
+    return HttpResponse(data, content_type='application/json')
 
 
 def add_claim(request):

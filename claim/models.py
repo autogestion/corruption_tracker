@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -29,3 +30,18 @@ class Claim(models.Model):
         for polygon in json_data["features"]:
             polygon['claim_count'] = polygons_dict.get(
                 str(polygon["properties"]["ID"]), 0)
+
+    @classmethod
+    def get_json_by_organization(cls, polygon_id):
+        claims = cls.objects.filter(polygon_id=polygon_id)
+
+        if claims:
+            claims_list = []
+            for claim in claims:
+                claims_list.append({
+                    'text': claim.text,
+                    'servant': claim.servant,
+                    'complainer': claim.complainer.username
+                })
+
+            return json.dumps(claims_list)
