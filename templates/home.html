@@ -39,8 +39,19 @@
 </div>
 
 
-<script type="text/javascript">   
-    $(document).ready(function () {      
+<script type="text/javascript">
+    /* To prevent multiple inserts of this var lets keep it in global NS */
+    var places = {{places}};
+    function get_name_by_id (polygon_id) {
+        for (var i = places.length - 1; i >= 0; i--) {
+            if (places[i].data === parseInt(polygon_id)){
+                return places[i].value;
+            }
+        }
+        return '{% trans "Name not found" %}'
+    }
+
+    $(document).ready(function () {
         $("#get_claims").click(function() {          
             var polygon_id = $('#polygon_id').val();
             select_building(polygon_id);
@@ -53,17 +64,28 @@
             }
         });
 
+        var pair;
+        var hash_data = window.location.hash.replace("#", "").split("&");
+        for (var i = hash_data.length - 1; i >= 0; i--) {
+            pair = hash_data[i].split('=');
+            if (pair[0] === 'organization') {
+                select_building(pair[1]);
+                $('#polygon_id').val(get_name_by_id(pair[1]));
+                break;
+            }
+        }
+
     });
 
     function select_building (polygon_id) {
+        window.location.hash = "organization=" + polygon_id;
         $.get("/get_claims/"  + polygon_id + "/", function(data) {
             $("#target").html(data.claims);
 
-            var places = {{places}};
             for (var i = places.length - 1; i >= 0; i--) {
                 if (places[i].data === polygon_id){
                     $('#polygon_id').val(places[i].value);
-                    return;                    
+                    return;
                 }
             };
         });
