@@ -105,6 +105,7 @@
                 message = message.replace('%text%', data[i]['text']);
                 messages += message;
             }
+            if (messages == "") {messages = "{% trans 'No claims for this polygon' %}"};
             $("#target").html(messages);
 
             for (var i = places.length - 1; i >= 0; i--) {

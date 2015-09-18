@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.db.models import Count
+from django.utils.translation import ugettext as _
 
 
 class Claim(models.Model):
@@ -34,14 +35,18 @@ class Claim(models.Model):
     @classmethod
     def get_json_by_organization(cls, polygon_id):
         claims = cls.objects.filter(polygon_id=polygon_id)
+        claims_list = []
 
-        if claims:
-            claims_list = []
+        if claims:            
             for claim in claims:
+                if claim.complainer:
+                    username = claim.complainer.username
+                else:
+                    username = _("Anon")
                 claims_list.append({
                     'text': claim.text,
                     'servant': claim.servant,
-                    'complainer': claim.complainer.username
+                    'complainer': username
                 })
 
-            return json.dumps(claims_list)
+        return json.dumps(claims_list)
