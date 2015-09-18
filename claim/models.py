@@ -12,7 +12,7 @@ class Claim(models.Model):
     live = models.BooleanField(default=False)
     polygon_id = models.CharField(max_length=250)
     servant = models.CharField(max_length=550)
-    complainer = models.ForeignKey(User)
+    complainer = models.ForeignKey(User, null=True, blank=True, default=None)
 
     @classmethod
     def update_map(cls, json_data):

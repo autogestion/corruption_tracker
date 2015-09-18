@@ -25,7 +25,6 @@ def home(request):
          'places': mark_safe(json.dumps(places))})
 
 
-@login_required
 def add_page(request):
     json_file = open(settings.GEOJSON, encoding='utf8')
     json_data = json.load(json_file)
@@ -36,12 +35,16 @@ def add_page(request):
 
     Claim.update_map(json_data)
 
+    if settings.RECAPTCHA_ENABLED is False:
+        settings.RECAPTCHA_PUBLIC = ''
+
     return render(
         request,
         'add_page.html',
         {'buildings': mark_safe(json.dumps(json_data)),
          'page': 'add_page',
-         'places': mark_safe(json.dumps(places))})
+         'places': mark_safe(json.dumps(places)),
+         'recaptcha_public': settings.RECAPTCHA_PUBLIC})
 
 
 def about(request):
