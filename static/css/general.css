@@ -62,3 +62,7 @@ h5 {
 #language_selector {
     padding-top: 13px;
 }
+
+#claim_template_global {
+    display: none;
+}
