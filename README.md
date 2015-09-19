@@ -5,10 +5,12 @@
 Corruption tracker lets you make cases of corruption and professionally unfit of civil servant public
 and as result track the level of it in public institutions
 
+Prerequisites
+
+    Python 3.4
+    Memcached
 
 ## Quickstart
-
-Python 3.4 is required
 
 Create a virtual environment
 
