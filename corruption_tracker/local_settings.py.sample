@@ -12,6 +12,9 @@ RECAPTCHA_ENABLED = False
 RECAPTCHA_SECRET = ""
 RECAPTCHA_PUBLIC = ""
 
+
+USE_CACHING = False
+
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
