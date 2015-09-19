@@ -19,7 +19,7 @@ class Claim(models.Model):
     @classmethod
     def update_map(cls, json_data):
         """
-        Update map with cliam information
+        Update map with claim information
         """
         polygons_values = cls.objects.values('polygon_id').\
             annotate(count=Count('polygon_id'))

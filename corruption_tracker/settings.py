@@ -133,12 +133,12 @@ LEAFLET_CONFIG = {
     # Kharkiv
     'DEFAULT_CENTER': (50.007759, 36.227193),
     'DEFAULT_ZOOM': 13,
-    'TILES': [(_('Satellite'), 'http://server.arcgisonline.com/ArcGIS/rest/'
-                               'services/World_Imagery/MapServer/tile/'
-                               '{z}/{y}/{x}', {}),
-              (_('Streets'), 'http://server.arcgisonline.com/ArcGIS/rest/'
+    'TILES': [(_('Streets'), 'http://server.arcgisonline.com/ArcGIS/rest/'
                              'services/World_Street_Map/MapServer/tile/'
-                             '{z}/{y}/{x}', {})]
+                             '{z}/{y}/{x}', {}),
+            (_('Satellite'), 'http://server.arcgisonline.com/ArcGIS/rest/'
+                               'services/World_Imagery/MapServer/tile/'
+                               '{z}/{y}/{x}', {})]
 
 }
 

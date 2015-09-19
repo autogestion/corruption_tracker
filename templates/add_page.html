@@ -42,7 +42,7 @@
                     </div>
                     <div class="form-group">
                         <label for="claim_text">{% trans "Claim message" %}:</label>
-                        <textarea type="text" class="form-control" id="claim_text" name="claim_text"></textarea>
+                        <textarea type="text" class="form-control" id="claim_text" name="claim_text" required></textarea>
                     </div>
 
                     {% if user.is_authenticated %}
@@ -89,8 +89,13 @@
             }
         });
 
-        $("#claim_form").submit(function(event){
-            console.log('sending');
+        // $(".readonly").keydown(function(e){
+        //     e.preventDefault();
+        // });
+
+
+
+        $("#claim_form").submit(function(event){          
             event.preventDefault();
             $.ajax({
                 type: "POST",
@@ -99,9 +104,10 @@
                 success: function(data){
                     $('#message').html('{% trans "Thank you for your message." %}');
                     $('#claim_text').val('');
-                    $('#servant').val('');
+                    $('#servant').val('');                    
                 }
             });
+            grecaptcha.reset();
             return false;
         });
 
