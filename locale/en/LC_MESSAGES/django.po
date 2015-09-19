@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-18 14:03+0000\n"
+"POT-Creation-Date: 2015-09-19 21:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: claim/models.py:45
+msgid "Anon"
+msgstr ""
 
 #: corruption_tracker/settings.py:90
 msgid "Ukrainian"
@@ -30,11 +34,11 @@ msgid "Russian"
 msgstr ""
 
 #: corruption_tracker/settings.py:136
-msgid "Satellite"
+msgid "Streets"
 msgstr ""
 
 #: corruption_tracker/settings.py:139
-msgid "Streets"
+msgid "Satellite"
 msgstr ""
 
 #: templates/add_page.html:18
@@ -76,7 +80,7 @@ msgstr ""
 msgid "Send claim"
 msgstr ""
 
-#: templates/add_page.html:100
+#: templates/add_page.html:105
 msgid "Thank you for your message."
 msgstr ""
 
@@ -136,4 +140,8 @@ msgstr ""
 
 #: templates/home.html:60
 msgid "Name not found"
+msgstr ""
+
+#: templates/home.html:108
+msgid "No claims for this polygon"
 msgstr ""
