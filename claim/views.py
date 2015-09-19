@@ -1,9 +1,44 @@
 import requests
+import memcache
+import time
 
 from django.http import HttpResponse
 from django.conf import settings
 
 from claim.models import Claim
+
+
+class CachedRequests(object):
+    @classmethod
+    def get(cls):
+        return cls()
+
+    def __init__(self):
+        self.mc = memcache.Client([settings.MEMCACHED_HOST], debug=1)
+
+    def _set(self, ip, data):
+        self.mc.set(ip, data,
+                    time=settings.CLAIM_TIMEOUT_PERIOD)
+
+    def _get(self, ip):
+        return self.mc.get(ip)
+
+    def can_i_create_claim(self, request):
+        """
+        Memcached store where keys is ip addresses of customers,
+        and values is list of latest retries.
+        """
+        ip = get_client_ip(request)
+        stored = self._get(ip)
+
+        if not stored or type(stored) != list:
+            self._set(ip, [time.time()])
+            return True
+        else:
+            stored.append(time.time())
+            self._set(ip, stored)
+
+            return not len(stored) > settings.CLAIMS_PER_HOUR
 
 
 # TODO(vegasq) Need create utils module, or something similar.
@@ -22,6 +57,10 @@ def get_claims(request, polygon_id):
 
 
 def add_claim(request):
+    # Check if from this IP claim creation is allowed.
+    if not CachedRequests.get().can_i_create_claim(request):
+        return HttpResponse(status=403)
+
     if settings.RECAPTCHA_ENABLED and not request.user.is_authenticated():
         if not request.POST.get('g-recaptcha-response', False):
             raise Exception('Google reCaptcha verification not passed')
