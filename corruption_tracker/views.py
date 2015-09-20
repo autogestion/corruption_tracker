@@ -3,14 +3,13 @@ import json
 from django.shortcuts import render
 from django.conf import settings
 from django.utils.safestring import mark_safe
-from django.contrib.auth.decorators import login_required
+
 from claim.models import Claim
+from utils.common import read_map
 
 
 def home(request):
-    json_file = open(settings.GEOJSON, encoding='utf8')
-    json_data = json.load(json_file)
-    # print(json_data)
+    json_data = read_map()
 
     places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
               for b in json_data['features'] if b['properties']['NAME']]
@@ -26,9 +25,7 @@ def home(request):
 
 
 def add_page(request):
-    json_file = open(settings.GEOJSON, encoding='utf8')
-    json_data = json.load(json_file)
-    # print(json_data)
+    json_data = read_map()
 
     places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
               for b in json_data['features'] if b['properties']['NAME']]
