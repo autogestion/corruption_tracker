@@ -1,4 +1,3 @@
-
 import time
 
 from django.http import HttpResponse
@@ -9,14 +8,14 @@ from utils.common import get_client_ip
 
 class CachedRequests(object):
     @classmethod
-    def get(cls):        
+    def get(cls):
         return cls()
 
     def __init__(self):
         if settings.USE_CACHING:
             # For those who develop on windows and not able to beat the drum
             import memcache
-            self.mc = memcache.Client([settings.MEMCACHED_HOST], debug=1)            
+            self.mc = memcache.Client([settings.MEMCACHED_HOST], debug=1)
 
     def _set(self, ip, data):
         self.mc.set(ip, data,
@@ -29,10 +28,10 @@ class CachedRequests(object):
         """
         Memcached store where keys is ip addresses of customers,
         and values is list of latest retries.
-        """        
+        """
 
         ip = get_client_ip(request)
-        stored = self._get(ip)            
+        stored = self._get(ip)
 
         if not stored or type(stored) != list:
             self._set(ip, [time.time()])
@@ -42,19 +41,17 @@ class CachedRequests(object):
             self._set(ip, stored)
 
             return not len(stored) > settings.CLAIMS_PER_HOUR
-          
 
 
-def caching(view):    
+def caching(view):
     # Check if from this IP claim creation is allowed.
-    def _decorated(*args, **kwargs):            
+    def _decorated(*args, **kwargs):
         if settings.USE_CACHING:
-            request = args[0]                
-            if not CachedRequests.get().can_i_create_claim(request):                    
+            request = args[0]
+            if not CachedRequests.get().can_i_create_claim(request):
                 return HttpResponse(status=403)
-            else:                    
+            else:
                 return view(*args, **kwargs)
         else:
             return view(*args, **kwargs)
-    return _decorated                  
-       
+    return _decorated

@@ -37,7 +37,7 @@ class Claim(models.Model):
         claims = cls.objects.filter(polygon_id=polygon_id)
         claims_list = []
 
-        if claims:            
+        if claims:
             for claim in claims:
                 if claim.complainer:
                     username = claim.complainer.username

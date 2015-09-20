@@ -1,6 +1,5 @@
 
 
-
 # TODO(vegasq) Need create utils module, or something similar.
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
