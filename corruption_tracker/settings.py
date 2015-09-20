@@ -136,7 +136,7 @@ LEAFLET_CONFIG = {
     'TILES': [(_('Streets'), 'http://server.arcgisonline.com/ArcGIS/rest/'
                              'services/World_Street_Map/MapServer/tile/'
                              '{z}/{y}/{x}', {}),
-            (_('Satellite'), 'http://server.arcgisonline.com/ArcGIS/rest/'
+              (_('Satellite'), 'http://server.arcgisonline.com/ArcGIS/rest/'
                                'services/World_Imagery/MapServer/tile/'
                                '{z}/{y}/{x}', {})]
 
