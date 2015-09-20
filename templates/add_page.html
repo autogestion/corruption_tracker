@@ -26,11 +26,12 @@
             <h3>{% trans "Add claim" %}</h3>
 
             <div class="right_block">
+                <div id="processing">Processing...</div>
                 <form role="form" id='claim_form'>
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="organization_name">{% trans "Organization" %}:</label>
-                        <input type="text" class="form-control" id="organization_name" placeholder='{% trans "Organization name" %}'>
+                        <input type="text" class="form-control" id="organization_name" placeholder='{% trans "Organization name" %}' required>
                     </div>
                     <div class="form-group">
                         <label for="polygon_id">{% trans "Polygon ID" %}:</label>
@@ -38,7 +39,7 @@
                     </div>
                     <div class="form-group">
                         <label for="servant">{% trans "Servant name" %}:</label>
-                        <input type="text" class="form-control" id="servant" name="servant">
+                        <input type="text" class="form-control" id="servant" name="servant" required>
                     </div>
                     <div class="form-group">
                         <label for="claim_text">{% trans "Claim message" %}:</label>
@@ -63,7 +64,7 @@
 
                     <div class="form-group">
                         <div id='message'></div>
-                        <button type="submit" class="btn btn-primary">{% trans "Send claim" %}</button>
+                        <button type="submit" class="btn btn-primary" id="submit_add" disabled>{% trans "Send claim" %}</button>
                     </div>
                 </form>
             </div>
@@ -74,6 +75,121 @@
 
 
 <script type="text/javascript">
+    // To prevent insert duplicity
+    var places = {{ places }};
+
+    function select_building (polygon_id) {
+        var places = {{places}};
+        $('#polygon_id').val(polygon_id);
+        for (var i = places.length - 1; i >= 0; i--) {
+            if (places[i].data == polygon_id) {
+                $('#organization_name').val(places[i].value);
+                return
+            }
+        };
+    }
+
+    var AddPage = {
+        min_claim_text_len: 50,
+        init: function (){
+            $('#organization_name').on('change', function(){
+                AddPage.validate();
+            });
+            $('#claim_text').on('change', function(){
+                AddPage.validate();
+            });
+
+            $('#organization_name').autocomplete({
+                lookup: places,
+                onSelect: function (suggestion) {
+                    $('#polygon_id').val(suggestion.data);
+                    AddPage.validate();
+                }
+            });
+
+            $("#claim_form").submit(function(event){
+                AddPage.show_processing();
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'add_claim' %}",
+                    data: $('#claim_form').serialize(),
+                    statusCode: {
+                        200: function (response) {
+                            //
+                        },
+                        201: function (response) {
+                            //
+                        },
+                        400: function (response) {
+                            //
+                        },
+                        403: function (response) {
+                            alert("{% trans 'Too much claims. Please wait an hour and try again.' %}");
+                        }
+                    },
+                    success: function(data){
+                        $('#message').html('{% trans "Thank you for your message." %}');
+                        $('#claim_text').val('');
+                        $('#servant').val('');
+                        {% if not user.is_authenticated %}
+                            grecaptcha.reset();
+                        {% endif %}
+                        AddPage.hide_processing();
+                    }
+                });
+                return false;
+            });
+
+        },
+        inputs_to_validate: [
+            $('#organization_name'),
+            $('#claim_text'),
+        ],
+        show_processing: function (){
+            $('#processing').show();
+        },
+        hide_processing: function (){
+            $('#processing').hide();
+        },
+        validate: function (){
+            // Organization name
+            var organization_name = $('#organization_name').val();
+            for (var i = places.length - 1; i >= 0; i--) {
+                if (organization_name == places[i].value) {
+                    $('#organization_name').removeClass('incorrect');
+                    break;
+                }
+                $('#organization_name').addClass('incorrect');
+            };
+
+            // Claim text
+            var claim_text = $('#claim_text').val();
+            if (claim_text.length < AddPage.min_claim_text_len) {
+                $('#claim_text').addClass('incorrect');
+            } else {
+                $('#claim_text').removeClass('incorrect');
+            }
+            AddPage.show_submit();
+
+        },
+        is_valid: function (){
+            for (var i = AddPage.inputs_to_validate.length - 1; i >= 0; i--) {
+                if (AddPage.inputs_to_validate[i].hasClass('incorrect')) {
+                    return false;
+                }
+            };
+            return true;
+        },
+        show_submit: function (){
+            if (AddPage.is_valid()) {
+                $('#submit_add').prop('disabled', false);
+            } else {
+                $('#submit_add').prop('disabled', true);
+            }
+        },
+    };
+
     $(document).ready(function() {
 
         var csrftoken = $.cookie('csrftoken');
@@ -89,46 +205,10 @@
             }
         });
 
-        // $(".readonly").keydown(function(e){
-        //     e.preventDefault();
-        // });
+        // Main page logic
+        AddPage.init();
 
-
-
-        $("#claim_form").submit(function(event){          
-            event.preventDefault();
-            $.ajax({
-                type: "POST",
-                url: "{% url 'add_claim' %}",
-                data: $('#claim_form').serialize(),
-                success: function(data){
-                    $('#message').html('{% trans "Thank you for your message." %}');
-                    $('#claim_text').val('');
-                    $('#servant').val('');                    
-                }
-            });
-            grecaptcha.reset();
-            return false;
-        });
-
-        $('#organization_name').autocomplete({
-            lookup: {{places}},
-            onSelect: function (suggestion) {
-                $('#polygon_id').val(suggestion.data);
-            }
-        });
     });
-
-    function select_building (polygon_id) {
-        var places = {{places}};
-        $('#polygon_id').val(polygon_id);
-        for (var i = places.length - 1; i >= 0; i--) {
-            if (places[i].data == polygon_id) {
-                $('#organization_name').val(places[i].value);
-                return
-            }
-        };
-    }
 
 </script>
 

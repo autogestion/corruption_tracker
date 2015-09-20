@@ -16,7 +16,6 @@ def get_claims(request, polygon_id):
 
 @caching
 def add_claim(request, deny=False):
-    
     if settings.RECAPTCHA_ENABLED and not request.user.is_authenticated():
         if not request.POST.get('g-recaptcha-response', False):
             raise Exception('Google reCaptcha verification not passed')
