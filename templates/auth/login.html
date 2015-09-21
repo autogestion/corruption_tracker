@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<style type="text/css">
+    #big_login_form {
+        width: 500px;
+        margin:0 auto;
+    }
+</style>
+<div id="big_login_form">
+    {% load i18n %}
+    <h1>{% trans "Login" %}</h1>
+
+    <form method="POST" action="/accounts/login/">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_login">{% trans "Username" %}:</label>
+            <input autofocus="autofocus" id="id_login" maxlength="30" name="login"
+                placeholder="{% trans "Username" %}" type="text" autocomplete="off"
+                class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="id_password">{% trans "Password" %}:</label>
+            <input id="id_password" name="password" placeholder="{% trans "Password" %}"
+                type="password" autocomplete="off" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <input checked="checked" id="id_remember" name="remember" type="checkbox">
+            {% trans "Remember me" %}
+        </div>
+
+        <input type="hidden" name="next" value="/" />
+      
+        <button class="btn btn-default" type="submit">{% trans "Login" %}</button>
+    </form>
+    <p><a class="button secondaryAction" href="/accounts/password/reset/">
+        {% trans "Forget password?" %}</a></p>
+</div>
+{% endblock %}

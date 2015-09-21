@@ -61,15 +61,16 @@
         </ul>
 
         {% if not request.user.is_authenticated and not "/login" in request.get_full_path %}
-            <form class='navbar-form navbar-right login' method='POST' action='{% url "account_login" %}'>{% csrf_token %}
+            <form class='navbar-form navbar-right login' method='POST' action='/login/'>
+                {% csrf_token %}
                 <div class='form-group'>
-                    <input id="id_login" type='text' class='form-control' name="login" placeholder='{% trans "Username" %}' /> 
+                    <input id="id_login" type='text' class='form-control' name="username" placeholder='{% trans "Username" %}' /> 
                 </div>
                 <div class='form-group'>
                     <input id="id_password" type='password' class='form-control' name='password' placeholder='{% trans "Password" %}' />
                 </div>
                 {% if redirect_field_value %}
-                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    <input type="hidden" name="next" value="{{ next }}" />
                 {% endif %}
                 <button type='submit' class='btn btn-default'>{% trans "Login" %}</button>
             </form>
@@ -77,17 +78,6 @@
 
     </div>
 </nav>
-
-{% if "accounts" in request.get_full_path and messages %}
-    <div>
-        <strong>{% trans "Messages" %}:</strong>
-        <ul>
-            {% for message in messages %}
-                <li>{% trans message %}</li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
 
 
 {% block content %}
