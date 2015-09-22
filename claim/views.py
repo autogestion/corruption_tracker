@@ -3,13 +3,13 @@ import requests
 from django.http import HttpResponse
 from django.conf import settings
 
-from claim.models import Claim
+from claim.models import Claim, Organization
 from utils.common import get_client_ip
 from utils.caching import caching
 
 
 def get_claims(request, polygon_id):
-    data = Claim.get_json_by_organization(polygon_id)
+    data = Organization.get(id=polygon_id).get_json_claims()
     return HttpResponse(data, content_type='application/json')
 
 
@@ -43,7 +43,9 @@ def add_claim(request, deny=False):
         claim = Claim(text=request.POST.get('claim_text', False),
                       polygon_id=request.POST.get('polygon_id', False),
                       servant=request.POST.get('servant', False),
-                      complainer=user)
+                      complainer=user,
+                      organization=Organization.get(
+                          id=request.POST.get('polygon_id', False)))
         claim.save()
         # Correct insert code
         code = 201
