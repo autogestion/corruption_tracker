@@ -65,4 +65,3 @@ def login_user(request):
 
     return render_to_response('auth/login.html',
                               context_instance=RequestContext(request))
-
