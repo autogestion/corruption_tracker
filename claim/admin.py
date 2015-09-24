@@ -5,13 +5,8 @@ from claim.models import Claim, Organization, InCharge,\
 
 
 class ClaimAdmin(admin.ModelAdmin):
-    # TODO(autogestion) For some strange reason if add 'organization'
-    # to list_display, claims disapear from admin table
-
-    # list_display = ('polygon_id', 'organization', 'servant',
-    #     'text', 'live', 'created')
-
-    list_display = ('polygon_id', 'created', 'live', 'servant', 'text',)
+    list_display = ('polygon_id', 'organization', 'servant',
+        'text', 'live', 'created')
     search_fields = ('polygon_id', 'text')
     list_filter = ('polygon_id', 'created')
 

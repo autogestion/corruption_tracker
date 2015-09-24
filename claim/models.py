@@ -83,8 +83,6 @@ class Claim(models.Model):
     created = models.DateTimeField(default=datetime.datetime.now)
     live = models.BooleanField(default=False)
     organization = models.ForeignKey(Organization)
-
-    # Plygon_id refers to GeoJSON?
     polygon_id = models.CharField(max_length=250)
     servant = models.CharField(max_length=550)
     complainer = models.ForeignKey(User, null=True, blank=True, default=None)

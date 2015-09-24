@@ -84,6 +84,7 @@ class Command(BaseCommand):
                     name=org['properties']['NAME'])
                 for org in orgs:
                     org.org_type = org_type
+                    org.save()
 
             # Temporary fix of found error:
             try:
