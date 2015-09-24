@@ -33,6 +33,7 @@ class OrganizationType(models.Model):
         ("16", _("Міністерство аграрної політики та продовольства України")),
         ("17", _("Міністерство юстиції України")),
     )
+    # TODO(autogestion) unique=True?
     org_type = models.CharField(choices=ORG_TYPES,
                                 max_length=10,
                                 default=ORG_TYPES[0][0])
@@ -77,33 +78,13 @@ class InCharge(models.Model):
         return self.name
 
 
-class Layer(models.Model):
-    """
-        Some general representation of map.
-        f.e.
-            All schools of Lviv
-            All universities of Ukraine
-            etc.
-    """
-    ORGANIZATION = 0
-    DISTRICT = 1
-    COUNTRY = 2
-    LAYER_TYPES = (
-        (ORGANIZATION, _("Organization")),
-        (DISTRICT, _("District")),
-        (COUNTRY, _("Country")),
-    )
-
-    name = models.CharField(max_length=250)
-    layer_type = models.IntegerField(choices=LAYER_TYPES,
-                                     default=ORGANIZATION)
-
-
 class Claim(models.Model):
     text = models.CharField(max_length=2550)
     created = models.DateTimeField(default=datetime.datetime.now)
     live = models.BooleanField(default=False)
     organization = models.ForeignKey(Organization)
+
+    # Plygon_id refers to GeoJSON?
     polygon_id = models.CharField(max_length=250)
     servant = models.CharField(max_length=550)
     complainer = models.ForeignKey(User, null=True, blank=True, default=None)
@@ -123,6 +104,35 @@ class Claim(models.Model):
         for polygon in json_data["features"]:
             polygon['claim_count'] = polygons_dict.get(
                 str(polygon["properties"]["ID"]), 0)
+
+
+# TODO(autogestion) Maybe we have to create separate app,
+# wich would handle geo info and will contain
+# Layer and Polygon models
+class Layer(models.Model):
+    """
+        Some general representation of map.
+        f.e.
+            All schools of Lviv
+            All universities of Ukraine
+            etc.
+    """
+    ORGANIZATION = 0
+    DISTRICT = 1
+    COUNTRY = 2
+    LAYER_TYPES = (
+        (ORGANIZATION, _("Organization")),
+        (DISTRICT, _("District")),
+        (COUNTRY, _("Country")),
+    )
+
+    # TODO(autogestion) name should be primary_key=True?
+    name = models.CharField(max_length=250)
+    layer_type = models.IntegerField(choices=LAYER_TYPES,
+                                     default=ORGANIZATION)
+
+    def __str__(self):
+        return self.name
 
 
 class Polygon(models.Model):
@@ -158,6 +168,7 @@ class Polygon(models.Model):
         # Remove me after release. Not critical.
         claims = Claim.objects.filter(
             organization__in=self.organizations.all())
+        print(self.organizations.all(), claims)
         claims_list = []
 
         if claims:
@@ -173,3 +184,6 @@ class Polygon(models.Model):
                 })
 
         return json.dumps(claims_list)
+
+    def __str__(self):
+        return 'Polygon ' + str(self.polygon_id)

@@ -11,15 +11,26 @@ class Command(BaseCommand):
     help = 'Fullfill database with basic data'
 
     def handle(self, *args, **options):
+        # TODO(autogestion) This command have to
+        # accept additional argument - filename of GeoJSON.
+        # Files could be stored in separate folder where command
+        # will look for recived filename.
+        # This GeoJSON would contain Layer name and type,
+        # and all of the polygons inside file will be linked
+        # to this Layer
+        # Without addional argument command should parse all
+        # files it that folder
+
         # Layers
-        for layer_type in Layer.LAYER_TYPES:
-            try:
-                Layer.objects.get(layer_type=layer_type[0])
-            except Layer.DoesNotExist:
-                obj = Layer(layer_type=layer_type[0], name=layer_type[1])
-                obj.save()
-            except Layer.MultipleObjectsReturned:
-                pass
+        # Temporary hack, before Layer appear in GeoJSON
+        try:
+            layer = Layer.objects.get(layer_type=Layer.ORGANIZATION,
+                name='Kharkiv_Test')
+        except Layer.DoesNotExist:
+            layer = Layer(layer_type=Layer.ORGANIZATION, name='Kharkiv_Test')
+            layer.save()
+        except Layer.MultipleObjectsReturned:
+            pass
 
         # Organization Types
         for org_type in OrganizationType.ORG_TYPES:
@@ -35,16 +46,26 @@ class Command(BaseCommand):
         map_data = read_map()
         for org in map_data['features']:
             # Create polygon
+
             try:
                 polygon = Polygon.objects.get(
                     polygon_id=org['properties']['ID'])
+
+                # Temporary hack, before Layer appear in GeoJSON
+                if polygon.layer.name != 'Kharkiv_Test':
+                    polygon.layer = layer
+                    polygon.save()
+
             except Polygon.DoesNotExist:
                 polygon = Polygon(polygon_id=org['properties']['ID'],
                                   coordinates=json.dumps(org['geometry']),
-                                  layer=Layer.objects.get(layer_type=0))
+                                  layer=layer)
                 polygon.save()
 
             # Create organization
+            # Temporary, fix unknown organization type
+            org_type = OrganizationType.objects.get(org_type="0")
+
             if org['properties']['NAME'] is None:
                 org['properties']['NAME'] = _('No name')
 
@@ -54,8 +75,21 @@ class Command(BaseCommand):
             except Organization.DoesNotExist:
                 org_obj = Organization(
                     name=org['properties']['NAME'],
-                    org_type=OrganizationType.objects.get(org_type="0")
+                    org_type=org_type
                 )
+                org_obj.save()
+            except Organization.MultipleObjectsReturned:
+                # Temporary fix to avoid organizations without types
+                orgs = Organization.objects.filter(
+                    name=org['properties']['NAME'])
+                for org in orgs:
+                    org.org_type = org_type
+
+            # Temporary fix of found error:
+            try:
+                org_obj.org_type
+            except OrganizationType.DoesNotExist:
+                org_obj.org_type = org_type
                 org_obj.save()
 
             # Link them

@@ -18,7 +18,8 @@ def home(request):
     places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
               for b in json_data['features'] if b['properties']['NAME']]
 
-    layer = Layer.objects.get(layer_type=Layer.ORGANIZATION)
+    # Temporary hack, before Layer appear in GeoJSON
+    layer = Layer.objects.get(name='Kharkiv_Test')
     polygons = Polygon.objects.filter(layer=layer)
 
     data = []
@@ -40,7 +41,8 @@ def add_page(request):
     places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
               for b in json_data['features'] if b['properties']['NAME']]
 
-    layer = Layer.objects.get(layer_type=Layer.ORGANIZATION)
+    # Temporary hack, before Layer appear in GeoJSON
+    layer = Layer.objects.get(name='Kharkiv_Test')
     polygons = Polygon.objects.filter(layer=layer)
 
     data = []

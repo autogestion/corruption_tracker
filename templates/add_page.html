@@ -90,7 +90,8 @@
     }
 
     var AddPage = {
-        min_claim_text_len: 50,
+        // 50 to much for testing        
+        min_claim_text_len: 10,
         init: function (){
             $('#organization_name').on('change', function(){
                 AddPage.validate();
@@ -167,6 +168,8 @@
             var claim_text = $('#claim_text').val();
             if (claim_text.length < AddPage.min_claim_text_len) {
                 $('#claim_text').addClass('incorrect');
+                $('#claim_text').val(AddPage.min_claim_text_len + " characters is minimum length of text");
+
             } else {
                 $('#claim_text').removeClass('incorrect');
             }
