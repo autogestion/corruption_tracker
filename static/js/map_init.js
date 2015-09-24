@@ -8,7 +8,7 @@ function main_map_init (map, options) {
 
         var myIcon = L.divIcon({
             className: 'icon_with_number',
-            html: buildings['features'][i]['claim_count']
+            html: buildings['features'][i]['properties']['CLAIM_COUNT']
         });
 
         marker = L.marker(

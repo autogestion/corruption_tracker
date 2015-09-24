@@ -44,32 +44,26 @@ class OrganizationType(models.Model):
 
 
 class Organization(models.Model):
-    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     url = models.URLField()
-    org_type = models.ForeignKey(OrganizationType)
+    org_type = models.ForeignKey(OrganizationType, null=True)
 
     def __str__(self):
         return self.name
 
-    def get_json_claims(self):
-        # Q(polygon_id=self.id) jsut compatible layer.
-        # Remove me after release. Not critical.
-        claims = Claim.objects.filter(Q(organization=self) |
-                                      Q(polygon_id=self.id))
-        claims_list = []
+    def get_map_representation(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'url': self.url,
+            'type': self.org_type.org_type,
+            'total_claims': self.total_claims
+        }
 
-        if claims:
-            for claim in claims:
-                username = claim.complainer.username if\
-                    claim.complainer else _("Anon")
-                claims_list.append({
-                    'text': claim.text,
-                    'servant': claim.servant,
-                    'complainer': username
-                })
-
-        return json.dumps(claims_list)
+    @property
+    def total_claims(self):
+        return Claim.objects.filter(Q(organization=self) |
+                                    Q(polygon_id=self.id)).count()
 
 
 class InCharge(models.Model):
@@ -81,6 +75,28 @@ class InCharge(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Layer(models.Model):
+    """
+        Some general representation of map.
+        f.e.
+            All schools of Lviv
+            All universities of Ukraine
+            etc.
+    """
+    ORGANIZATION = 0
+    DISTRICT = 1
+    COUNTRY = 2
+    LAYER_TYPES = (
+        (ORGANIZATION, _("Organization")),
+        (DISTRICT, _("District")),
+        (COUNTRY, _("Country")),
+    )
+
+    name = models.CharField(max_length=250)
+    layer_type = models.IntegerField(choices=LAYER_TYPES,
+                                     default=ORGANIZATION)
 
 
 class Claim(models.Model):
@@ -107,3 +123,53 @@ class Claim(models.Model):
         for polygon in json_data["features"]:
             polygon['claim_count'] = polygons_dict.get(
                 str(polygon["properties"]["ID"]), 0)
+
+
+class Polygon(models.Model):
+    # TODO(vegasq) Let's pretend that Polygon represent
+    # building, but Polygon.organizations - list of offices.
+    polygon_id = models.IntegerField(primary_key=True)
+    organizations = models.ManyToManyField(Organization)
+    layer = models.ForeignKey(Layer)
+    coordinates = models.CharField(max_length=2000)
+
+    def generate_map_polygon(self):
+        orgs = []
+        claims_count = 0
+        for org in self.organizations.all():
+            orgs.append(org.get_map_representation())
+            claims_count += org.total_claims
+
+        names = " <br> ".join([org['name'] for org in orgs])
+
+        return {
+            "type": "Feature",
+            "properties": {
+                "ID": self.polygon_id,
+                "NAME": names,
+                "ORGANIZATIONS": orgs,
+                "CLAIM_COUNT": claims_count
+            },
+            "geometry": json.loads(self.coordinates)
+        }
+
+    def get_json_claims(self):
+        # Q(polygon_id=self.id) jsut compatible layer.
+        # Remove me after release. Not critical.
+        claims = Claim.objects.filter(
+            organization__in=self.organizations.all())
+        claims_list = []
+
+        if claims:
+            for claim in claims:
+                username = claim.complainer.username if\
+                    claim.complainer else _("Anon")
+                claims_list.append({
+                    'organization_id': claim.organization.id,
+                    'organization_name': claim.organization.name,
+                    'text': claim.text,
+                    'servant': claim.servant,
+                    'complainer': username
+                })
+
+        return json.dumps(claims_list)
