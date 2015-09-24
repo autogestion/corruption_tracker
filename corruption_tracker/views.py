@@ -8,7 +8,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 
-from claim.models import Claim
+from claim.models import Claim, Layer, Polygon
 from utils.common import read_map
 
 
@@ -18,7 +18,13 @@ def home(request):
     places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
               for b in json_data['features'] if b['properties']['NAME']]
 
-    Claim.update_map(json_data)
+    layer = Layer.objects.get(layer_type=Layer.ORGANIZATION)
+    polygons = Polygon.objects.filter(layer=layer)
+
+    data = []
+    for polygon in polygons:
+        data.append(polygon.generate_map_polygon())
+    json_data['features'] = data
 
     return render(
         request,
@@ -34,7 +40,13 @@ def add_page(request):
     places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
               for b in json_data['features'] if b['properties']['NAME']]
 
-    Claim.update_map(json_data)
+    layer = Layer.objects.get(layer_type=Layer.ORGANIZATION)
+    polygons = Polygon.objects.filter(layer=layer)
+
+    data = []
+    for polygon in polygons:
+        data.append(polygon.generate_map_polygon())
+    json_data['features'] = data
 
     if settings.RECAPTCHA_ENABLED is False:
         settings.RECAPTCHA_PUBLIC = ''
