@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-24 21:32+0000\n"
+"POT-Creation-Date: 2015-09-25 06:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,15 +97,15 @@ msgstr ""
 msgid "Міністерство юстиції України"
 msgstr ""
 
-#: claim/models.py:122 templates/add_page.html:33
+#: claim/models.py:123 templates/add_page.html:33
 msgid "Organization"
 msgstr ""
 
-#: claim/models.py:123
+#: claim/models.py:124
 msgid "District"
 msgstr ""
 
-#: claim/models.py:124
+#: claim/models.py:125
 msgid "Country"
 msgstr ""
 
@@ -160,19 +160,19 @@ msgstr ""
 msgid "Claim message"
 msgstr ""
 
-#: templates/add_page.html:53
+#: templates/add_page.html:54
 msgid "Keep me anonymously"
 msgstr ""
 
-#: templates/add_page.html:67
+#: templates/add_page.html:68
 msgid "Send claim"
 msgstr ""
 
-#: templates/add_page.html:129
+#: templates/add_page.html:130
 msgid "Too much claims. Please wait an hour and try again."
 msgstr ""
 
-#: templates/add_page.html:133
+#: templates/add_page.html:134
 msgid "Thank you for your message."
 msgstr ""
 

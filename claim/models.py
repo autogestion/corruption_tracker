@@ -33,10 +33,11 @@ class OrganizationType(models.Model):
         ("16", _("Міністерство аграрної політики та продовольства України")),
         ("17", _("Міністерство юстиції України")),
     )
-    # TODO(autogestion) unique=True?
+
     org_type = models.CharField(choices=ORG_TYPES,
                                 max_length=10,
-                                default=ORG_TYPES[0][0])
+                                default=ORG_TYPES[0][0],
+                                unique=True)
 
     def __str__(self):
         for org_type in self.ORG_TYPES:
@@ -166,7 +167,6 @@ class Polygon(models.Model):
         # Remove me after release. Not critical.
         claims = Claim.objects.filter(
             organization__in=self.organizations.all())
-        print(self.organizations.all(), claims)
         claims_list = []
 
         if claims:

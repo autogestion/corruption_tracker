@@ -30,6 +30,7 @@ Create a default local settings file
 Create the tables
 
     python manage.py syncdb
+    python manage.py initiate_db
 
 Start the server
 
