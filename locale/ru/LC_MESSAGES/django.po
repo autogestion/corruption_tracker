@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-19 21:35+0000\n"
+"POT-Creation-Date: 2015-09-25 06:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,97 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: claim/models.py:45
+#: claim/management/commands/initiate_db.py:70
+msgid "No name"
+msgstr ""
+
+#: claim/models.py:15
+msgid "Unknown"
+msgstr ""
+
+#: claim/models.py:16
+msgid "Міністерство фінансів України"
+msgstr ""
+
+#: claim/models.py:17
+msgid "Міністерство соціальної політики України"
+msgstr ""
+
+#: claim/models.py:18
+msgid ""
+"Міністерство регіонального розвитку, будівництва та житлово-комунального "
+"господарства України"
+msgstr ""
+
+#: claim/models.py:20
+msgid "Міністерство охорони здоров'я України "
+msgstr ""
+
+#: claim/models.py:21
+msgid "Міністерство освіти і науки України"
+msgstr ""
+
+#: claim/models.py:22
+msgid "Міністерство оборони України"
+msgstr ""
+
+#: claim/models.py:23
+msgid "Міністерство молоді та спорту України"
+msgstr ""
+
+#: claim/models.py:24
+msgid "Міністерство культури України"
+msgstr ""
+
+#: claim/models.py:25
+msgid "Міністерство інфраструктури України"
+msgstr ""
+
+#: claim/models.py:26
+msgid "Міністерство інформаційної політики України"
+msgstr ""
+
+#: claim/models.py:27
+msgid "Міністерство закордонних справ України"
+msgstr ""
+
+#: claim/models.py:28
+msgid "Міністерство енергетики та вугільної промисловості України"
+msgstr ""
+
+#: claim/models.py:30
+msgid "Міністерство економічного розвитку і торгівлі України"
+msgstr ""
+
+#: claim/models.py:31
+msgid "Міністерство екології та природних ресурсів України"
+msgstr ""
+
+#: claim/models.py:32
+msgid "Міністерство внутрішніх справ України"
+msgstr ""
+
+#: claim/models.py:33
+msgid "Міністерство аграрної політики та продовольства України"
+msgstr ""
+
+#: claim/models.py:34
+msgid "Міністерство юстиції України"
+msgstr ""
+
+#: claim/models.py:123 templates/add_page.html:33
+msgid "Organization"
+msgstr ""
+
+#: claim/models.py:124
+msgid "District"
+msgstr ""
+
+#: claim/models.py:125
+msgid "Country"
+msgstr ""
+
+#: claim/models.py:175
 msgid "Anon"
 msgstr ""
 
@@ -54,36 +144,59 @@ msgstr ""
 msgid "Add claim"
 msgstr ""
 
-#: templates/add_page.html:32
-msgid "Organization"
-msgstr ""
-
-#: templates/add_page.html:33 templates/home.html:29
+#: templates/add_page.html:34 templates/home.html:29
 msgid "Organization name"
 msgstr ""
 
-#: templates/add_page.html:36
+#: templates/add_page.html:37
 msgid "Polygon ID"
 msgstr ""
 
-#: templates/add_page.html:40
+#: templates/add_page.html:41
 msgid "Servant name"
 msgstr ""
 
-#: templates/add_page.html:44
+#: templates/add_page.html:45
 msgid "Claim message"
 msgstr ""
 
-#: templates/add_page.html:52
+#: templates/add_page.html:54
 msgid "Keep me anonymously"
 msgstr ""
 
-#: templates/add_page.html:66
+#: templates/add_page.html:68
 msgid "Send claim"
 msgstr ""
 
-#: templates/add_page.html:105
+#: templates/add_page.html:130
+msgid "Too much claims. Please wait an hour and try again."
+msgstr ""
+
+#: templates/add_page.html:134
 msgid "Thank you for your message."
+msgstr ""
+
+#: templates/auth/login.html:11 templates/auth/login.html.py:36
+#: templates/base.html:75
+msgid "Login"
+msgstr ""
+
+#: templates/auth/login.html:17 templates/auth/login.html.py:19
+#: templates/base.html:67
+msgid "Username"
+msgstr ""
+
+#: templates/auth/login.html:24 templates/auth/login.html.py:25
+#: templates/base.html:70
+msgid "Password"
+msgstr ""
+
+#: templates/auth/login.html:31
+msgid "Remember me"
+msgstr ""
+
+#: templates/auth/login.html:39
+msgid "Forget password?"
 msgstr ""
 
 #: templates/base.html:34
@@ -100,22 +213,6 @@ msgstr ""
 
 #: templates/base.html:59
 msgid "Register"
-msgstr ""
-
-#: templates/base.html:66
-msgid "Username"
-msgstr ""
-
-#: templates/base.html:69
-msgid "Password"
-msgstr ""
-
-#: templates/base.html:74
-msgid "Login"
-msgstr ""
-
-#: templates/base.html:83
-msgid "Messages"
 msgstr ""
 
 #: templates/home.html:18
