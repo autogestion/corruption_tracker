@@ -46,7 +46,7 @@ class OrganizationType(models.Model):
 
 class Organization(models.Model):
     name = models.CharField(max_length=255)
-    url = models.URLField()
+    url = models.URLField(null=True, blank=True)
     org_type = models.ForeignKey(OrganizationType, null=True)
 
     def __str__(self):
@@ -87,18 +87,19 @@ class Claim(models.Model):
     servant = models.CharField(max_length=550)
     complainer = models.ForeignKey(User, null=True, blank=True, default=None)
 
-    @classmethod
-    def update_map(cls, json_data):
-        """
-        Update map with claim information
-        """
-        polygons_values = cls.objects.values('polygon_id').\
-            annotate(count=Count('polygon_id'))
+    # Not used
+    # @classmethod
+    # def update_map(cls, json_data):
+    #     """
+    #     Update map with claim information
+    #     """
+    #     polygons_values = cls.objects.values('polygon_id').\
+    #         annotate(count=Count('polygon_id'))
 
-        polygons_dict = {}
-        for values_dict in polygons_values:
-            polygons_dict[values_dict['polygon_id']] = values_dict['count']
+    #     polygons_dict = {}
+    #     for values_dict in polygons_values:
+    #         polygons_dict[values_dict['polygon_id']] = values_dict['count']
 
-        for polygon in json_data["features"]:
-            polygon['claim_count'] = polygons_dict.get(
-                str(polygon["properties"]["ID"]), 0)
+    #     for polygon in json_data["features"]:
+    #         polygon['claim_count'] = polygons_dict.get(
+    #             str(polygon["properties"]["ID"]), 0)

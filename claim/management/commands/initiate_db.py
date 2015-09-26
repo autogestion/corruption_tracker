@@ -2,7 +2,7 @@ import json
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.utils.translation import ugettext as _
+# from django.utils.translation import ugettext as _
 
 from claim.models import OrganizationType, Organization
 from geoinfo.models import Layer, Polygon
@@ -59,7 +59,18 @@ class Command(BaseCommand):
                     polygon.layer = layer
                     polygon.save()
 
+                # Temporary hack to kill off organizations without names
+                if not org['properties']['NAME']:
+                    for emtpy_org in polygon.organizations.all():
+                        emtpy_org.delete()
+                    polygon.delete()
+                    continue
+
             except Polygon.DoesNotExist:
+                # Hack to avoid organizations without names
+                if not org['properties']['NAME']:
+                    continue
+
                 polygon = Polygon(polygon_id=org['properties']['ID'],
                                   coordinates=json.dumps(org['geometry']),
                                   layer=layer)
@@ -69,8 +80,8 @@ class Command(BaseCommand):
             # Temporary, fix unknown organization type
             org_type = OrganizationType.objects.get(org_type="0")
 
-            if org['properties']['NAME'] is None:
-                org['properties']['NAME'] = _('No name')
+            # if org['properties']['NAME'] is None:
+            #     org['properties']['NAME'] = _('No name')
 
             try:
                 org_obj = Organization.objects.get(
