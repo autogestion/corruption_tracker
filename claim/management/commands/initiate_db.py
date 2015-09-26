@@ -1,11 +1,12 @@
 import json
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.translation import ugettext as _
 
 from claim.models import OrganizationType, Organization
 from geoinfo.models import Layer, Polygon
-from utils.common import read_map
+from utils.common import get_geojson_file
 
 
 class Command(BaseCommand):
@@ -26,9 +27,10 @@ class Command(BaseCommand):
         # Temporary hack, before Layer appear in GeoJSON
         try:
             layer = Layer.objects.get(layer_type=Layer.ORGANIZATION,
-                name='Kharkiv_Test')
+                name=settings.DEFAULT_LAYER_NAME)
         except Layer.DoesNotExist:
-            layer = Layer(layer_type=Layer.ORGANIZATION, name='Kharkiv_Test')
+            layer = Layer(layer_type=Layer.ORGANIZATION,
+                name=settings.DEFAULT_LAYER_NAME, is_default=True)
             layer.save()
         except Layer.MultipleObjectsReturned:
             pass
@@ -44,7 +46,7 @@ class Command(BaseCommand):
                 pass
 
         # Polygons n Orgs
-        map_data = read_map()
+        map_data = get_geojson_file()
         for org in map_data['features']:
             # Create polygon
 

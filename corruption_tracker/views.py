@@ -8,59 +8,49 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 
-from claim.models import Claim
-from geoinfo.models import Polygon, Layer
-from utils.common import read_map
+from geoinfo.models import Layer
+from utils.common import get_geojson_file
+
+
+def create_default_layer(claims=True):
+    # There was an idea that we don't need
+    # claims on add page
+
+    json_data = get_geojson_file()
+    places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
+              for b in json_data['features'] if b['properties']['NAME']]
+
+    try:
+        layer = Layer.objects.get(is_default=True)
+    except Layer.DoesNotExist:
+        layer = Layer.objects.get(name=settings.DEFAULT_LAYER_NAME)
+    polygons = layer.polygon_set.all()
+
+    data = []
+    for polygon in polygons:
+        data.append(polygon.generate_map_polygon())
+    json_data['features'] = data
+
+    return {'buildings': mark_safe(json.dumps(json_data)),
+            'places': mark_safe(json.dumps(places))}
 
 
 def home(request):
-    json_data = read_map()
+    resp_dict = create_default_layer()
+    resp_dict['page'] = 'home'
 
-    places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
-              for b in json_data['features'] if b['properties']['NAME']]
-
-    # Temporary hack, before Layer appear in GeoJSON
-    layer = Layer.objects.get(name='Kharkiv_Test')
-    polygons = Polygon.objects.filter(layer=layer)
-
-    data = []
-    for polygon in polygons:
-        data.append(polygon.generate_map_polygon())
-    json_data['features'] = data
-
-    return render(
-        request,
-        'home.html',
-        {'buildings': mark_safe(json.dumps(json_data)),
-         'page': 'home',
-         'places': mark_safe(json.dumps(places))})
+    return render(request, 'home.html', resp_dict)
 
 
 def add_page(request):
-    json_data = read_map()
-
-    places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
-              for b in json_data['features'] if b['properties']['NAME']]
-
-    # Temporary hack, before Layer appear in GeoJSON
-    layer = Layer.objects.get(name='Kharkiv_Test')
-    polygons = Polygon.objects.filter(layer=layer)
-
-    data = []
-    for polygon in polygons:
-        data.append(polygon.generate_map_polygon())
-    json_data['features'] = data
+    resp_dict = create_default_layer()
+    resp_dict['page'] = 'add_page'
 
     if settings.RECAPTCHA_ENABLED is False:
         settings.RECAPTCHA_PUBLIC = ''
+    resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
 
-    return render(
-        request,
-        'add_page.html',
-        {'buildings': mark_safe(json.dumps(json_data)),
-         'page': 'add_page',
-         'places': mark_safe(json.dumps(places)),
-         'recaptcha_public': settings.RECAPTCHA_PUBLIC})
+    return render(request, 'add_page.html', resp_dict)
 
 
 def about(request):

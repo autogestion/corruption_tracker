@@ -27,13 +27,17 @@ class Layer(models.Model):
     )
 
     # TODO(autogestion) name should be uniqe=True?
-    name = models.CharField(max_length=250)
+    name = models.CharField(max_length=250, unique=True)
     layer_type = models.IntegerField(choices=LAYER_TYPES,
                                      default=ORGANIZATION)
 
     # TODO(autogestion) This field will allow to upload
     # geojson files through admin
     json_filename = models.FileField(null=True, blank=True)
+
+    # If field set to True,
+    # this Layer would be loaded on main page
+    is_default = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
