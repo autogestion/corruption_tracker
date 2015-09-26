@@ -45,6 +45,7 @@ INSTALLED_APPS = (
 
     'leaflet',
     'claim',
+    'geoinfo',
 )
 
 MIDDLEWARE_CLASSES = (

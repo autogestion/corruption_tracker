@@ -8,7 +8,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 
-from claim.models import Claim, Layer, Polygon
+from claim.models import Claim
+from geoinfo.models import Polygon, Layer
 from utils.common import read_map
 
 
