@@ -4,8 +4,6 @@ from django.http import HttpResponse
 from django.conf import settings
 
 from claim.models import Claim, Organization
-# , Organization
-from geoinfo.models import Polygon
 from utils.common import get_client_ip
 from utils.caching import caching
 
@@ -39,17 +37,15 @@ def add_claim(request, deny=False):
 
     code = 500
     if (
-        request.POST.get('polygon_id', False) and
+        request.POST.get('org_id', False) and
         request.POST.get('claim_text', False)
     ):
         claim = Claim(
             text=request.POST.get('claim_text', False),
-            polygon_id=request.POST.get('polygon_id', False),
             servant=request.POST.get('servant', False),
             complainer=user,
-            organization=Polygon.objects.get(
-                polygon_id=request.POST.get('polygon_id', False)
-            ).organizations.all()[0]
+            organization=Organization.objects.get(
+                id=request.POST.get('org_id', False))
         )
         claim.save()
         # Correct insert code

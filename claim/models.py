@@ -2,10 +2,8 @@
 import datetime
 import json
 
-from django.db.models import Q
 from django.db import models
 from django.contrib.auth.models import User
-# from django.db.models import Count
 from django.utils.translation import ugettext as _
 
 
@@ -50,22 +48,9 @@ class Organization(models.Model):
     url = models.URLField(null=True, blank=True)
     org_type = models.ForeignKey(OrganizationType, null=True)
 
-    def __str__(self):
-        return self.name
-
-    def get_map_representation(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'url': self.url,
-            'type': self.org_type.org_type,
-            'total_claims': self.total_claims
-        }
-
     @property
     def total_claims(self):
-        return Claim.objects.filter(Q(organization=self) |
-                                    Q(polygon_id=self.id)).count()
+        return self.claim_set.all().count()
 
     def json_claims(self):
         claims = self.claim_set.all()
@@ -86,6 +71,9 @@ class Organization(models.Model):
 
         return json.dumps(claims_list)
 
+    def __str__(self):
+        return self.name
+
 
 class InCharge(models.Model):
     name = models.CharField(max_length=255)
@@ -103,23 +91,6 @@ class Claim(models.Model):
     created = models.DateTimeField(default=datetime.datetime.now)
     live = models.BooleanField(default=False)
     organization = models.ForeignKey(Organization)
-    polygon_id = models.CharField(max_length=250)
+    # polygon_id = models.CharField(max_length=250)
     servant = models.CharField(max_length=550)
     complainer = models.ForeignKey(User, null=True, blank=True, default=None)
-
-    # Not used
-    # @classmethod
-    # def update_map(cls, json_data):
-    #     """
-    #     Update map with claim information
-    #     """
-    #     polygons_values = cls.objects.values('polygon_id').\
-    #         annotate(count=Count('polygon_id'))
-
-    #     polygons_dict = {}
-    #     for values_dict in polygons_values:
-    #         polygons_dict[values_dict['polygon_id']] = values_dict['count']
-
-    #     for polygon in json_data["features"]:
-    #         polygon['claim_count'] = polygons_dict.get(
-    #             str(polygon["properties"]["ID"]), 0)

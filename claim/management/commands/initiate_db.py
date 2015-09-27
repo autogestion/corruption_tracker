@@ -27,10 +27,10 @@ class Command(BaseCommand):
         # Temporary hack, before Layer appear in GeoJSON
         try:
             layer = Layer.objects.get(layer_type=Layer.ORGANIZATION,
-                name=settings.DEFAULT_LAYER_NAME)
+                                      name=settings.DEFAULT_LAYER_NAME)
         except Layer.DoesNotExist:
             layer = Layer(layer_type=Layer.ORGANIZATION,
-                name=settings.DEFAULT_LAYER_NAME, is_default=True)
+                          name=settings.DEFAULT_LAYER_NAME, is_default=True)
             layer.save()
 
         # Organization Types
@@ -105,7 +105,20 @@ class Command(BaseCommand):
             # Link them
             polygon.organizations.add(org_obj)
 
-    # Temporary, delete No name organizations
-    no_name = Organization.objects.filter(name='No name')
-    for no_name_org in no_name:
-        no_name_org.delete()
+        # Temporary, delete No name organizations
+        no_name = Organization.objects.filter(name='No name')
+        for no_name_org in no_name:
+            no_name_org.delete()
+
+        # Temporary, to add additional organizations
+        # to north terminal
+        org_type = OrganizationType.objects.get(org_type="0")
+        north_terminal = Polygon.objects.get(polygon_id='1296')
+        if north_terminal.organizations.all().count() < 3:
+            for new_org in ['Довідкова', 'Каси']:
+                new_org_obj = Organization(
+                    name=new_org,
+                    org_type=org_type
+                )
+                new_org_obj.save()
+                north_terminal.organizations.add(new_org_obj)

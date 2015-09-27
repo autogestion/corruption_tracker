@@ -5,14 +5,14 @@ from claim.models import Claim, InCharge,\
 
 
 class ClaimAdmin(admin.ModelAdmin):
-    list_display = ('polygon_id', 'organization', 'servant',
-        'text', 'live', 'created')
-    search_fields = ('polygon_id', 'text')
-    list_filter = ('polygon_id', 'created')
+    list_display = ('id', 'organization', 'servant',
+                    'text', 'live', 'created')
+    search_fields = ('organization', 'servant', 'text')
+    list_filter = ('organization', 'created')
 
 
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'org_type')
+    list_display = ('id', 'name', 'org_type', 'total_claims')
     search_fields = ('name', 'org_type')
     list_filter = ('name', 'org_type')
 

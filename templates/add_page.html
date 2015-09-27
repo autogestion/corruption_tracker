@@ -5,10 +5,7 @@
 {% block head %}
     <title>Corruption map</title>
     {% leaflet_js %}  
-    {% leaflet_css %}<!-- 
-    <script src="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.js"</script>
-    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="http:///rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.css" rel="stylesheet"> -->
+    {% leaflet_css %}
     <script src='https://www.google.com/recaptcha/api.js'></script>
 {% endblock %}
 
@@ -34,9 +31,9 @@
                         <input type="text" class="form-control" id="organization_name" placeholder='{% trans "Organization name" %}'>
                     </div>
                     <div class="form-group">
-                        <label for="polygon_id">{% trans "Polygon ID" %}:</label>
-                        <div id='polygon_id_error'></div>
-                        <input type="text" class="form-control" id="polygon_id" name="polygon_id" readonly>
+                        <label for="org_id">{% trans "Organization ID" %}:</label>
+                        <div id='org_id_error'></div>
+                        <input type="text" class="form-control" id="org_id" name="org_id" readonly>
                     </div>
                     <div class="form-group">
                         <label for="servant">{% trans "Servant name" %}:</label>
@@ -77,15 +74,14 @@
 
 
 <script type="text/javascript">
-    // To prevent insert duplicity
-    var autocomplete_places = {{places}};
-    var places = buildings.features
+    // To prevent insert duplicity   
+    var places = {{places}}
 
-    function select_building (polygon_id) {
-        $('#polygon_id').val(polygon_id);
+    function select_building (org_id) {
+        $('#org_id').val(org_id);
         for (var i = places.length - 1; i >= 0; i--) {
-            if (places[i].properties.ID == polygon_id) {
-                $('#organization_name').val(places[i].properties.NAME);
+            if (places[i].properties.ID == org_id) {
+                $('#organization_name').val(places[i].name);
                 return
             }
         };
@@ -95,7 +91,7 @@
         // 50 too much for testing        
         min_claim_text_len: 10,
         init: function (){
-            $('#polygon_id').on('change', function(){
+            $('#org_id').on('change', function(){
                 AddPage.validate();
             });
             $('#claim_text').on('change', function(){
@@ -103,9 +99,9 @@
             });
 
             $('#organization_name').autocomplete({
-                lookup: autocomplete_places,
+                lookup: places,
                 onSelect: function (suggestion) {
-                    $('#polygon_id').val(suggestion.data);
+                    $('#org_id').val(suggestion.data);
                     AddPage.validate();
                 }
             });
@@ -148,7 +144,7 @@
         inputs_to_validate: [
             // $('#organization_name'),
             $('#claim_text'),
-            $('#polygon_id'),
+            $('#org_id'),
         ],
         show_processing: function (){
             $('#processing').show();
@@ -174,13 +170,13 @@
 
 
             // Let's validate polygon id (:
-            var polygon_id = $('#polygon_id').val();
-            if (polygon_id.length < 0) {
-                $('#polygon_id').addClass('incorrect');
-                $('#polygon_id_error').html("Choose organization to claim");
+            var org_id = $('#org_id').val();
+            if (org_id.length < 0) {
+                $('#org_id').addClass('incorrect');
+                $('#org_id_error').html("Choose organization to claim");
 
             } else {
-                $('#polygon_id').removeClass('incorrect');
+                $('#org_id').removeClass('incorrect');
             }
             AddPage.show_submit();
 
