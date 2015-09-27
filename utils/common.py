@@ -3,13 +3,13 @@ import json
 from django.conf import settings
 
 
-def read_map():
+def get_geojson_file(filename=settings.GEOJSON):
     try:
         # python 3+
-        json_s = open(settings.GEOJSON, encoding='utf8').read()
+        json_s = open(filename, encoding='utf8').read()
     except TypeError:
         # python 2
-        json_s = open(settings.GEOJSON).read()
+        json_s = open(filename).read()
         json_s = json_s.decode('utf8')
 
     return json.loads(json_s)

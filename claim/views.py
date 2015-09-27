@@ -3,7 +3,9 @@ import requests
 from django.http import HttpResponse
 from django.conf import settings
 
-from claim.models import Claim, Organization, Polygon
+from claim.models import Claim
+# , Organization
+from geoinfo.models import Polygon
 from utils.common import get_client_ip
 from utils.caching import caching
 

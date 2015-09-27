@@ -1,10 +1,12 @@
 import json
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.utils.translation import ugettext as _
+# from django.utils.translation import ugettext as _
 
-from claim.models import OrganizationType, Organization, Layer, Polygon
-from utils.common import read_map
+from claim.models import OrganizationType, Organization
+from geoinfo.models import Layer, Polygon
+from utils.common import get_geojson_file
 
 
 class Command(BaseCommand):
@@ -25,9 +27,10 @@ class Command(BaseCommand):
         # Temporary hack, before Layer appear in GeoJSON
         try:
             layer = Layer.objects.get(layer_type=Layer.ORGANIZATION,
-                name='Kharkiv_Test')
+                name=settings.DEFAULT_LAYER_NAME)
         except Layer.DoesNotExist:
-            layer = Layer(layer_type=Layer.ORGANIZATION, name='Kharkiv_Test')
+            layer = Layer(layer_type=Layer.ORGANIZATION,
+                name=settings.DEFAULT_LAYER_NAME, is_default=True)
             layer.save()
         except Layer.MultipleObjectsReturned:
             pass
@@ -43,7 +46,7 @@ class Command(BaseCommand):
                 pass
 
         # Polygons n Orgs
-        map_data = read_map()
+        map_data = get_geojson_file()
         for org in map_data['features']:
             # Create polygon
 
@@ -56,7 +59,18 @@ class Command(BaseCommand):
                     polygon.layer = layer
                     polygon.save()
 
+                # Temporary hack to kill off organizations without names
+                if not org['properties']['NAME']:
+                    for emtpy_org in polygon.organizations.all():
+                        emtpy_org.delete()
+                    polygon.delete()
+                    continue
+
             except Polygon.DoesNotExist:
+                # Hack to avoid organizations without names
+                if not org['properties']['NAME']:
+                    continue
+
                 polygon = Polygon(polygon_id=org['properties']['ID'],
                                   coordinates=json.dumps(org['geometry']),
                                   layer=layer)
@@ -66,8 +80,8 @@ class Command(BaseCommand):
             # Temporary, fix unknown organization type
             org_type = OrganizationType.objects.get(org_type="0")
 
-            if org['properties']['NAME'] is None:
-                org['properties']['NAME'] = _('No name')
+            # if org['properties']['NAME'] is None:
+            #     org['properties']['NAME'] = _('No name')
 
             try:
                 org_obj = Organization.objects.get(

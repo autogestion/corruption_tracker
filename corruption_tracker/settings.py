@@ -45,6 +45,7 @@ INSTALLED_APPS = (
 
     'leaflet',
     'claim',
+    'geoinfo',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -125,9 +126,10 @@ LOGIN_REDIRECT_URL = '/'
 #     }
 # }
 
-# GEOJSON = os.path.join(BASE_DIR, 'buildings.geojson')
-GEOJSON = os.path.join(BASE_DIR, '50_Kharkiv_new.geojson')
 
+GEOJSON = os.path.join(BASE_DIR, '50_Kharkiv_new.geojson')
+# Layer that will used as default on main page
+DEFAULT_LAYER_NAME = 'Kharkiv_Test'
 
 LEAFLET_CONFIG = {
     # Kharkiv

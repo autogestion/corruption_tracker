@@ -30,11 +30,12 @@
                 <form role="form" id='claim_form'>
                     {% csrf_token %}
                     <div class="form-group">
-                        <label for="organization_name">{% trans "Organization" %}:</label>
-                        <input type="text" class="form-control" id="organization_name" placeholder='{% trans "Organization name" %}' required>
+                        <label for="organization_name">{% trans "Organization" %}:</label>                  
+                        <input type="text" class="form-control" id="organization_name" placeholder='{% trans "Organization name" %}'>
                     </div>
                     <div class="form-group">
                         <label for="polygon_id">{% trans "Polygon ID" %}:</label>
+                        <div id='polygon_id_error'></div>
                         <input type="text" class="form-control" id="polygon_id" name="polygon_id" readonly>
                     </div>
                     <div class="form-group">
@@ -77,14 +78,15 @@
 
 <script type="text/javascript">
     // To prevent insert duplicity
-    var places = {{ places }};
+    var autocomplete_places = {{places}};
+    var places = buildings.features
 
     function select_building (polygon_id) {
-        var places = {{places}};
+
         $('#polygon_id').val(polygon_id);
         for (var i = places.length - 1; i >= 0; i--) {
-            if (places[i].data == polygon_id) {
-                $('#organization_name').val(places[i].value);
+            if (places[i].properties.ID == polygon_id) {
+                $('#organization_name').val(places[i].properties.NAME);
                 return
             }
         };
@@ -94,7 +96,7 @@
         // 50 too much for testing        
         min_claim_text_len: 10,
         init: function (){
-            $('#organization_name').on('change', function(){
+            $('#polygon_id').on('change', function(){
                 AddPage.validate();
             });
             $('#claim_text').on('change', function(){
@@ -102,7 +104,7 @@
             });
 
             $('#organization_name').autocomplete({
-                lookup: places,
+                lookup: autocomplete_places,
                 onSelect: function (suggestion) {
                     $('#polygon_id').val(suggestion.data);
                     AddPage.validate();
@@ -145,8 +147,9 @@
 
         },
         inputs_to_validate: [
-            $('#organization_name'),
+            // $('#organization_name'),
             $('#claim_text'),
+            $('#polygon_id'),
         ],
         show_processing: function (){
             $('#processing').show();
@@ -156,14 +159,32 @@
         },
         validate: function (){
             // Organization name
-            var organization_name = $('#organization_name').val();
-            for (var i = places.length - 1; i >= 0; i--) {
-                if (organization_name == places[i].value) {
-                    $('#organization_name').removeClass('incorrect');
-                    break;
-                }
-                $('#organization_name').addClass('incorrect');
-            };
+
+            // We don't need to validate organization name,
+            // it is not used on server side
+            // Also, it could be emtpy
+
+            // var organization_name = $('#organization_name').val();
+            // for (var i = places.length - 1; i >= 0; i--) {
+            //     if (organization_name == places[i].properties.NAME) {
+            //         $('#organization_name').removeClass('incorrect');
+            //         break;
+            //     }
+            //     $('#organization_name').addClass('incorrect');
+            // };
+
+
+            // Let's validate polygon id (:
+            var polygon_id = $('#polygon_id').val();
+            if (polygon_id.length < 0) {
+                $('#polygon_id').addClass('incorrect');
+                $('#polygon_id_error').html("Choose organization to claim");
+
+            } else {
+                $('#polygon_id').removeClass('incorrect');
+            }
+            AddPage.show_submit();
+
 
             // Claim text
             var claim_text = $('#claim_text').val();
