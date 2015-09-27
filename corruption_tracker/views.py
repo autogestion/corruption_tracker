@@ -17,14 +17,21 @@ def create_default_layer(claims=True):
     # claims on add page
 
     json_data = get_geojson_file()
-    places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
-              for b in json_data['features'] if b['properties']['NAME']]
+    # places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
+    #           for b in json_data['features'] if b['properties']['NAME']]
 
     try:
         layer = Layer.objects.get(is_default=True)
     except Layer.DoesNotExist:
         layer = Layer.objects.get(name=settings.DEFAULT_LAYER_NAME)
     polygons = layer.polygon_set.all()
+
+    organizations = []
+    for polygon in polygons:
+        organizations.extend(polygon.organizations.all())
+
+    places = [{'data': org.id, 'value': org.name}
+              for org in organizations]
 
     data = []
     for polygon in polygons:

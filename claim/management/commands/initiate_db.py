@@ -32,8 +32,6 @@ class Command(BaseCommand):
             layer = Layer(layer_type=Layer.ORGANIZATION,
                 name=settings.DEFAULT_LAYER_NAME, is_default=True)
             layer.save()
-        except Layer.MultipleObjectsReturned:
-            pass
 
         # Organization Types
         for org_type in OrganizationType.ORG_TYPES:
@@ -48,8 +46,8 @@ class Command(BaseCommand):
         # Polygons n Orgs
         map_data = get_geojson_file()
         for org in map_data['features']:
-            # Create polygon
 
+            # Create polygon
             try:
                 polygon = Polygon.objects.get(
                     polygon_id=org['properties']['ID'])
@@ -80,9 +78,6 @@ class Command(BaseCommand):
             # Temporary, fix unknown organization type
             org_type = OrganizationType.objects.get(org_type="0")
 
-            # if org['properties']['NAME'] is None:
-            #     org['properties']['NAME'] = _('No name')
-
             try:
                 org_obj = Organization.objects.get(
                     name=org['properties']['NAME'])
@@ -109,3 +104,8 @@ class Command(BaseCommand):
 
             # Link them
             polygon.organizations.add(org_obj)
+
+    # Temporary, delete No name organizations
+    no_name = Organization.objects.filter(name='No name')
+    for no_name_org in no_name:
+        no_name_org.delete()

@@ -26,7 +26,7 @@
             <h3>{% trans "Search" %}</h3>
             <div class="right_block">
                 <div class="input-group">
-                    <input type='search' id='polygon_id' placeholder='{% trans "Organization name" %}' class="form-control">
+                    <input type='search' id='org_id' placeholder='{% trans "Organization name" %}' class="form-control">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >{% trans "Search" %}</button>
                     </span>
@@ -51,9 +51,9 @@
 <script type="text/javascript">
     /* To prevent multiple inserts of this var lets keep it in global NS */
     var places = {{places}};
-    function get_name_by_id (polygon_id) {
+    function get_name_by_id (org_id) {
         for (var i = places.length - 1; i >= 0; i--) {
-            if (places[i].data === parseInt(polygon_id)){
+            if (places[i].data === parseInt(org_id)){
                 return places[i].value;
             }
         }
@@ -62,11 +62,11 @@
 
     $(document).ready(function () {
         $("#get_claims").click(function() {
-            var polygon_id = $('#polygon_id').val();
-            select_building(polygon_id);
+            var org_id = $('#org_id').val();
+            select_building(org_id);
         });
 
-        $('#polygon_id').autocomplete({
+        $('#org_id').autocomplete({
             lookup: {{places}},
             onSelect: function (suggestion) {
                 select_building(suggestion.data);
@@ -79,21 +79,21 @@
             pair = hash_data[i].split('=');
             if (pair[0] === 'organization') {
                 select_building(pair[1]);
-                $('#polygon_id').val(get_name_by_id(pair[1]));
+                $('#org_id').val(get_name_by_id(pair[1]));
                 break;
             }
         }
 
     });
 
-    function select_building (polygon_id) {
-        window.location.hash = "organization=" + polygon_id;
+    function select_building (org_id) {
+        window.location.hash = "organization=" + org_id;
 
         var servant = "{% trans "Servant" %}";
         var complainer = "{% trans "Complainer" %}";
         var claim_text = "{% trans "Claim text" %}";
 
-        $.get("/get_claims/"  + polygon_id + "/", function(data) {
+        $.get("/get_claims/"  + org_id + "/", function(data) {
             var messages = "";
             var template,
                 message;
@@ -109,8 +109,8 @@
             $("#target").html(messages);
 
             for (var i = places.length - 1; i >= 0; i--) {
-                if (places[i].data === polygon_id){
-                    $('#polygon_id').val(places[i].value);
+                if (places[i].data === org_id){
+                    $('#org_id').val(places[i].value);
                     return;
                 }
             };

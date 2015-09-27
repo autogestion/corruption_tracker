@@ -1,32 +1,41 @@
 function main_map_init (map, options) {
     // Add GeoJSON layer
-    var marker, polygon_id;
+    var marker;
 
     // Add building markers with popups to buildings.
     for (var i = buildings['features'].length - 1; i >= 0; i--) {
-        polygon_id = buildings['features'][i]['properties']['ID'];
+        // polygon_id = buildings['features'][i]['properties']['ID'];
 
-        var myIcon = L.divIcon({
-            className: 'icon_with_number',
-            html: buildings['features'][i]['properties']['CLAIM_COUNT']
-        });
+        var org_id;
 
-        marker = L.marker(
-            [
-                buildings['features'][i]['geometry']['coordinates'][0][0][1],
-                buildings['features'][i]['geometry']['coordinates'][0][0][0]
-            ],
-            {icon: myIcon}
-        )
+        for (var ii = buildings['features'][i]['properties']["ORGANIZATIONS"].length - 1; ii >= 0; ii--) {
 
-        function select_building_callback(polygon_id){
-            return function(){
-                select_building(polygon_id);
+            org_id = buildings['features'][i]['properties']["ORGANIZATIONS"][ii]['id'];
+
+
+            var myIcon = L.divIcon({
+                className: 'icon_with_number',
+                html: buildings['features'][i]['properties']["ORGANIZATIONS"][ii]['claims_count']
+            });
+
+
+            marker = L.marker(
+                [
+                    buildings['features'][i]['geometry']['coordinates'][0][ii][1],
+                    buildings['features'][i]['geometry']['coordinates'][0][ii][0]
+                ],
+                {icon: myIcon}
+            )
+
+            function select_building_callback(org_id){
+                return function(){
+                    select_building(org_id);
+                }
             }
-        }
 
-        marker.on('click', select_building_callback(polygon_id));
-        marker.addTo(map).bindPopup(buildings['features'][i]['properties']['NAME']);
+            marker.on('click', select_building_callback(org_id));
+            marker.addTo(map).bindPopup(buildings['features'][i]['properties']["ORGANIZATIONS"][ii]['name']);
+        };
     };
 
     L.geoJson(buildings).addTo(map);

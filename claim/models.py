@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import datetime
+import json
 
 from django.db.models import Q
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Count
+# from django.db.models import Count
 from django.utils.translation import ugettext as _
 
 
@@ -65,6 +66,25 @@ class Organization(models.Model):
     def total_claims(self):
         return Claim.objects.filter(Q(organization=self) |
                                     Q(polygon_id=self.id)).count()
+
+    def json_claims(self):
+        claims = self.claim_set.all()
+
+        claims_list = []
+
+        if claims:
+            for claim in claims:
+                username = claim.complainer.username if\
+                    claim.complainer else _("Anon")
+                claims_list.append({
+                    'organization_id': self.id,
+                    'organization_name': self.name,
+                    'text': claim.text,
+                    'servant': claim.servant,
+                    'complainer': username
+                })
+
+        return json.dumps(claims_list)
 
 
 class InCharge(models.Model):

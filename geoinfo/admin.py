@@ -5,7 +5,7 @@ from geoinfo.models import Layer, Polygon
 
 
 class PolygonAdmin(admin.ModelAdmin):
-    list_display = ('polygon_id', 'layer')
+    list_display = ('polygon_id', 'layer', 'organization_count')
     search_fields = ('olygon_id',)
     list_filter = ('layer',)
 

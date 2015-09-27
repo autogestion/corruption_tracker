@@ -3,15 +3,15 @@ import requests
 from django.http import HttpResponse
 from django.conf import settings
 
-from claim.models import Claim
+from claim.models import Claim, Organization
 # , Organization
 from geoinfo.models import Polygon
 from utils.common import get_client_ip
 from utils.caching import caching
 
 
-def get_claims(request, polygon_id):
-    data = Polygon.objects.get(polygon_id=polygon_id).get_json_claims()
+def get_claims(request, org_id):
+    data = Organization.objects.get(id=org_id).json_claims()
     return HttpResponse(data, content_type='application/json')
 
 

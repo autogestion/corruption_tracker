@@ -26,7 +26,6 @@ class Layer(models.Model):
         (COUNTRY, _("Country")),
     )
 
-    # TODO(autogestion) name should be uniqe=True?
     name = models.CharField(max_length=250, unique=True)
     layer_type = models.IntegerField(choices=LAYER_TYPES,
                                      default=ORGANIZATION)
@@ -53,44 +52,50 @@ class Polygon(models.Model):
 
     def generate_map_polygon(self):
         orgs = []
-        claims_count = 0
+        # claims_count = 0
         for org in self.organizations.all():
-            orgs.append(org.get_map_representation())
-            claims_count += org.total_claims
+            # orgs.append(org.get_map_representation())
+            # claims_count += org.total_claims
+            orgs.append({'id': org.id,
+                        'name': org.name,
+                         'claims_count': org.total_claims})
 
-        names = " <br> ".join([org['name'] for org in orgs])
+        # names = " <br> ".join([org['name'] for org in orgs])
 
         return {
             "type": "Feature",
             "properties": {
                 "ID": self.polygon_id,
-                "NAME": names,
+                # "NAME": names,
                 "ORGANIZATIONS": orgs,
-                "CLAIM_COUNT": claims_count
+                # "CLAIM_COUNT": claims_count
             },
             "geometry": json.loads(self.coordinates)
         }
 
-    def get_json_claims(self):
-        # Q(polygon_id=self.id) jsut compatible layer.
-        # Remove me after release. Not critical.
-        claims = Claim.objects.filter(
-            organization__in=self.organizations.all())
-        claims_list = []
+    # def get_json_claims(self):
+    #     # Q(polygon_id=self.id) jsut compatible layer.
+    #     # Remove me after release. Not critical.
+    #     claims = Claim.objects.filter(
+    #         organization__in=self.organizations.all())
+    #     claims_list = []
 
-        if claims:
-            for claim in claims:
-                username = claim.complainer.username if\
-                    claim.complainer else _("Anon")
-                claims_list.append({
-                    'organization_id': claim.organization.id,
-                    'organization_name': claim.organization.name,
-                    'text': claim.text,
-                    'servant': claim.servant,
-                    'complainer': username
-                })
+    #     if claims:
+    #         for claim in claims:
+    #             username = claim.complainer.username if\
+    #                 claim.complainer else _("Anon")
+    #             claims_list.append({
+    #                 'organization_id': claim.organization.id,
+    #                 'organization_name': claim.organization.name,
+    #                 'text': claim.text,
+    #                 'servant': claim.servant,
+    #                 'complainer': username
+    #             })
 
-        return json.dumps(claims_list)
+    #     return json.dumps(claims_list)
+
+    def organization_count(self):
+        return self.organizations.all().count()
 
     def __str__(self):
         return 'Polygon ' + str(self.polygon_id)
