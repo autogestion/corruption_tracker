@@ -1,38 +1,11 @@
-import json
 
-from django.shortcuts import render
 from django.conf import settings
-from django.utils.safestring import mark_safe
 from django.http import *
-from django.shortcuts import render_to_response
+from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 
-from geoinfo.models import Layer
-from utils.common import get_geojson_file
-
-
-def create_default_layer(claims=True):
-    # There was an idea that we don't need
-    # claims on add page
-
-    json_data = get_geojson_file()
-    places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
-              for b in json_data['features'] if b['properties']['NAME']]
-
-    try:
-        layer = Layer.objects.get(is_default=True)
-    except Layer.DoesNotExist:
-        layer = Layer.objects.get(name=settings.DEFAULT_LAYER_NAME)
-    polygons = layer.polygon_set.all()
-
-    data = []
-    for polygon in polygons:
-        data.append(polygon.generate_map_polygon())
-    json_data['features'] = data
-
-    return {'buildings': mark_safe(json.dumps(json_data)),
-            'places': mark_safe(json.dumps(places))}
+from geoinfo.views import create_default_layer
 
 
 def home(request):
