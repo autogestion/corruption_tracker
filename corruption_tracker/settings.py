@@ -127,7 +127,7 @@ LOGIN_REDIRECT_URL = '/'
 # }
 
 
-GEOJSON = os.path.join(BASE_DIR, '50_Kharkiv_new.geojson')
+GEOJSON = os.path.join(BASE_DIR, 'init_geo_data', '50_Kharkiv.geojson')
 # Layer that will used as default on main page
 DEFAULT_LAYER_NAME = 'Kharkiv_Test'
 
