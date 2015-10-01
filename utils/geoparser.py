@@ -9,6 +9,7 @@ class GeoJSONParser():
     @staticmethod
     def geojson_to_db(geo_json):
         layer_info = geo_json['ctracker_config']
+        print('Processing %s geojson...' % layer_info['layer_name'])
         try:
             layer = Layer.objects.get(name=layer_info['layer_name'])
         except Layer.DoesNotExist:
