@@ -1,7 +1,6 @@
 import json
 
 from django.utils.safestring import mark_safe
-from django.conf import settings
 
 from geoinfo.models import Layer
 
@@ -10,10 +9,7 @@ def create_default_layer(claims=True):
     # There was an idea that we don't need
     # claims on add page
 
-    try:
-        layer = Layer.objects.get(is_default=True)
-    except Layer.DoesNotExist:
-        layer = Layer.objects.get(name=settings.DEFAULT_LAYER_NAME)
+    layer = Layer.objects.get(is_default=True)
     polygons = layer.polygon_set.all()
 
     organizations = []
