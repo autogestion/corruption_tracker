@@ -45,22 +45,28 @@ class Polygon(models.Model):
     polygon_id = models.IntegerField(primary_key=True)
     organizations = models.ManyToManyField(Organization)
     layer = models.ForeignKey(Layer)
-    coordinates = models.CharField(max_length=2000)
+    shape = models.CharField(max_length=2000)
+    centroid = models.CharField(max_length=50, null=True, blank=True)
 
     def generate_map_polygon(self):
         orgs = []
+        polygon_claims = 0
         for org in self.organizations.all():
+            org_claims = org.claim_set.all().count()
+            polygon_claims += org_claims
             orgs.append({'id': org.id,
                         'name': org.name,
-                         'claims_count': org.claim_set.all().count()})
+                         'claims_count': org_claims})
 
         return {
             "type": "Feature",
             "properties": {
                 "ID": self.polygon_id,
-                "ORGANIZATIONS": orgs,
+                "organizations": orgs,
+                "centroid": json.loads(self.centroid),
+                "polygon_claims": polygon_claims
             },
-            "geometry": json.loads(self.coordinates)
+            "geometry": json.loads(self.shape)
         }
 
     def organization_count(self):

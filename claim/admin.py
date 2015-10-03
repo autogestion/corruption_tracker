@@ -14,7 +14,7 @@ class ClaimAdmin(admin.ModelAdmin):
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'org_type', 'total_claims')
     search_fields = ('name', 'org_type')
-    list_filter = ('name', 'org_type')
+    list_filter = ('org_type')
 
 
 class InChargeAdmin(admin.ModelAdmin):
