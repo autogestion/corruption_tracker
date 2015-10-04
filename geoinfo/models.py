@@ -61,6 +61,10 @@ class Polygon(models.Model):
                         'name': org.name,
                          'claims_count': org_claims})
 
+        # reverse coordinates for manualy adding polgygons
+        geometry = json.loads(self.shape)
+        [x.reverse() for x in geometry["coordinates"][0]]
+
         return {
             "type": "Feature",
             "properties": {
@@ -69,7 +73,7 @@ class Polygon(models.Model):
                 "centroid": json.loads(self.centroid),
                 "polygon_claims": polygon_claims
             },
-            "geometry": json.loads(self.shape)
+            "geometry": geometry
         }
 
     def organization_count(self):

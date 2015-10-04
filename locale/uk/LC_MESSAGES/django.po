@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-27 17:37+0000\n"
+"POT-Creation-Date: 2015-10-04 16:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -171,11 +171,15 @@ msgstr "Зробити анонімно"
 msgid "Send claim"
 msgstr "Відправити скаргу"
 
-#: templates/add_page.html:127
+#: templates/add_page.html:85 templates/home.html:57
+msgid "Name not found"
+msgstr ""
+
+#: templates/add_page.html:129
 msgid "Too much claims. Please wait an hour and try again."
 msgstr ""
 
-#: templates/add_page.html:131
+#: templates/add_page.html:133
 msgid "Thank you for your message."
 msgstr "Дякуємо за ваше повідомлення."
 
@@ -247,10 +251,6 @@ msgstr "ПІБ службовця"
 #| msgid "Claim message"
 msgid "Claim text"
 msgstr "Текст скарги"
-
-#: templates/home.html:57
-msgid "Name not found"
-msgstr ""
 
 #: templates/home.html:105
 msgid "No claims for this polygon"
