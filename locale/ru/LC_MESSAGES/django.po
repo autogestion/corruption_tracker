@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-04 16:30+0000\n"
+"POT-Creation-Date: 2015-10-04 21:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -117,15 +117,15 @@ msgstr ""
 msgid "Satellite"
 msgstr ""
 
-#: geoinfo/models.py:21 templates/add_page.html:30
+#: geoinfo/models.py:19 templates/add_page.html:30
 msgid "Organization"
 msgstr ""
 
-#: geoinfo/models.py:22
+#: geoinfo/models.py:20
 msgid "District"
 msgstr ""
 
-#: geoinfo/models.py:23
+#: geoinfo/models.py:21
 msgid "Country"
 msgstr ""
 

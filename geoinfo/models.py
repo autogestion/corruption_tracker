@@ -8,11 +8,9 @@ from claim.models import Organization
 
 class Layer(models.Model):
     """
-        Some general representation of map.
-        f.e.
-            All schools of Lviv
-            All universities of Ukraine
-            etc.
+        Representation of GeoJSON.
+        Is a collection of polygons, united on the
+        basis of type and proximity
     """
     ORGANIZATION = 0
     DISTRICT = 1
@@ -26,15 +24,10 @@ class Layer(models.Model):
     name = models.CharField(max_length=250, unique=True)
     layer_type = models.IntegerField(choices=LAYER_TYPES,
                                      default=ORGANIZATION)
-
     # TODO(autogestion) This field will allow to upload
     # geojson files through admin
     json_filename = models.FileField(null=True, blank=True)
-
-    # If field set to True,
-    # this Layer would be loaded on main page
     is_default = models.BooleanField(default=False)
-
     zoom = models.IntegerField()
     center = models.CharField(max_length=50)
 
@@ -64,13 +57,15 @@ class Polygon(models.Model):
         # reverse coordinates for manualy adding polgygons
         geometry = json.loads(self.shape)
         [x.reverse() for x in geometry["coordinates"][0]]
+        centroid = json.loads(self.centroid)
+        centroid.reverse()
 
         return {
             "type": "Feature",
             "properties": {
                 "ID": self.polygon_id,
                 "organizations": orgs,
-                "centroid": json.loads(self.centroid),
+                "centroid": centroid,
                 "polygon_claims": polygon_claims
             },
             "geometry": geometry
