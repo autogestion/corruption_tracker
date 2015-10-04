@@ -19,7 +19,14 @@ function main_map_init (map, options) {
         )
 
         orgs_set = buildings['features'][i]['properties']["organizations"]
+
         var polygon = L.polygon(buildings['features'][i]["geometry"]["coordinates"]);
+        polygon.centroid = buildings['features'][i]['properties']["centroid"]
+
+        if (orgs_set.length==1){       
+            polygon.organization = orgs_set[0]['id']
+        }
+
         polygon.setStyle({
             fillColor: 'grey' ,
             weight: 1,
@@ -34,27 +41,11 @@ function main_map_init (map, options) {
             org_row.innerHTML = orgs_set[ii]['name'] + ': &nbsp;&nbsp;' + orgs_set[ii]['claims_count'];
 
             org_row.onclick = function(event) {
-                select_building($(this).attr('id'));               
-                var polygon_id = $(this).attr('href').replace('#','');
-                var centroid_coordinates;
-                for (var i = buildings['features'].length - 1; i >= 0; i--) {
-                    if (buildings['features'][i]['properties']["ID"]==polygon_id){                        
-                        centroid_coordinates = buildings['features'][i]['properties']["centroid"]
-                    }
-                }                
-                map.setView(centroid_coordinates, buildings['config']['zoom'] + 1);
+                select_building($(this).attr('id'));
                 event.preventDefault();
                 };
             org_rows.push(org_row);
-            }; 
-
-            // Here have to be implemented callback for polygon with single org
-            // if (orgs_set.length == 1){                
-            //     polygon.onclick = function(event) {
-            //         console.log('polygon clicked');
-            //         select_building(org_row.id);
-            //     }   
-            // }
+            };
 
         org_list = document.createElement("ul");
         $.each(org_rows, function(i){
@@ -75,14 +66,20 @@ function main_map_init (map, options) {
                     color: 'white'
             });
             };
-
+            map.setView(this.centroid, buildings['config']['zoom'] + 1);
             this.setStyle({
                 fillColor: 'red' ,
                 weight: 1,
                 color: 'grey'
             });
             $_selectedPolygon = this;
-        });
+            if (this.organization) {
+                select_building(this.organization);
+            }
+            else {
+                $('#target').empty();            
+            };
+        });  
     };
     map.setView(buildings['config']['center'], buildings['config']['zoom']);  
     $_selectedPolygon = null;

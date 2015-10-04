@@ -5,7 +5,7 @@
 Corruption tracker lets you make cases of corruption and professionally unfit of civil servant public
 and as result track the level of it in public institutions
 
-![impl](https://cloud.githubusercontent.com/assets/1098257/10265887/8a21a9f0-6a4a-11e5-8c8c-bf12e7422347.png)
+![screenshot_2](https://cloud.githubusercontent.com/assets/1098257/10270323/4afbd0be-6af6-11e5-8443-a8cf265a74cc.png)
 
 
 Prerequisites
