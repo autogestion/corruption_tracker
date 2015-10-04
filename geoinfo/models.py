@@ -35,6 +35,9 @@ class Layer(models.Model):
     # this Layer would be loaded on main page
     is_default = models.BooleanField(default=False)
 
+    zoom = models.IntegerField()
+    center = models.CharField(max_length=50)
+
     def __str__(self):
         return self.name
 

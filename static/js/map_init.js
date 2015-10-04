@@ -44,5 +44,6 @@ function main_map_init (map, options) {
         });
         marker.addTo(map).bindPopup(org_list);        
     };
-    L.geoJson(buildings).addTo(map);                    
+    L.geoJson(buildings).addTo(map);
+    map.setView(buildings['config']['center'], buildings['config']['zoom']);           
 }

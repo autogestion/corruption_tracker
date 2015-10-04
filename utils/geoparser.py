@@ -16,7 +16,9 @@ class GeoJSONParser():
             layer = Layer(
                 layer_type=getattr(Layer, layer_info['layer_type']),
                 name=layer_info['layer_name'],
-                is_default=bool(layer_info['set_default']))
+                is_default=bool(layer_info['set_default']),
+                zoom=layer_info['zoom'],
+                center=json.dumps(layer_info['center']))
             layer.save()
 
         for feature in geo_json['features']:

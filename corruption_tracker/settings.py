@@ -133,8 +133,8 @@ INIT_GEOJSON_FOLDER = os.path.join(BASE_DIR, 'init_geo_data')
 
 LEAFLET_CONFIG = {
     # Kharkiv
-    'DEFAULT_CENTER': (50.007759, 36.227193),
-    'DEFAULT_ZOOM': 13,
+    # 'DEFAULT_CENTER': (50.059605, 36.201421),
+    # 'DEFAULT_ZOOM': 14,
     'TILES': [(_('Streets'), 'http://server.arcgisonline.com/ArcGIS/rest/'
                              'services/World_Street_Map/MapServer/tile/'
                              '{z}/{y}/{x}', {}),

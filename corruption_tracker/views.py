@@ -5,18 +5,21 @@ from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 
-from geoinfo.views import create_default_layer
+from geoinfo.views import generate_layer
+from geoinfo.models import Layer
 
 
 def home(request):
-    resp_dict = create_default_layer()
+    layer = Layer.objects.get(is_default=True)
+    resp_dict = generate_layer(layer)
     resp_dict['page'] = 'home'
 
     return render(request, 'home.html', resp_dict)
 
 
 def add_page(request):
-    resp_dict = create_default_layer()
+    layer = Layer.objects.get(is_default=True)
+    resp_dict = generate_layer(layer)
     resp_dict['page'] = 'add_page'
 
     if settings.RECAPTCHA_ENABLED is False:
