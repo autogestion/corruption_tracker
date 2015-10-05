@@ -2,15 +2,12 @@ import json
 
 from django.utils.safestring import mark_safe
 
-from geoinfo.models import Layer
 
-
-def create_default_layer(claims=True):
+def generate_layer(layer_obj, claims=True):
     # There was an idea that we don't need
     # claims on add page
 
-    layer = Layer.objects.get(is_default=True)
-    polygons = layer.polygon_set.all()
+    polygons = layer_obj.polygon_set.all()
 
     organizations = []
     for polygon in polygons:
@@ -24,7 +21,11 @@ def create_default_layer(claims=True):
         data.append(polygon.generate_map_polygon())
 
     geo_json = {
-        'type': "FeatureCollection", }
+        'type': "FeatureCollection",
+        'config': {
+            'center': json.loads(layer_obj.center),
+            'zoom': layer_obj.zoom},
+    }
     geo_json['features'] = data
 
     return {'buildings': mark_safe(json.dumps(geo_json)),
