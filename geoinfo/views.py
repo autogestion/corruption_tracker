@@ -3,30 +3,47 @@ import json
 from django.utils.safestring import mark_safe
 
 
-def generate_layer(layer_obj, claims=True):
-    # There was an idea that we don't need
-    # claims on add page
+class LayerGenerator:
 
-    polygons = layer_obj.polygon_set.all()
+    def __init__(self, layer_obj):
+        self.layer = layer_obj
+        self.max_claims = layer_obj.max_claims
 
-    organizations = []
-    for polygon in polygons:
-        organizations.extend(polygon.organizations.all())
+    def color_spot(self, value):
+        percent = value * 100 / self.max_claims
 
-    places = [{'data': org.id, 'value': org.name}
-              for org in organizations]
+        if percent <= 20:
+            return '#FEB24C'
+        elif percent <= 70:
+            return '#FC4E2A'
+        else:
+            return '#E31A1C'
 
-    data = []
-    for polygon in polygons:
-        data.append(polygon.generate_map_polygon())
+    def generate(self):
+        polygons = self.layer.polygon_set.all()
 
-    geo_json = {
-        'type': "FeatureCollection",
-        'config': {
-            'center': json.loads(layer_obj.center),
-            'zoom': layer_obj.zoom},
-    }
-    geo_json['features'] = data
+        organizations = []
+        for polygon in polygons:
+            organizations.extend(polygon.organizations.all())
 
-    return {'buildings': mark_safe(json.dumps(geo_json)),
-            'places': mark_safe(json.dumps(places))}
+        places = [{'data': org.id, 'value': org.name}
+                  for org in organizations]
+
+        data = []
+        for polygon in polygons:
+            polygon_json = polygon.generate_map_polygon()
+            polygon_claims = polygon_json["properties"]['polygon_claims']
+            polygon_json["properties"]['color'] = self.color_spot(polygon_claims)\
+                if polygon_claims else '#FFEDA0'
+            data.append(polygon_json)
+
+        geo_json = {
+            'type': "FeatureCollection",
+            'config': {
+                'center': json.loads(self.layer.center),
+                'zoom': self.layer.zoom},
+        }
+        geo_json['features'] = data
+
+        return {'buildings': mark_safe(json.dumps(geo_json)),
+                'places': mark_safe(json.dumps(places))}
