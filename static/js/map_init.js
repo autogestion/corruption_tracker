@@ -37,8 +37,8 @@ function main_map_init (map, options) {
             fillColor: buildings['features'][i]['properties']['color'],
             weight: 2,
             color: 'blue',
-            opacity: 0.2,
-            fillOpacity: 0.2
+            opacity: 0.3,
+            fillOpacity: 0.3
         });
 
         org_rows = []
@@ -73,14 +73,14 @@ function main_map_init (map, options) {
                 $_selectedPolygon.setStyle({
                     weight: 2,
                     color: 'blue',
-                    opacity: 0.2,
-                    fillOpacity: 0.2
+                    opacity: 0.3,
+                    fillOpacity: 0.3
             });
             };
             map.setView(this.centroid, buildings['config']['zoom'] + 1);
             this.setStyle({
                 weight: 6,
-                color: 'yellow',
+                color: 'green',
                 opacity: 1,
                 fillOpacity: 0.8
             });
