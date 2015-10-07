@@ -2,6 +2,7 @@ import requests
 
 from django.http import HttpResponse
 from django.conf import settings
+from django.utils.html import escape
 
 from claim.models import Claim, Organization
 from utils.common import get_client_ip
@@ -41,8 +42,8 @@ def add_claim(request, deny=False):
         request.POST.get('claim_text', False)
     ):
         claim = Claim(
-            text=request.POST.get('claim_text', False),
-            servant=request.POST.get('servant', False),
+            text=escape(request.POST.get('claim_text', False)),
+            servant=escape(request.POST.get('servant', False)),
             complainer=user,
             organization=Organization.objects.get(
                 id=request.POST.get('org_id', False))
