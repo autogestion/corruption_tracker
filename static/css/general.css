@@ -13,6 +13,7 @@ nav .navbar-brand {
 }
 
 .icon_with_number {
+    pointer-events: none;
     margin: 0;
     padding: 0;
     height: 2em !important;

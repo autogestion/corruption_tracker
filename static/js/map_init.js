@@ -45,9 +45,9 @@ function main_map_init (map, options) {
             org_row.onclick = function(event) {
                 select_building($(this).attr('id'));
                 event.preventDefault();
-                };
-            org_rows.push(org_row);
             };
+            org_rows.push(org_row);
+        };
 
         org_list = document.createElement("ul");
         $.each(org_rows, function(i){
