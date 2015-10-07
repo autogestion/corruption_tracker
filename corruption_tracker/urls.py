@@ -34,7 +34,10 @@ urlpatterns = [
     url(r'^about$', views.about, name="about"),
 
     # AJAX calls
+    url(r'^get_claims/(?P<org_id>[\w.]{0,256})/limit=(?P<limit>\d+)/$',
+        claim_views.get_claims, name="get_claims"),
     url(r'^get_claims/(?P<org_id>[\w.]{0,256})/$',
         claim_views.get_claims, name="get_claims"),
     url(r'^add_claim$', claim_views.add_claim, name="add_claim"),
+    url(r'^claims/(?P<org_id>[\w.]{0,256})/$',claim_views.claims, name="claims"),
 ]

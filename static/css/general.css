@@ -150,3 +150,28 @@ h5 {
     height: 16px;
     padding-top: 1px;
 }
+
+#show_all_button_template {
+    display: none;
+}
+
+.claims_page_claim_block {
+    width: 300px;
+    min-height: 200px;
+    float: left;
+    border: 1px solid lightgray;
+    margin:10px;
+}
+.claims_page_line_name {
+    display: block;
+    float: left;
+    width: 120px;
+    padding-right: 10px;
+}
+.claims_page_claim_head {
+padding: 5px 10px;
+    background-color: #ECECEC;
+}
+.claim_page_claim_text {
+    padding:10px;
+}
