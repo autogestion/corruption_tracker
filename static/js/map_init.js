@@ -1,5 +1,11 @@
 function main_map_init (map, options) {
-    // Add GeoJSON layer   
+    $("#main > div.leaflet-control-container > div.leaflet-top.leaflet-right").addClass('layout_chooser');
+    $('.layout_chooser').removeClass("leaflet-right");
+    $('.layout_chooser').addClass("leaflet-left");
+
+    $('.layout_chooser').removeClass("leaflet-top");
+    $('.layout_chooser').addClass("leaflet-bottom");
+    // Add GeoJSON layer
     var marker, org_row, orgs_set, org_rows;
 
     // Add building markers with popups to buildings.
