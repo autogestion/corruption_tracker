@@ -28,9 +28,11 @@ function main_map_init (map, options) {
         }
 
         polygon.setStyle({
-            fillColor: 'grey' ,
-            weight: 1,
-            color: 'white'
+            fillColor: buildings['features'][i]['properties']['color'],
+            weight: 2,
+            color: 'blue',
+            opacity: 0.2,
+            fillOpacity: 0.2
         });
 
         org_rows = []
@@ -58,19 +60,23 @@ function main_map_init (map, options) {
         marker.addTo(map);
         polygon.addTo(map).bindPopup(org_list);
 
+
+
         polygon.on('click',function()  {
             if ($_selectedPolygon) {
                 $_selectedPolygon.setStyle({
-                    fillColor: 'grey' ,
-                    weight: 1,
-                    color: 'white'
+                    weight: 2,
+                    color: 'blue',
+                    opacity: 0.2,
+                    fillOpacity: 0.2
             });
             };
             map.setView(this.centroid, buildings['config']['zoom'] + 1);
             this.setStyle({
-                fillColor: 'red' ,
-                weight: 1,
-                color: 'grey'
+                weight: 6,
+                color: 'yellow',
+                opacity: 1,
+                fillOpacity: 0.8
             });
             $_selectedPolygon = this;
             if (this.organization) {

@@ -31,6 +31,10 @@ class Layer(models.Model):
     zoom = models.IntegerField()
     center = models.CharField(max_length=50)
 
+    @property
+    def max_claims(self):
+        return max([x.total_claims for x in self.polygon_set.all()])
+
     def __str__(self):
         return self.name
 
@@ -43,6 +47,10 @@ class Polygon(models.Model):
     layer = models.ForeignKey(Layer)
     shape = models.CharField(max_length=2000)
     centroid = models.CharField(max_length=50, null=True, blank=True)
+
+    @property
+    def total_claims(self):
+        return sum([x.total_claims for x in self.organizations.all()])
 
     def generate_map_polygon(self):
         orgs = []
