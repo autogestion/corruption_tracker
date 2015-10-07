@@ -82,3 +82,53 @@ h5 {
     font-size: 3em;
     display: none;
 }
+
+@media screen and (max-width: 10000px) {
+    #main {
+        position: fixed;
+        top: 52px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 52px);
+        z-index: -1;
+    }
+    #float_block {
+        border-radius: 3px;
+        margin: 10px;
+        position: fixed;
+        right: 5px;
+        top: 40px;
+        z-index: -1;
+        padding-top: 10px;
+        max-height: calc(100% - 52px);
+        overflow: scroll;
+        background-color: white;
+        background-color: #f8f8f8;
+        border-color: #e7e7e7;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    #main {
+        position: relative;
+        top: initial;
+        left: initial;
+        width: initial;
+        height: 500px;
+        z-index: initial;
+    }
+    #float_block {
+        border-radius: initial;
+        margin: initial;
+        position: initial;
+        right: initial;
+        top: initial;
+        z-index: initial;
+        padding-top: initial;
+        max-height: initial;
+        overflow: initial;
+        background-color: initial;
+        background-color: initial;
+        border-color: initial;
+    }
+}
