@@ -67,6 +67,9 @@ class ClaimType(models.Model):
     name = models.CharField(max_length=555)
     org_type = models.ManyToManyField(OrganizationType)
 
+    def __str__(self):
+        return self.name
+
 
 class Organization(models.Model):
     name = models.CharField(max_length=255)
@@ -84,6 +87,9 @@ class Organization(models.Model):
 
         if claims:
             for claim in claims:
+
+                claim_type = claim.claim_type.name if\
+                    claim.claim_type else _('Others')
                 username = claim.complainer.username if\
                     claim.complainer else _("Anon")
                 claims_list.append({
@@ -91,7 +97,8 @@ class Organization(models.Model):
                     'organization_name': self.name,
                     'text': claim.text,
                     'servant': claim.servant,
-                    'complainer': username
+                    'complainer': username,
+                    'claim_type': claim_type
                 })
 
         return json.dumps(claims_list)

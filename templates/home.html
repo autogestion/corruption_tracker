@@ -41,6 +41,7 @@
     <div class="claim_tempalte">
         <div class="complainer"><b>{% trans "Complainer" %}:</b> <span>%complainer%</span></div>
         <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
+        <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
         <div class="claim"><b>{% trans "Claim text" %}:</b> <span>%text%</span></div>
         <hr>
     </div>
@@ -90,6 +91,7 @@
 
         var servant = "{% trans "Servant" %}";
         var complainer = "{% trans "Complainer" %}";
+        var claim_type = "{% trans "Claim type" %}";
         var claim_text = "{% trans "Claim text" %}";
 
         $.get("/get_claims/"  + org_id + "/", function(data) {
@@ -101,6 +103,7 @@
             for (var i = data.length - 1; i >= 0; i--) {
                 message = template.replace('%complainer%', data[i]['complainer']);
                 message = message.replace('%servant%', data[i]['servant']);
+                message = message.replace('%claim_type%', data[i]['claim_type']);
                 message = message.replace('%text%', data[i]['text']);
                 messages += message;
             }
