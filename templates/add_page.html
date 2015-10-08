@@ -19,8 +19,10 @@
             {% leaflet_map "main" callback="main_map_init" %}
         </div>
         <div class="col-md-4" id="float_block">
-            <h3>{% trans "Add claim" %}</h3>
-            <h5>{% trans "To add claim please click on building on the map, or enter organization name in searchbox 'Organization', name of servant and describe what was wrong. After it press 'Send claim' button." %}</h5>
+            <h3>
+                {% trans "Add claim" %}
+                <small><br>{% trans "To add claim please click on building on the map, or enter organization name in searchbox 'Organization', name of servant and describe what was wrong. After it press 'Send claim' button." %}</small>
+            </h3>
 
             <div class="right_block">
                 <div id="processing">Processing...</div>

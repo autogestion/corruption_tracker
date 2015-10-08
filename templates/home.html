@@ -18,8 +18,11 @@
             {% leaflet_map "main" callback="main_map_init" %}
         </div>
         <div class="col-md-4" id="float_block">
-            <h3>{% trans "Search" %}</h3>
-            <h5>{% trans "To check claims you should click on building on the map, or enter organization name in searchbox." %}</h5>
+            <h3>
+                {% trans "Search" %}
+                <small><br>{% trans "To check claims you should click on building on the map, or enter organization name in searchbox." %}</small>
+            </h3>
+
             <div class="right_block">
                 <div class="input-group">
                     <input type='search' id='org_id' placeholder='{% trans "Organization name" %}' class="form-control">
