@@ -22,20 +22,18 @@ class LayerGenerator:
     def generate(self):
         polygons = self.layer.polygon_set.all()
 
-        organizations = []
-        for polygon in polygons:
-            organizations.extend(polygon.organizations.all())
-
-        places = [{'data': org.id, 'value': org.name}
-                  for org in organizations]
-
         data = []
+        organizations = []
         for polygon in polygons:
             polygon_json = polygon.generate_map_polygon()
             polygon_claims = polygon_json["properties"]['polygon_claims']
             polygon_json["properties"]['color'] = self.color_spot(polygon_claims)\
                 if polygon_claims else '#FFEDA0'
             data.append(polygon_json)
+            organizations.extend(polygon.organizations.all())
+
+        places = [{'data': org.id, 'value': org.name}
+                  for org in organizations]
 
         geo_json = {
             'type': "FeatureCollection",
