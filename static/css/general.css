@@ -133,3 +133,20 @@ h5 {
         border-color: initial;
     }
 }
+
+.autocomplete-suggestion {
+    cursor: pointer;
+}
+
+#github_link {
+    padding-right: 50px;
+    background: rgba(255, 255, 255, 0.7);
+    font-size: 11px;
+    padding: 0 5px;
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 0;
+    right: 43px;
+    height: 16px;
+    padding-top: 1px;
+}
