@@ -78,7 +78,7 @@ class Organization(models.Model):
     def total_claims(self):
         return self.claim_set.all().count()
 
-    def json_claims(self):
+    def json_claims(self, limit=999):
         claims = self.claim_set.all()
 
         claims_list = []
@@ -99,7 +99,7 @@ class Organization(models.Model):
                     'claim_type': claim_type
                 })
 
-        return json.dumps(claims_list)
+        return json.dumps(claims_list[0:limit])
 
     def __str__(self):
         return self.name
