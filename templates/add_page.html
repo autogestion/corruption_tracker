@@ -38,6 +38,12 @@
                         <input type="text" class="form-control" id="org_id" name="org_id" readonly>
                     </div>
                     <div class="form-group">
+                        <label for="claim_type">{% trans "Choose Violation type" %}:</label>
+                        <select id="claim_type" name="claim_type">
+                          <option selected></option>                    
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="servant">{% trans "Servant name" %}:</label>
                         <input type="text" class="form-control" id="servant" name="servant" required>
                     </div>
@@ -78,14 +84,50 @@
 <script type="text/javascript">
     // To prevent insert duplicity   
     var places = {{places}}
+    var claim_types = {{claim_types}}
+
+
+    function update_dropdown (org_type_id){
+        console.log(org_type_id)
+        var $dropdown = $("#claim_type");
+        $dropdown.empty();
+
+        if (claim_types[org_type_id]){
+            console.log(claim_types[org_type_id])
+        $.each(claim_types[org_type_id], function(key, value) {
+          $dropdown.append($("<option></option>")
+             .attr("value", value.id).text(value.value));
+        });    
+        }
+        // console.log(claim_types[org_type_id])
+
+
+    // var newOptions = {"Option 1": "value1",
+    //   "Option 2": "value2",
+    //   "Option 3": "value3"
+    // };
+
+    // var $el = $("#selectId");
+    // $el.empty(); // remove old options
+    // $.each(newOptions, function(value,key) {
+    //   $el.append($("<option></option>")
+    //      .attr("value", value).text(key));
+    // });
+
+    }
+
+
     function get_name_by_id (org_id) {
         for (var i = places.length - 1; i >= 0; i--) {
             if (places[i].data === parseInt(org_id)){
+                update_dropdown (places[i].org_type_id)
                 return places[i].value;
             }
         }
         return '{% trans "Name not found" %}'
     }
+
+
     function select_building (org_id) {
         $('#org_id').val(org_id);
         $('#organization_name').val(get_name_by_id(org_id));

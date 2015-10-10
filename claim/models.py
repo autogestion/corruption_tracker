@@ -39,8 +39,6 @@ class OrganizationType(models.Model):
     #                             default=ORG_TYPES[0][0],
     #                             unique=True)
 
-
-
     # Now for example we need to add election station type,
     # so need to change source. Better if type would be parsed
     # from json or add through admin
@@ -123,7 +121,6 @@ class Claim(models.Model):
     created = models.DateTimeField(default=datetime.datetime.now)
     live = models.BooleanField(default=False)
     organization = models.ForeignKey(Organization)
-    # polygon_id = models.CharField(max_length=250)
     servant = models.CharField(max_length=550)
     complainer = models.ForeignKey(User, null=True, blank=True, default=None)
     claim_type = models.ForeignKey(ClaimType, null=True, blank=True,
