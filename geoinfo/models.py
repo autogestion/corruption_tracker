@@ -40,11 +40,11 @@ class Layer(models.Model):
         percent = value * 100 / max_value
 
         if percent <= 20:
-            return '#FEB24C'
+            return 'green'
         elif percent <= 70:
-            return '#FC4E2A'
+            return 'yellow'
         else:
-            return '#E31A1C'
+            return 'red'
 
     def generate_json(self, add=False):
         polygons = self.polygon_set.all()
@@ -57,7 +57,7 @@ class Layer(models.Model):
             polygon_claims = polygon_json["properties"]['polygon_claims']
             polygon_json["properties"]['color'] = self.color_spot(
                 polygon_claims, max_claims_value)\
-                if polygon_claims else '#FFEDA0'
+                if polygon_claims else 'grey'
             data.append(polygon_json)
             organizations.extend(polygon.organizations.all())
 

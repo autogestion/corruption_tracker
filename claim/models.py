@@ -99,7 +99,7 @@ class Organization(models.Model):
                     'claim_type': claim_type
                 })
 
-        return json.dumps(claims_list[0:limit])
+        return json.dumps(claims_list[:limit])
 
     def __str__(self):
         return self.name
