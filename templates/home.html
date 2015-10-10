@@ -46,6 +46,9 @@
         <hr>
     </div>
 </div>
+<div id="show_all_button_template">
+    <a class="btn btn-primary" href="/claims/%org_id%">{% trans "Show more" %}</a>
+</div>
 
 
 <script type="text/javascript">
@@ -97,9 +100,12 @@
         $.get("/get_claims/"  + org_id + "/", function(data) {
             var messages = "";
             var template,
-                message;
+                message,
+                template_button;
 
             template = document.getElementById('claim_template_global').innerHTML;
+            template_button = document.getElementById('show_all_button_template').innerHTML;
+
             for (var i = data.length - 1; i >= 0; i--) {
                 message = template.replace('%complainer%', data[i]['complainer']);
                 message = message.replace('%servant%', data[i]['servant']);
@@ -108,7 +114,8 @@
                 messages += message;
             }
             if (messages == "") {messages = "{% trans 'No claims for this polygon' %}"};
-            $("#target").html(messages);
+            template_button = template_button.replace('%org_id%', org_id);
+            $("#target").html(messages + template_button);
 
             for (var i = places.length - 1; i >= 0; i--) {
                 if (places[i].data === org_id){
