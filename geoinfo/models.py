@@ -2,8 +2,9 @@ import json
 
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.utils.safestring import mark_safe
 
-from claim.models import Organization
+from claim.models import Organization, OrganizationType
 
 
 class Layer(models.Model):
@@ -31,9 +32,66 @@ class Layer(models.Model):
     zoom = models.IntegerField()
     center = models.CharField(max_length=50)
 
-    @property
-    def max_claims(self):
-        return max([x.total_claims for x in self.polygon_set.all()])
+    # @property
+    # def max_claims(self):
+    #     return max([x.total_claims for x in self.polygon_set.all()])
+
+    def color_spot(self, value, max_value):
+        percent = value * 100 / max_value
+
+        if percent <= 20:
+            return 'green'
+        elif percent <= 70:
+            return 'yellow'
+        else:
+            return 'red'
+
+    def generate_json(self, add=False):
+        polygons = self.polygon_set.all()
+        max_claims_value = max([x.total_claims for x in polygons])
+
+        data = []
+        organizations = []
+        for polygon in polygons:
+            polygon_json = polygon.generate_map_polygon()
+            polygon_claims = polygon_json["properties"]['polygon_claims']
+            polygon_json["properties"]['color'] = self.color_spot(
+                polygon_claims, max_claims_value)\
+                if polygon_claims else 'grey'
+            data.append(polygon_json)
+            organizations.extend(polygon.organizations.all())
+
+        places = [{'data': org.id,
+                  'value': org.name,
+                   'org_type_id': org.org_type.type_id if org.org_type else 0}
+                  for org in organizations]
+
+        geo_json = {
+            'type': "FeatureCollection",
+            'config': {
+                'center': json.loads(self.center),
+                'zoom': self.zoom},
+        }
+        geo_json['features'] = data
+
+        responce = {'buildings': mark_safe(json.dumps(geo_json)),
+                    'places': mark_safe(json.dumps(places))}
+
+        if add:
+            org_types = OrganizationType.objects.filter(
+                type_id__in=list(set([x['org_type_id'] for x in places])))
+
+            claim_type_sets = {}
+            for org_type in org_types:
+                claim_type_set = []
+                for claim_type in org_type.claimtype_set.all():
+                    claim_type_set.append({'id': claim_type.id,
+                                          'value': claim_type.name})
+                claim_type_sets[org_type.type_id] = claim_type_set
+
+            responce['claim_types'] = mark_safe(json.dumps(claim_type_sets))
+
+        return responce
 
     def __str__(self):
         return self.name

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.utils.html import escape
 from django.shortcuts import render
 
-from claim.models import Claim, Organization
+from claim.models import Claim, Organization, ClaimType
 from utils.common import get_client_ip
 from utils.caching import caching
 
@@ -45,6 +45,7 @@ def add_claim(request, deny=False):
         False) or not request.user.is_authenticated() else request.user
 
     code = 500
+    print(request.POST)
     if (
         request.POST.get('org_id', False) and
         request.POST.get('claim_text', False)
@@ -54,8 +55,10 @@ def add_claim(request, deny=False):
             servant=escape(request.POST.get('servant', False)),
             complainer=user,
             organization=Organization.objects.get(
-                id=request.POST.get('org_id', False))
-        )
+                id=request.POST.get('org_id', False)),
+            claim_type=ClaimType.objects.get(
+                id=request.POST.get('claim_type', False))
+                )
         claim.save()
         # Correct insert code
         code = 201

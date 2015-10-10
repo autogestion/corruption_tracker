@@ -9,6 +9,18 @@ class GeoJSONParser():
     @staticmethod
     def geojson_to_db(geo_json):
         layer_info = geo_json['ctracker_config']
+
+        global_org_type = False
+        if 'global_org_type' in layer_info:
+            try:
+                global_org_type = OrganizationType.objects.get(
+                    type_id=layer_info['global_org_type'])
+            except OrganizationType.DoesNotExist:
+                global_org_type = OrganizationType(
+                    type_id=layer_info['global_org_type'],
+                    name=layer_info['global_org_type_name'])
+                global_org_type.save()
+
         print('Processing %s geojson...' % layer_info['layer_name'])
         try:
             layer = Layer.objects.get(name=layer_info['layer_name'])
@@ -42,7 +54,7 @@ class GeoJSONParser():
 
             # Create organization
             # Temporary, fix unknown organization type
-            org_type = OrganizationType.objects.get(org_type="0")
+            org_type = global_org_type
 
             polygon_orgs = feature['properties']['NAME'].split('|')
             for org_name in polygon_orgs:
