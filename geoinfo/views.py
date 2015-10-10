@@ -13,11 +13,11 @@ class LayerGenerator:
         percent = value * 100 / self.max_claims
 
         if percent <= 20:
-            return '#FEB24C'
+            return 'green'
         elif percent <= 70:
-            return '#FC4E2A'
+            return 'yellow'
         else:
-            return '#E31A1C'
+            return 'red'
 
     def generate(self):
         polygons = self.layer.polygon_set.all()
@@ -28,7 +28,7 @@ class LayerGenerator:
             polygon_json = polygon.generate_map_polygon()
             polygon_claims = polygon_json["properties"]['polygon_claims']
             polygon_json["properties"]['color'] = self.color_spot(polygon_claims)\
-                if polygon_claims else '#FFEDA0'
+                if polygon_claims else 'grey'
             data.append(polygon_json)
             organizations.extend(polygon.organizations.all())
 
