@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-11 21:39+0000\n"
+"POT-Creation-Date: 2015-10-11 22:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,7 +61,7 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: templates/add_page.html:23 templates/base.html:35
+#: templates/add_page.html:23 templates/base.html:36
 msgid "Add claim"
 msgstr "Додати скаргу"
 
@@ -118,19 +118,19 @@ msgid "Thank you for your message."
 msgstr "Дякуємо за ваше повідомлення."
 
 #: templates/auth/login.html:11 templates/auth/login.html.py:36
-#: templates/base.html:75
+#: templates/base.html:76
 msgid "Login"
 msgstr "Увійти"
 
 #: templates/auth/login.html:17 templates/auth/login.html.py:19
-#: templates/base.html:67
+#: templates/base.html:68
 #, fuzzy
 #| msgid "Servant name"
 msgid "Username"
 msgstr "ПІБ службовця"
 
 #: templates/auth/login.html:24 templates/auth/login.html.py:25
-#: templates/base.html:70
+#: templates/base.html:71
 msgid "Password"
 msgstr ""
 
@@ -142,19 +142,19 @@ msgstr ""
 msgid "Forget password?"
 msgstr ""
 
-#: templates/base.html:34
+#: templates/base.html:35
 msgid "Corruption map"
 msgstr "Карта корупції"
 
-#: templates/base.html:36
+#: templates/base.html:37
 msgid "Who is here?"
 msgstr "Хто тут?"
 
-#: templates/base.html:57
+#: templates/base.html:58
 msgid "Logout"
 msgstr "Вийти"
 
-#: templates/base.html:59
+#: templates/base.html:60
 msgid "Register"
 msgstr "Зареєструватися"
 
