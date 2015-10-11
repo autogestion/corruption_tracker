@@ -13,6 +13,8 @@ RECAPTCHA_SECRET = ""
 RECAPTCHA_PUBLIC = ""
 
 
+STATIC_ROOT = ''
+
 USE_CACHING = False
 
 # Database
