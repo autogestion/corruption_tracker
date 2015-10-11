@@ -15,13 +15,19 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.conf import settings
 
 from claim import views as claim_views
 from . import views
 
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+
+    url(r'^static/(?P<path>.*)$',
+        'django.views.static.serve',
+        {'document_root': settings.STATIC_ROOT}),
 
     url(r'^login/$', 'corruption_tracker.views.login_user',
         name='login'),
@@ -39,5 +45,5 @@ urlpatterns = [
     url(r'^get_claims/(?P<org_id>[\w.]{0,256})/$',
         claim_views.get_claims, name="get_claims"),
     url(r'^add_claim$', claim_views.add_claim, name="add_claim"),
-    url(r'^claims/(?P<org_id>[\w.]{0,256})/$',claim_views.claims, name="claims"),
+    url(r'^claims/(?P<org_id>[\w.]{0,256})/$', claim_views.claims, name="claims")
 ]
