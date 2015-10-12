@@ -113,8 +113,10 @@
                 message = message.replace('%text%', data[i]['text']);
                 messages += message;
             }
-            if (messages == "") {messages = "{% trans 'No claims for this polygon' %}"};
             template_button = template_button.replace('%org_id%', org_id);
+            if (messages == "") {
+                messages = "{% trans 'No claims for this polygon' %}";
+                template_button=''};            
             $("#target").html(messages + template_button);
 
             for (var i = places.length - 1; i >= 0; i--) {
