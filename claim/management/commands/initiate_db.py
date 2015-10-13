@@ -15,18 +15,6 @@ class Command(BaseCommand):
         parser.add_argument('--file', type=str)
 
     def handle(self, *args, **options):
-        # Organization Types, must be parsed from geojson
-        # We don't use them any way
-
-        # print('Creating organization types...')
-        # for org_type in OrganizationType.ORG_TYPES:
-        #     try:
-        #         OrganizationType.objects.get(org_type=org_type[0])
-        #     except OrganizationType.DoesNotExist:
-        #         obj = OrganizationType(org_type=org_type[0])
-        #         obj.save()
-        #     except OrganizationType.MultipleObjectsReturned:
-        #         pass
 
         # Polygons n Orgs
         if options['file']:

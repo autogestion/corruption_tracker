@@ -7,7 +7,7 @@ from claim.models import OrganizationType, Organization
 class GeoJSONParser():
 
     @staticmethod
-    def geojson_to_db(geo_json):
+    def geojson_to_db(geo_json, return_instance=False):
         layer_info = geo_json['ctracker_config']
 
         global_org_type = False
@@ -25,6 +25,15 @@ class GeoJSONParser():
         try:
             layer = Layer.objects.get(name=layer_info['layer_name'])
         except Layer.DoesNotExist:
+
+            if layer_info['set_default']:
+                try:
+                    ex_default = Layer.objects.get(is_default=True)
+                    ex_default.is_default = False
+                    ex_default.save()
+                except Layer.DoesNotExist:
+                    pass
+
             layer = Layer(
                 layer_type=getattr(Layer, layer_info['layer_type']),
                 name=layer_info['layer_name'],
@@ -72,3 +81,6 @@ class GeoJSONParser():
 
                 # Link them
                 polygon.organizations.add(org_obj)
+
+        if return_instance:
+            return layer
