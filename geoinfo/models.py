@@ -25,9 +25,8 @@ class Layer(models.Model):
     name = models.CharField(max_length=250, unique=True)
     layer_type = models.IntegerField(choices=LAYER_TYPES,
                                      default=ORGANIZATION)
-    # TODO(autogestion) This field will allow to upload
-    # geojson files through admin
-    json_filename = models.FileField(null=True, blank=True)
+    parse_file = models.BooleanField(default=False)
+    json_file = models.FileField(null=True, blank=True, upload_to='geojsons')
     is_default = models.BooleanField(default=False)
     zoom = models.IntegerField()
     center = models.CharField(max_length=50)
@@ -35,6 +34,7 @@ class Layer(models.Model):
     # @property
     # def max_claims(self):
     #     return max([x.total_claims for x in self.polygon_set.all()])
+
 
     def color_spot(self, value, max_value):
         percent = value * 100 / max_value
