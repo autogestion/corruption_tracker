@@ -13,11 +13,6 @@
 <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
 <script src="{% static "js/jquery.cookie.js" %}"></script>
 <script src="{% static "js/jquery.autocomplete.min.js" %}"></script>
-
-<script type="text/javascript">
-    var buildings = {{ buildings|default:"[]" }};
-</script>
-<script src="{% static "js/map_init.js" %}"></script>
 <link href= "{% static "css/gh-fork-ribbon.min.css" %}"  rel="stylesheet">
 
 {% block head %}
