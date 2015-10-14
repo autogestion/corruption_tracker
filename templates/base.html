@@ -34,7 +34,9 @@
         <ul class="nav navbar-nav">
             <li {% if page == 'home' %} class="active"{% endif %}><a href="{% url 'home' %}">{% trans "Corruption map" %}</a></li>
             <li {% if page == 'add_page' %} class="active"{% endif %}><a href="{% url 'add_page' %}">{% trans "Add claim" %}</a></li>
+            <li {% if page == 'add_mobile' %} class="active"{% endif %}><a href="{% url 'add_mobile' %}">{% trans "Mobile version" %}</a></li>
             <li {% if page == 'about' %} class="active"{% endif %}><a href="{% url 'about' %}">{% trans "Who is here?" %}</a></li>
+
         </ul>
 
          <ul class="nav navbar-nav navbar-right">

@@ -35,7 +35,6 @@ class Layer(models.Model):
     # def max_claims(self):
     #     return max([x.total_claims for x in self.polygon_set.all()])
 
-
     def color_spot(self, value, max_value):
         percent = value * 100 / max_value
 
@@ -46,19 +45,20 @@ class Layer(models.Model):
         else:
             return 'red'
 
-    def generate_json(self, add=False):
+    def generate_json(self, add=False, mobile=False):
         polygons = self.polygon_set.all()
         max_claims_value = max([x.total_claims for x in polygons])
 
         data = []
         organizations = []
         for polygon in polygons:
-            polygon_json = polygon.generate_map_polygon()
-            polygon_claims = polygon_json["properties"]['polygon_claims']
-            polygon_json["properties"]['color'] = self.color_spot(
-                polygon_claims, max_claims_value)\
-                if polygon_claims else 'grey'
-            data.append(polygon_json)
+            if not mobile:
+                polygon_json = polygon.generate_map_polygon()
+                polygon_claims = polygon_json["properties"]['polygon_claims']
+                polygon_json["properties"]['color'] = self.color_spot(
+                    polygon_claims, max_claims_value)\
+                    if polygon_claims else 'grey'
+                data.append(polygon_json)
             organizations.extend(polygon.organizations.all())
 
         places = [{'data': org.id,
@@ -66,16 +66,19 @@ class Layer(models.Model):
                    'org_type_id': org.org_type.type_id if org.org_type else 0}
                   for org in organizations]
 
-        geo_json = {
-            'type': "FeatureCollection",
-            'config': {
-                'center': json.loads(self.center),
-                'zoom': self.zoom},
-        }
-        geo_json['features'] = data
+        if not mobile:
+            geo_json = {
+                'type': "FeatureCollection",
+                'config': {
+                    'center': json.loads(self.center),
+                    'zoom': self.zoom},
+            }
+            geo_json['features'] = data
 
-        responce = {'buildings': mark_safe(json.dumps(geo_json)),
-                    'places': mark_safe(json.dumps(places))}
+            responce = {'buildings': mark_safe(json.dumps(geo_json)),
+                        'places': mark_safe(json.dumps(places))}
+        else:
+            responce = {'places': mark_safe(json.dumps(places))}
 
         if add:
             org_types = OrganizationType.objects.filter(

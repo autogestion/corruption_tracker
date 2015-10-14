@@ -27,6 +27,18 @@ def add_page(request):
     return render(request, 'add_page.html', resp_dict)
 
 
+def add_mobile(request):
+    resp_dict = Layer.objects.get(is_default=True)\
+        .generate_json(add=True, mobile=True)
+    resp_dict['page'] = 'add_mobile'
+
+    if settings.RECAPTCHA_ENABLED is False:
+        settings.RECAPTCHA_PUBLIC = ''
+    resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
+
+    return render(request, 'add_mobile.html', resp_dict)
+
+
 def about(request):
     return render(request, 'about.html', {'page': 'about'})
 
