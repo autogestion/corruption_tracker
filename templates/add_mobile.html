@@ -24,15 +24,9 @@
 {% block map %}
 {% load i18n %}
 
-<div id="mobileForm">
+<div class="container" id="mobileForm">
         <form role="form" id='claim_form'>
             {% csrf_token %}
-
-            <div class="form-group">
-              <button type="button" class="btn btn-danger">
-                <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Відміна
-              </button>
-            </div>
 
             <div class="form-group">
                 <label for="organization_name">{% trans "Organization" %}:</label>                  
@@ -77,9 +71,11 @@
 
             <div class="form-group">
                 <div id='message'></div>
-                <button type="submit" class="btn btn-primary" id="submit_add" disabled>{% trans "Send claim" %}</button>
+                <button type="submit" class="btn btn-primary btn-block"  id="mobile_submit">{% trans "Send claim" %}</button>
             </div>
-        </form>    
+        </form>
+{% include "mobile_navigation.html" %}           
 </div>
+
 
 {% endblock %}
