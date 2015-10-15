@@ -2,10 +2,10 @@
 
 
 
-#desktopForm {
+.navbar-collapse{
 background-color: #202020;
 color: #bbbbbb;
-padding-top: 10px;
+
 }
 
 #mobileForm {
@@ -15,28 +15,17 @@ padding-top: 10px;
 }
 
 
-.btn-primary {
+.btn-block {
 color: 	#fcfcfc; 
 border-radius: 15px;
 background-color: #dd1515;
 border-color: #dd1515;
 }
 
-.btn-primary:hover {
+.btn-block:hover {
 color: #dd1515;
 background-color: #bbbbbb;
 border-color: #bbbbbb;
-}
-
-.btn-danger {
-background-color: #5bb238;
-border-color: #5bb238;
-border-radius: 15px;
-}
-
-.btn-danger:hover {
-background-color: #338a25;
-border-color: #338a25;
 }
 
 .glyphicon-menu-left {
