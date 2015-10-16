@@ -20,7 +20,7 @@ function get_name_by_id (org_id) {
             return places[i].value;
         }
     }
-    return '{% trans "Name not found" %}'
+    return "Name not found"
 }
 
 
@@ -97,34 +97,15 @@ var AddPage = {
     hide_processing: function (){
         $('#processing').hide();
     },
-    validate: function (){
-        // Organization name
-
-        // We don't need to validate organization name,
-        // it is not used on server side
-        // Also, it could be emtpy
-
-        // var organization_name = $('#organization_name').val();
-        // for (var i = places.length - 1; i >= 0; i--) {
-        //     if (organization_name == places[i].properties.NAME) {
-        //         $('#organization_name').removeClass('incorrect');
-        //         break;
-        //     }
-        //     $('#organization_name').addClass('incorrect');
-        // };
-
-
-        // Let's validate polygon id (:
+    validate: function (){       
         var org_id = $('#org_id').val();
         if (org_id.length < 0) {
             $('#org_id').addClass('incorrect');
             $('#org_id_error').html("Choose organization to claim");
-
         } else {
             $('#org_id').removeClass('incorrect');
         }
         AddPage.show_submit();
-
 
         // Claim text
         var claim_text = $('#claim_text').val();

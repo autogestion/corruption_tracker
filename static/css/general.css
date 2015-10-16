@@ -158,8 +158,8 @@ h5 {
 }
 
 .claims_page_claim_block {
-    width: 300px;
-    min-height: 200px;
+    width: 350px;
+    min-height: 250px;
     float: left;
     border: 1px solid lightgray;
     margin:10px;
@@ -167,12 +167,13 @@ h5 {
 .claims_page_line_name {
     display: block;
     float: left;
-    width: 120px;
+    width: 130px;
     padding-right: 10px;
 }
 .claims_page_claim_head {
-padding: 5px 10px;
+    padding: 5px 10px;
     background-color: #ECECEC;
+    min-height: 100px;
 }
 .claim_page_claim_text {
     padding:10px;

@@ -6,11 +6,14 @@
 
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
         <script type="text/javascript">
-            var app = angular.module("claimsApp", []);
+            var app = angular.module("claimsApp", []).config(function($interpolateProvider) {
+                    $interpolateProvider.startSymbol('{$');
+                    $interpolateProvider.endSymbol('$}');
+                });
 
             app.controller('ClaimsController', function($scope, $http) {
                 $http({
-                    url: "http://localhost:8000/get_claims/{{ org_id }}/limit=999/"
+                    url: "/get_claims/{{ org_id }}/limit=999/"
                 }).success(function(data, status) {
                     console.log('Ok');
                     $scope.claims = data;
@@ -32,22 +35,16 @@
 
                 var CSV = '';
                 //Set Report title in first row or line
-
                 CSV += ReportTitle + '\r\n\n';
-
                 //This condition will generate the Label/Header
                 if (ShowLabel) {
                     var row = "";
-
                     //This loop will extract the label from 1st index of on array
                     for (var index in arrData[0]) {
-
                         //Now convert each value to string and comma-seprated
                         row += index + ',';
                     }
-
                     row = row.slice(0, -1);
-
                     //append Label row with line break
                     CSV += row + '\r\n';
                 }
@@ -55,14 +52,11 @@
                 //1st loop is to extract each row
                 for (var i = 0; i < arrData.length; i++) {
                     var row = "";
-
                     //2nd loop will extract each column and convert it in string comma-seprated
                     for (var index in arrData[i]) {
                         row += '"' + arrData[i][index] + '",';
                     }
-
                     row.slice(0, row.length - 1);
-
                     //add a line break after each row
                     CSV += row + '\r\n';
                 }
@@ -107,19 +101,21 @@
                 <div ng-app="claimsApp">
                     <div ng-controller="ClaimsController">
                         <h3>
-                            {% trans "Claims list for" %} {% verbatim %}{{ organization_name }}{% endverbatim %}
-                            <small><a class="btn btn-default" href="#" ng-click="to_csv()">{% trans "Export to CSV" %}</a></small>
+                            {% trans "Claims list for" %} {$ organization_name $}                            
                         </h3>
+                        <small><a class="btn btn-default" href="#" ng-click="to_csv()">{% trans "Export to CSV" %}</a></small>
                         <div ng-model="claims" ng-repeat="claim in claims">
-                            {% verbatim %}
+                        
                             <div class="claims_page_claim_block">
                                 <div class="claims_page_claim_head">
-                                    <div><b class="claims_page_line_name">Servant:</b> {{ claim.servant }}</div>
-                                    <div><b class="claims_page_line_name">Complainer:</b> {{ claim.complainer }}</div>
+                                    <div><b class="claims_page_line_name">{% trans "Servant" %}:</b> {$ claim.servant $}</div>
+                                    <div><b class="claims_page_line_name">{% trans "Complainer" %}:</b> {$ claim.complainer $}</div>
+                                    <div><b class="claims_page_line_name">{% trans "Claim type" %}:</b>{$ claim.claim_type $}</div>      
+                                    <div><b class="claims_page_line_name">{% trans "Created" %}:</b> {$ claim.created $}</div>
                                 </div>
-                                <div class="claim_page_claim_text">{{ claim.text }}</div>
+                                <div class="claim_page_claim_text">{$ claim.text $}</div>                            
                             </div>
-                            {% endverbatim %}
+                    
                         </div>
                     </div>
                 </div>
