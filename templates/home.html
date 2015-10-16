@@ -6,6 +6,15 @@
     <title>Corruption map</title>
     {% leaflet_js %}  
     {% leaflet_css %}
+    <script type="text/javascript">
+        /* To prevent multiple inserts of this var lets keep it in global NS */
+        var buildings = {{ buildings|default:"[]" }};
+        var places = {{places}};    
+    </script>
+    <script src="{% static "js/map_init.js" %}"></script>
+    <script src="{% static "js/get_claims.js" %}"></script>
+
+
 {% endblock %}
 
 
@@ -43,93 +52,13 @@
         <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
         <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
         <div class="claim"><b>{% trans "Claim text" %}:</b> <span>%text%</span></div>
+        <div class="created"><b>{% trans "Created" %}:</b> <span>%created%</span></div>
         <hr>
     </div>
 </div>
 <div id="show_all_button_template">
-    <a class="btn btn-primary" href="/claims/%org_id%">{% trans "Show more" %}</a>
+    <a class="btn btn-primary" href="/claims/%org_id%" target="_blank">{% trans "Show more" %}</a>
 </div>
-
-
-<script type="text/javascript">
-    /* To prevent multiple inserts of this var lets keep it in global NS */
-    var places = {{places}};
-    function get_name_by_id (org_id) {
-        for (var i = places.length - 1; i >= 0; i--) {
-            if (places[i].data === parseInt(org_id)){
-                return places[i].value;
-            }
-        }
-        return '{% trans "Name not found" %}'
-    }
-
-    $(document).ready(function () {
-        $("#get_claims").click(function() {
-            var org_id = $('#org_id').val();
-            select_building(org_id);
-        });
-
-        $('#org_id').autocomplete({
-            lookup: {{places}},
-            onSelect: function (suggestion) {
-                select_building(suggestion.data);
-            }
-        });
-
-        var pair;
-        var hash_data = window.location.hash.replace("#", "").split("&");
-        for (var i = hash_data.length - 1; i >= 0; i--) {
-            pair = hash_data[i].split('=');
-            if (pair[0] === 'organization') {
-                select_building(pair[1]);
-                $('#org_id').val(get_name_by_id(pair[1]));
-                break;
-            }
-        }
-
-    });
-
-    function select_building (org_id) {
-        window.location.hash = "organization=" + org_id;
-
-        var servant = "{% trans "Servant" %}";
-        var complainer = "{% trans "Complainer" %}";
-        var claim_type = "{% trans "Claim type" %}";
-        var claim_text = "{% trans "Claim text" %}";
-
-        $.get("/get_claims/"  + org_id + "/", function(data) {
-            var messages = "";
-            var template,
-                message,
-                template_button;
-
-            template = document.getElementById('claim_template_global').innerHTML;
-            template_button = document.getElementById('show_all_button_template').innerHTML;
-
-            for (var i = data.length - 1; i >= 0; i--) {
-                message = template.replace('%complainer%', data[i]['complainer']);
-                message = message.replace('%servant%', data[i]['servant']);
-                message = message.replace('%claim_type%', data[i]['claim_type']);
-                message = message.replace('%text%', data[i]['text']);
-                messages += message;
-            }
-            template_button = template_button.replace('%org_id%', org_id);
-            if (messages == "") {
-                messages = "{% trans 'No claims for this polygon' %}";
-                template_button=''};            
-            $("#target").html(messages + template_button);
-
-            for (var i = places.length - 1; i >= 0; i--) {
-                if (places[i].data === org_id){
-                    $('#org_id').val(places[i].value);
-                    return;
-                }
-            };
-        });
-    }
-
-
-</script>
 
 {% endblock %}
 

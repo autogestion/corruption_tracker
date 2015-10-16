@@ -1,3 +1,4 @@
+
 import requests
 
 from django.http import HttpResponse
@@ -58,7 +59,7 @@ def add_claim(request, deny=False):
                 id=request.POST.get('org_id', False)),
             claim_type=ClaimType.objects.get(
                 id=request.POST.get('claim_type', False))
-                )
+        )
         claim.save()
         # Correct insert code
         code = 201

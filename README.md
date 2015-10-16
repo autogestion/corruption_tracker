@@ -1,7 +1,5 @@
 # Corruption tracker
 
-## About
-
 Corruption tracker lets you make cases of corruption and professionally unfit of civil servant public
 and as result track the level of it in public institutions
 

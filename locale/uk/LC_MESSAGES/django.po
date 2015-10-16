@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-11 22:53+0000\n"
+"POT-Creation-Date: 2015-10-16 14:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: claim/models.py:90
 msgid "Others"
-msgstr ""
+msgstr "Інше"
 
 #: claim/models.py:92
 #, fuzzy
@@ -31,15 +31,15 @@ msgstr "Анонім"
 
 #: corruption_tracker/settings.py:91
 msgid "Ukrainian"
-msgstr ""
+msgstr "Україньска"
 
 #: corruption_tracker/settings.py:92
 msgid "English"
-msgstr ""
+msgstr "Англійська"
 
 #: corruption_tracker/settings.py:93
 msgid "Russian"
-msgstr ""
+msgstr "Московитська"
 
 #: corruption_tracker/settings.py:138
 msgid "Streets"
@@ -49,23 +49,23 @@ msgstr ""
 msgid "Satellite"
 msgstr ""
 
-#: geoinfo/models.py:20 templates/add_page.html:32
+#: geoinfo/models.py:20 templates/add_page.html:47
 msgid "Organization"
 msgstr "Заклад"
 
 #: geoinfo/models.py:21
 msgid "District"
-msgstr ""
+msgstr "Район"
 
 #: geoinfo/models.py:22
 msgid "Country"
 msgstr ""
 
-#: templates/add_page.html:23 templates/base.html:36
+#: templates/add_page.html:38 templates/base.html:31
 msgid "Add claim"
 msgstr "Додати скаргу"
 
-#: templates/add_page.html:24
+#: templates/add_page.html:39
 msgid ""
 "To add claim please click on building on the map, or enter organization name "
 "in searchbox 'Organization', name of servant and describe what was wrong. "
@@ -75,102 +75,84 @@ msgstr ""
 "в полi 'Заклад', вкажiть ПIБ службовця i опишiть проблему та натисніть "
 "кнопку 'Відправити скаргу'."
 
-#: templates/add_page.html:33 templates/home.html:28
+#: templates/add_page.html:48 templates/home.html:37
 msgid "Organization name"
 msgstr "Назва закладу"
 
-#: templates/add_page.html:36
-#, fuzzy
-#| msgid "Organization"
-msgid "Organization ID"
-msgstr "Заклад"
-
-#: templates/add_page.html:41
+#: templates/add_page.html:55
 msgid "Choose Violation type"
-msgstr ""
+msgstr "Оберіть тип порушення"
 
-#: templates/add_page.html:47
+#: templates/add_page.html:61
 msgid "Servant name"
 msgstr "ПІБ службовця"
 
-#: templates/add_page.html:51
+#: templates/add_page.html:65
 msgid "Claim message"
 msgstr "Текст скарги"
 
-#: templates/add_page.html:60
+#: templates/add_page.html:74
 msgid "Keep me anonymously"
 msgstr "Зробити анонімно"
 
-#: templates/add_page.html:74
+#: templates/add_page.html:88
 msgid "Send claim"
 msgstr "Відправити скаргу"
 
-#: templates/add_page.html:112 templates/home.html:63
-msgid "Name not found"
-msgstr ""
-
-#: templates/add_page.html:158
-msgid "Too much claims. Please wait an hour and try again."
-msgstr ""
-
-#: templates/add_page.html:162
-msgid "Thank you for your message."
-msgstr "Дякуємо за ваше повідомлення."
-
 #: templates/auth/login.html:11 templates/auth/login.html.py:36
-#: templates/base.html:76
+#: templates/base.html:71
 msgid "Login"
 msgstr "Увійти"
 
 #: templates/auth/login.html:17 templates/auth/login.html.py:19
-#: templates/base.html:68
+#: templates/base.html:63
 #, fuzzy
 #| msgid "Servant name"
 msgid "Username"
 msgstr "ПІБ службовця"
 
 #: templates/auth/login.html:24 templates/auth/login.html.py:25
-#: templates/base.html:71
+#: templates/base.html:66
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #: templates/auth/login.html:31
 msgid "Remember me"
-msgstr ""
+msgstr "Запам'ятати мене"
 
 #: templates/auth/login.html:39
 msgid "Forget password?"
 msgstr ""
 
-#: templates/base.html:35
+#: templates/base.html:30
 msgid "Corruption map"
 msgstr "Карта корупції"
 
-#: templates/base.html:37
+#: templates/base.html:32
 msgid "Who is here?"
 msgstr "Хто тут?"
 
-#: templates/base.html:58
+#: templates/base.html:53
 msgid "Logout"
 msgstr "Вийти"
 
-#: templates/base.html:60
+#: templates/base.html:55
 msgid "Register"
 msgstr "Зареєструватися"
 
 #: templates/claims.html:110
 msgid "Claims list for"
-msgstr ""
+msgstr "Список скарг для"
 
 #: templates/claims.html:111
 msgid "Export to CSV"
-msgstr ""
+msgstr "Експортувати як CSV"
 
-#: templates/home.html:22 templates/home.html.py:30
+#: templates/home.html:31 templates/home.html.py:39
 msgid "Search"
 msgstr "Пошук"
 
-#: templates/home.html:23
+#: templates/home.html:32
 msgid ""
 "To check claims you should click on building on the map, or enter "
 "organization name in searchbox."
@@ -178,44 +160,26 @@ msgstr ""
 "Щоб побачии скарги зробіть клік на будівлі на мапі, або введіть назву "
 "закладу в поле пошуку"
 
-#: templates/home.html:42 templates/home.html.py:96
+#: templates/home.html:51
 msgid "Complainer"
-msgstr ""
+msgstr "Позивач"
 
-#: templates/home.html:43 templates/home.html.py:95
-#, fuzzy
-#| msgid "Servant name"
+#: templates/home.html:52
 msgid "Servant"
 msgstr "ПІБ службовця"
 
-#: templates/home.html:44 templates/home.html.py:97
-#, fuzzy
-#| msgid "Claim message"
+#: templates/home.html:53
 msgid "Claim type"
-msgstr "Текст скарги"
+msgstr "Тип скарги"
 
-#: templates/home.html:45 templates/home.html.py:98
-#, fuzzy
-#| msgid "Claim message"
+#: templates/home.html:54
 msgid "Claim text"
 msgstr "Текст скарги"
 
-#: templates/home.html:50
+#: templates/home.html:55
+msgid "Created"
+msgstr "Створено"
+
+#: templates/home.html:60
 msgid "Show more"
-msgstr ""
-
-#: templates/home.html:116
-msgid "No claims for this polygon"
-msgstr ""
-
-#~ msgid "Messages"
-#~ msgstr "Повідомлення"
-
-#~ msgid ""
-#~ "Servant: %(servant)s<br>\n"
-#~ "                               Claim: %(text)s<br>\n"
-#~ "                               From: %(complainer)s<br><br>"
-#~ msgstr ""
-#~ "Службовець: %(servant)s<br>\n"
-#~ "                               Скарга: %(text)s<br>\n"
-#~ "                               Вiд: %(complainer)s<br><br>"
+msgstr "Показати більше"
