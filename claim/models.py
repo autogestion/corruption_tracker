@@ -96,7 +96,8 @@ class Organization(models.Model):
                     'text': claim.text,
                     'servant': claim.servant,
                     'complainer': username,
-                    'claim_type': claim_type
+                    'claim_type': claim_type,
+                    'created': claim.created.strftime('%Y-%m-%d %H:%M:%S')
                 })
 
         return json.dumps(claims_list[:limit])
