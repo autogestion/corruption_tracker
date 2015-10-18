@@ -43,6 +43,7 @@ function select_building (org_id) {
     window.location.hash = "organization=" + org_id;  
 
     $.get("/get_claims/"  + org_id + "/", function(data) {
+
         var messages = "";
         var template,
             message,
@@ -54,15 +55,18 @@ function select_building (org_id) {
 
         var records = [];
         var record;
-
+        var count = 0
         for (var i = data.length - 1; i >= 0; i--) {
-            message = template.replace('%complainer%', data[i]['complainer']);
-            message = message.replace('%servant%', data[i]['servant']);
-            message = message.replace('%claim_type%', data[i]['claim_type']);
-            message = message.replace('%text%', data[i]['text']);
-            message = message.replace('%created%', data[i]['created']);
-            messages += message;
 
+            if (count < 4) {
+                message = template.replace('%complainer%', data[i]['complainer']);
+                message = message.replace('%servant%', data[i]['servant']);
+                message = message.replace('%claim_type%', data[i]['claim_type']);
+                message = message.replace('%text%', data[i]['text']);
+                message = message.replace('%created%', data[i]['created']);
+                messages += message;
+                count += 1
+            } 
             record = {recid: i+1, complainer: data[i]['complainer'], servant: data[i]['servant'], claim_type: data[i]['claim_type'],
                         text: data[i]['text'], created: data[i]['created']};
             records.push(record); 
@@ -73,7 +77,8 @@ function select_building (org_id) {
         template_button = template_button.replace('%org_id%', org_id);
         if (messages == "") {
             messages = 'No claims for this polygon';
-            template_button=''};            
+            template_button= '';
+            template_button_grid = ''};            
         $("#target").html(messages + template_button_grid + template_button);
 
         for (var i = places.length - 1; i >= 0; i--) {
