@@ -1,3 +1,34 @@
+//  start of w2ui config
+var layout = {
+        name: 'layout',
+        padding: 0,
+        panels: [
+            { type: 'main', minSize: 400, resizable: true, }
+        ]
+    };
+
+var grid = { 
+        name: 'grid',
+        show: {          
+            toolbar : true,
+            footer : true,
+            lineNumbers : true
+        },         
+        columns: [
+            { field: 'complainer', caption: 'complainer', size: '15%', sortable: true, searchable: true },
+            { field: 'servant', caption: 'servant', size: '15%', sortable: true, searchable: true },
+            { field: 'claim_type', caption: 'claim_type', size: '20%', sortable: true, searchable: true},
+            { field: 'text', caption: 'text', size: '35%', searchable: true},
+            { field: 'created', caption: 'created', size: '15%', sortable: true},
+        ],};
+
+$(function () { 
+    $().w2layout(layout);
+    $().w2grid(grid);
+});
+// end of w2ui config
+
+
 function get_name_by_id (org_id) {
         for (var i = places.length - 1; i >= 0; i--) {
             if (places[i].data === parseInt(org_id)){
@@ -12,6 +43,7 @@ function select_building (org_id) {
     window.location.hash = "organization=" + org_id;  
 
     $.get("/get_claims/"  + org_id + "/", function(data) {
+
         var messages = "";
         var template,
             message,
@@ -19,20 +51,35 @@ function select_building (org_id) {
 
         template = document.getElementById('claim_template_global').innerHTML;
         template_button = document.getElementById('show_all_button_template').innerHTML;
+        template_button_grid = document.getElementById('show_all_button_template_grid').innerHTML;
 
+        var records = [];
+        var record;
+        var count = 0
         for (var i = data.length - 1; i >= 0; i--) {
-            message = template.replace('%complainer%', data[i]['complainer']);
-            message = message.replace('%servant%', data[i]['servant']);
-            message = message.replace('%claim_type%', data[i]['claim_type']);
-            message = message.replace('%text%', data[i]['text']);
-            message = message.replace('%created%', data[i]['created']);
-            messages += message;
+
+            if (count < 4) {
+                message = template.replace('%complainer%', data[i]['complainer']);
+                message = message.replace('%servant%', data[i]['servant']);
+                message = message.replace('%claim_type%', data[i]['claim_type']);
+                message = message.replace('%text%', data[i]['text']);
+                message = message.replace('%created%', data[i]['created']);
+                messages += message;
+                count += 1
+            } 
+            record = {recid: i+1, complainer: data[i]['complainer'], servant: data[i]['servant'], claim_type: data[i]['claim_type'],
+                        text: data[i]['text'], created: data[i]['created']};
+            records.push(record); 
         }
+
+        w2ui.grid.records = records;
+
         template_button = template_button.replace('%org_id%', org_id);
         if (messages == "") {
             messages = 'No claims for this polygon';
-            template_button=''};            
-        $("#target").html(messages + template_button);
+            template_button= '';
+            template_button_grid = ''};            
+        $("#target").html(messages + template_button_grid + template_button);
 
         for (var i = places.length - 1; i >= 0; i--) {
             if (places[i].data === org_id){
@@ -40,6 +87,21 @@ function select_building (org_id) {
                 return;
             }
         };
+    });
+}
+
+
+function w2ui_popup() {
+    w2popup.open({
+        title: 'Claims',
+        body: '<div id="main_w2ui" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; width: 100%;"></div>',
+        width : 1000,
+        onOpen  : function (event) {
+            event.onComplete = function () {
+                $('#w2ui-popup #main_w2ui').w2render('layout');
+                w2ui.layout.content('main', w2ui.grid);
+            }
+        },
     });
 }
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-16 14:43+0000\n"
+"POT-Creation-Date: 2015-10-17 10:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,7 +70,7 @@ msgid ""
 "After it press 'Send claim' button."
 msgstr ""
 
-#: templates/add_page.html:48 templates/home.html:37
+#: templates/add_page.html:48 templates/home.html:36
 msgid "Organization name"
 msgstr ""
 
@@ -133,44 +133,48 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
-#: templates/claims.html:110
+#: templates/claims.html:104
 msgid "Claims list for"
 msgstr ""
 
-#: templates/claims.html:111
+#: templates/claims.html:106
 msgid "Export to CSV"
 msgstr ""
 
-#: templates/home.html:31 templates/home.html.py:39
+#: templates/claims.html:111 templates/home.html:51
+msgid "Servant"
+msgstr ""
+
+#: templates/claims.html:112 templates/home.html:50
+msgid "Complainer"
+msgstr ""
+
+#: templates/claims.html:113 templates/home.html:52
+msgid "Claim type"
+msgstr ""
+
+#: templates/claims.html:114 templates/home.html:54
+msgid "Created"
+msgstr ""
+
+#: templates/home.html:30 templates/home.html.py:38
 msgid "Search"
 msgstr ""
 
-#: templates/home.html:32
+#: templates/home.html:31
 msgid ""
 "To check claims you should click on building on the map, or enter "
 "organization name in searchbox."
 msgstr ""
 
-#: templates/home.html:51
-msgid "Complainer"
-msgstr ""
-
-#: templates/home.html:52
-msgid "Servant"
-msgstr ""
-
 #: templates/home.html:53
-msgid "Claim type"
-msgstr ""
-
-#: templates/home.html:54
 msgid "Claim text"
 msgstr ""
 
-#: templates/home.html:55
-msgid "Created"
+#: templates/home.html:59
+msgid "Show all claims as tiles"
 msgstr ""
 
-#: templates/home.html:60
-msgid "Show more"
+#: templates/home.html:62
+msgid "Show all claims as table"
 msgstr ""

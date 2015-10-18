@@ -11,7 +11,7 @@ from utils.common import get_client_ip
 from utils.caching import caching
 
 
-def get_claims(request, org_id, limit=5):
+def get_claims(request, org_id, limit=999):
     # For unknown reason django do not check type param, event if in urls.py
     # we have coorect \d pattern.
     limit = int(limit)
