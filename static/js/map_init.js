@@ -3,8 +3,8 @@ function main_map_init (map, options) {
     $('.layout_chooser').removeClass("leaflet-right");
     $('.layout_chooser').addClass("leaflet-left");
 
-    $('.layout_chooser').removeClass("leaflet-top");
-    $('.layout_chooser').addClass("leaflet-bottom");
+    // $('.layout_chooser').removeClass("leaflet-top");
+    // $('.layout_chooser').addClass("leaflet-bottom");
     // Add GeoJSON layer
     var marker, org_row, orgs_set, org_rows;
 
