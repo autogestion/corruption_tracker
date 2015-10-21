@@ -40,6 +40,11 @@ nav .navbar-brand {
     width: 100%;
 }
 
+.layout_chooser {
+    padding-top: 65px;
+}
+
+
 @media screen and (max-width: 10000px) {
     .leaflet-container {
         height: 700px;
