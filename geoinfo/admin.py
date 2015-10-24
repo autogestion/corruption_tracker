@@ -24,7 +24,7 @@ class LayerForm(forms.ModelForm):
 
     # def clean(self):
     #     if self.cleaned_data.get('parse_file') and\
-    #        self.cleaned_data.get('json_file'):      
+    #        self.cleaned_data.get('json_file'):
     #         return self.cleaned_data
     #     else:
     #         super(LayerForm, self).clean()
@@ -39,8 +39,8 @@ class LayerAdmin(admin.ModelAdmin):
 
 
 class PolygonAdmin(admin.ModelAdmin):
-    list_display = ('polygon_id', 'layer', 'organization_count')
-    search_fields = ('polygon_id',)
+    list_display = ('polygon_id', 'layer', 'organization_count', 'address')
+    search_fields = ('polygon_id', 'address')
     list_filter = ('layer',)
 
 

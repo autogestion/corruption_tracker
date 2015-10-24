@@ -105,7 +105,7 @@ msgstr "Увійти"
 #: templates/auth/login.html:17 templates/auth/login.html.py:19
 #: templates/base.html:63
 msgid "Username"
-msgstr "ПІБ службовця"
+msgstr "Юзернейм"
 
 #: templates/auth/login.html:24 templates/auth/login.html.py:25
 #: templates/base.html:66
