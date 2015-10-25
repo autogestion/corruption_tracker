@@ -1,0 +1,4 @@
+[{"model": "claim.moderationstatus", "pk": "not_moderated", "fields": {"name": "Claim is not moderated"}}, 
+{"model": "claim.moderationstatus", "pk": "suspicious", "fields": {"name": "Claim is suspicious"}}, 
+{"model": "claim.moderationstatus", "pk": "valid", "fields": {"name": "Claim is ok"}},
+{"model": "claim.moderator", "pk": 1, "fields": {"show_claims": ["not_moderated", "suspicious", "valid"]}}]

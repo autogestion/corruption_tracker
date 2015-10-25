@@ -1,12 +1,14 @@
 from django.contrib import admin
 
 from claim.models import Claim, InCharge,\
-    Organization, OrganizationType, ClaimType
+    Organization, OrganizationType, ClaimType,\
+    ModerationStatus, Moderator
 
 
 class ClaimAdmin(admin.ModelAdmin):
     list_display = ('id', 'organization', 'servant',
-                    'claim_type', 'text', 'live', 'created')
+                    'claim_type', 'text', 'live',
+                    'moderation', 'created')
     search_fields = ('organization', 'servant', 'text')
     list_filter = ('organization', 'created')
 
@@ -37,3 +39,5 @@ admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(InCharge, InChargeAdmin)
 admin.site.register(OrganizationType, OrganizationTypeAdmin)
 admin.site.register(ClaimType, ClaimTypeAdmin)
+admin.site.register(ModerationStatus)
+admin.site.register(Moderator)

@@ -97,8 +97,11 @@ class Layer(models.Model):
 
 
 class Polygon(models.Model):
-    # TODO(vegasq) Let's pretend that Polygon represent
-    # building, but Polygon.organizations - list of offices.
+    """
+        Polygon represent building,
+        but Polygon.organizations - list of offices.
+    """
+
     polygon_id = models.IntegerField(primary_key=True)
     organizations = models.ManyToManyField(Organization)
     layer = models.ForeignKey(Layer)
@@ -114,7 +117,7 @@ class Polygon(models.Model):
         orgs = []
         polygon_claims = 0
         for org in self.organizations.all():
-            org_claims = org.claim_set.all().count()
+            org_claims = org.total_claims
             polygon_claims += org_claims
             orgs.append({'id': org.id,
                         'name': org.name,

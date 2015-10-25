@@ -7,6 +7,33 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
 
+class ModerationStatus(models.Model):
+    status_id = models.CharField(primary_key=True, max_length=155)
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.status_id
+
+
+class Moderator(models.Model):
+    """
+    Singleton model, where admin can choose
+    claims with wich state of moderation to show
+
+    """
+    show_claims = models.ManyToManyField(ModerationStatus)
+
+    class Meta:
+        verbose_name_plural = "Moderator"
+
+    def save(self, *args, **kwargs):
+        self.id = 1
+        super(Moderator, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+
 class OrganizationType(models.Model):
     # TODO(autogestion) This data (ORG_TYPES) could be moved to separate
     # json file and loads to DB by initiate_db command together with
@@ -34,25 +61,12 @@ class OrganizationType(models.Model):
     #     ("16", _("Міністерство аграрної політики та продовольства України")),
     #     ("17", _("Міністерство юстиції України")),
     # )
-    # org_type = models.CharField(choices=ORG_TYPES,
-    #                             max_length=10,
-    #                             default=ORG_TYPES[0][0],
-    #                             unique=True)
 
-    # Now for example we need to add election station type,
-    # so need to change source. Better if type would be parsed
-    # from json or add through admin
-    # TODO(vegasq) should we use AMENITY as keys here?
     type_id = models.CharField(primary_key=True, max_length=155)
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.type_id
-
-    # def __str__(self):
-    #     for org_type in self.ORG_TYPES:
-    #         if org_type[0] == str(self.org_type):
-    #             return org_type[1]
 
 
 class ClaimType(models.Model):
@@ -74,12 +88,16 @@ class Organization(models.Model):
     url = models.URLField(null=True, blank=True)
     org_type = models.ForeignKey(OrganizationType, null=True, blank=True)
 
+    def moderation_filter(self):
+        allowed_statuses = Moderator.objects.get(id=1).show_claims.all()
+        return self.claim_set.filter(moderation__in=allowed_statuses)
+
     @property
     def total_claims(self):
-        return self.claim_set.all().count()
+        return self.moderation_filter().count()
 
     def json_claims(self, limit=999):
-        claims = self.claim_set.all()
+        claims = self.moderation_filter()
 
         claims_list = []
 
@@ -126,3 +144,4 @@ class Claim(models.Model):
     complainer = models.ForeignKey(User, null=True, blank=True, default=None)
     claim_type = models.ForeignKey(ClaimType, null=True, blank=True,
                                    default=None)
+    moderation = models.ForeignKey(ModerationStatus, default='not_moderated')
