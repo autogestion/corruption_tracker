@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-17 10:54+0000\n"
+"POT-Creation-Date: 2015-10-24 14:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,11 +39,11 @@ msgstr "Англійська"
 msgid "Russian"
 msgstr "Московитська"
 
-#: corruption_tracker/settings.py:138
+#: corruption_tracker/settings.py:139
 msgid "Streets"
 msgstr ""
 
-#: corruption_tracker/settings.py:141
+#: corruption_tracker/settings.py:148
 msgid "Satellite"
 msgstr ""
 
@@ -105,7 +105,7 @@ msgstr "Увійти"
 #: templates/auth/login.html:17 templates/auth/login.html.py:19
 #: templates/base.html:63
 msgid "Username"
-msgstr "ПІБ службовця"
+msgstr "Юзернейм"
 
 #: templates/auth/login.html:24 templates/auth/login.html.py:25
 #: templates/base.html:66
@@ -183,4 +183,3 @@ msgstr "Показати всі скарги як тайли"
 #: templates/home.html:62
 msgid "Show all claims as table"
 msgstr "Показати всі скарги як таблицю"
-

@@ -8,8 +8,9 @@ class GeoJSONParser():
 
     @staticmethod
     def geojson_to_db(geo_json, return_instance=False):
-        layer_info = geo_json['ctracker_config']
 
+        # Create layer
+        layer_info = geo_json['ctracker_config']
         global_org_type = False
         if 'global_org_type' in layer_info:
             try:
@@ -42,8 +43,8 @@ class GeoJSONParser():
                 center=json.dumps(layer_info['center']))
             layer.save()
 
+        # Create polygons
         for feature in geo_json['features']:
-            # Create polygon
             try:
                 polygon = Polygon.objects.get(
                     polygon_id=feature['properties']['ID'])
@@ -58,6 +59,7 @@ class GeoJSONParser():
                     centroid=json.dumps([
                         feature['properties']["CEN_LAT"],
                         feature['properties']["CEN_LONG"]]),
+                    address=feature['properties']['ADDRESS'],
                     layer=layer)
                 polygon.save()
 

@@ -35,7 +35,6 @@ class Layer(models.Model):
     # def max_claims(self):
     #     return max([x.total_claims for x in self.polygon_set.all()])
 
-
     def color_spot(self, value, max_value):
         percent = value * 100 / max_value
 
@@ -105,6 +104,7 @@ class Polygon(models.Model):
     layer = models.ForeignKey(Layer)
     shape = models.CharField(max_length=2000)
     centroid = models.CharField(max_length=50, null=True, blank=True)
+    address = models.CharField(max_length=800, null=True, blank=True)
 
     @property
     def total_claims(self):
