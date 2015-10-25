@@ -18,7 +18,7 @@ RECAPTCHA_PUBLIC = ""
 #STATIC_ROOT = ''
 MEDIA_ROOT = 'media'
 
-USE_CACHING = False
+#USE_CACHING = False
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases

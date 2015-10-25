@@ -80,7 +80,10 @@ var AddPage = {
                     };
                   
                     AddPage.hide_processing();
-                }
+                },
+                error: function(data){
+                    console.log(data.responseText)
+                }                
             });
             return false;
         });

@@ -8,7 +8,7 @@ from claim.models import Claim, InCharge,\
 class ClaimAdmin(admin.ModelAdmin):
     list_display = ('id', 'organization', 'servant',
                     'claim_type', 'text', 'live',
-                    'moderation', 'created')
+                    'complainer', 'moderation', 'created')
     search_fields = ('organization', 'servant', 'text')
     list_filter = ('organization', 'created')
 
