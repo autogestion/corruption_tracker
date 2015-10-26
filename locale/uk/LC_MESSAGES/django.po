@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-24 14:04+0000\n"
+"POT-Creation-Date: 2015-10-25 13:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: claim/models.py:90
+#: claim/models.py:86
 msgid "Others"
 msgstr "Інше"
 
-#: claim/models.py:92
+#: claim/models.py:88
 msgid "Anon"
 msgstr "Анонім"
 
@@ -59,7 +59,7 @@ msgstr "Район"
 msgid "Country"
 msgstr ""
 
-#: templates/add_page.html:38 templates/base.html:31
+#: templates/add_page.html:38 templates/base.html:33
 msgid "Add claim"
 msgstr "Додати скаргу"
 
@@ -98,17 +98,17 @@ msgid "Send claim"
 msgstr "Відправити скаргу"
 
 #: templates/auth/login.html:11 templates/auth/login.html.py:36
-#: templates/base.html:71
+#: templates/base.html:73
 msgid "Login"
 msgstr "Увійти"
 
 #: templates/auth/login.html:17 templates/auth/login.html.py:19
-#: templates/base.html:63
+#: templates/base.html:65
 msgid "Username"
 msgstr "Юзернейм"
 
 #: templates/auth/login.html:24 templates/auth/login.html.py:25
-#: templates/base.html:66
+#: templates/base.html:68
 msgid "Password"
 msgstr "Пароль"
 
@@ -120,19 +120,19 @@ msgstr "Запам'ятати мене"
 msgid "Forget password?"
 msgstr ""
 
-#: templates/base.html:30
+#: templates/base.html:32
 msgid "Corruption map"
 msgstr "Карта корупції"
 
-#: templates/base.html:32
+#: templates/base.html:34
 msgid "Who is here?"
 msgstr "Хто тут?"
 
-#: templates/base.html:53
+#: templates/base.html:55
 msgid "Logout"
 msgstr "Вийти"
 
-#: templates/base.html:55
+#: templates/base.html:57
 msgid "Register"
 msgstr "Зареєструватися"
 
