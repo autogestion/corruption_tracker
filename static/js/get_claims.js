@@ -40,56 +40,66 @@ function get_name_by_id (org_id) {
 
 
 function select_building (org_id) {
-    window.location.hash = "organization=" + org_id;  
+    window.location.hash = "organization=" + org_id; 
 
-    $.get("/get_claims/"  + org_id + "/", function(data) {
+        $.ajax({
+            type: "GET",
+            url: "/get_claims/"  + org_id + "/",
+            success: function(data){
+                var messages = "";
+                var template,
+                    message,
+                    template_button;
 
-        var messages = "";
-        var template,
-            message,
-            template_button;
+                template = document.getElementById('claim_template_global').innerHTML;
+                template_button = document.getElementById('show_all_button_template').innerHTML;
+                template_button_grid = document.getElementById('show_all_button_template_grid').innerHTML;
 
-        template = document.getElementById('claim_template_global').innerHTML;
-        template_button = document.getElementById('show_all_button_template').innerHTML;
-        template_button_grid = document.getElementById('show_all_button_template_grid').innerHTML;
+                var records = [];
+                var record;
+                var count = 0
+                for (var i = data.length - 1; i >= 0; i--) {
 
-        var records = [];
-        var record;
-        var count = 0
-        for (var i = data.length - 1; i >= 0; i--) {
+                    if (count < 4) {
+                        message = template.replace('%complainer%', data[i]['complainer']);
+                        message = message.replace('%servant%', data[i]['servant']);
+                        message = message.replace('%claim_type%', data[i]['claim_type']);
+                        message = message.replace('%text%', data[i]['text']);
+                        message = message.replace('%created%', data[i]['created']);
 
-            if (count < 4) {
-                message = template.replace('%complainer%', data[i]['complainer']);
-                message = message.replace('%servant%', data[i]['servant']);
-                message = message.replace('%claim_type%', data[i]['claim_type']);
-                message = message.replace('%text%', data[i]['text']);
-                message = message.replace('%created%', data[i]['created']);
-                messages += message;
-                count += 1
-            } 
-            record = {recid: i+1, complainer: data[i]['complainer'], servant: data[i]['servant'], claim_type: data[i]['claim_type'],
-                        text: data[i]['text'], created: data[i]['created']};
-            records.push(record); 
-        }
+                        if (data[i]['claim_icon']) {
+                            message = message.replace('<div style="float: right"></div>',  '<div style ="float: right"><img src="' + data[i]['claim_icon'] + '" height="50em" width="50em"></div>');
+                            console.log (message);
+                        }
+                        messages += message;
+                        count += 1
+                    } 
+                    record = {recid: i+1, complainer: data[i]['complainer'], servant: data[i]['servant'], claim_type: data[i]['claim_type'],
+                                text: data[i]['text'], created: data[i]['created']};
+                    records.push(record); 
+                }
 
-        w2ui.grid.records = records;
+                w2ui.grid.records = records;
 
-        template_button = template_button.replace('%org_id%', org_id);
-        if (messages == "") {
-            messages = 'No claims for this polygon';
-            template_button= '';
-            template_button_grid = ''};            
-        $("#target").html(messages + template_button_grid + template_button);
+                template_button = template_button.replace('%org_id%', org_id);
+                if (messages == "") {
+                    messages = 'No claims for this polygon';
+                    template_button= '';
+                    template_button_grid = ''};            
+                $("#target").html(messages + template_button_grid + template_button);
 
-        for (var i = places.length - 1; i >= 0; i--) {
-            if (places[i].data === org_id){
-                $('#org_id').val(places[i].value);
-                return;
-            }
-        };
-    });
+                for (var i = places.length - 1; i >= 0; i--) {
+                    if (places[i].data === org_id){
+                        $('#org_id').val(places[i].value);
+                        return;
+                    }
+                };
+            },
+            error: function(data){
+                console.log(data.responseText)
+            }                
+        });
 }
-
 
 function w2ui_popup() {
     w2popup.open({
