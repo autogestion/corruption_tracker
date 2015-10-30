@@ -105,7 +105,7 @@ class Polygon(models.Model):
     polygon_id = models.IntegerField(primary_key=True)
     organizations = models.ManyToManyField(Organization)
     layer = models.ForeignKey(Layer)
-    shape = models.CharField(max_length=2000)
+    shape = models.CharField(max_length=10000)
     centroid = models.CharField(max_length=50, null=True, blank=True)
     address = models.CharField(max_length=800, null=True, blank=True)
 
