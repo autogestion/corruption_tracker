@@ -6,13 +6,21 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
+from multiselectfield import MultiSelectField
 
-class ModerationStatus(models.Model):
-    status_id = models.CharField(primary_key=True, max_length=155)
-    name = models.CharField(max_length=255)
 
-    def __str__(self):
-        return self.status_id
+# class ModerationStatus(models.Model):
+#     status_id = models.CharField(primary_key=True, max_length=155)
+#     name = models.CharField(max_length=255)
+
+#     def __str__(self):
+#         return self.status_id
+
+
+STATUSES = (('not_moderated', 'Not moderated'),
+            ('suspicious', 'Suspicious'),
+            ('anonymous', 'From anonymous'),
+            ('valid', 'Moderated'))
 
 
 class Moderator(models.Model):
@@ -21,7 +29,10 @@ class Moderator(models.Model):
     claims with wich state of moderation to show
 
     """
-    show_claims = models.ManyToManyField(ModerationStatus)
+
+    show_claims = MultiSelectField(choices=STATUSES,
+        default='not_moderated,suspicious,anonymous,valid')
+    # show_claims = models.ManyToManyField(ModerationStatus)
 
     # memcached settings
     use_memcached = models.BooleanField(default=False)
@@ -56,7 +67,7 @@ class ClaimType(models.Model):
     """
     name = models.CharField(max_length=555)
     org_type = models.ManyToManyField(OrganizationType)
-    icon = models.FileField(upload_to = 'icons/', null=True, blank=True)
+    icon = models.FileField(upload_to='icons/', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -68,7 +79,7 @@ class Organization(models.Model):
     org_type = models.ForeignKey(OrganizationType, null=True, blank=True)
 
     def moderation_filter(self):
-        allowed_statuses = Moderator.objects.get(id=1).show_claims.all()
+        allowed_statuses = Moderator.objects.get(id=1).show_claims
         return self.claim_set.filter(moderation__in=allowed_statuses)
 
     @property
@@ -125,32 +136,6 @@ class Claim(models.Model):
     complainer = models.ForeignKey(User, null=True, blank=True, default=None)
     claim_type = models.ForeignKey(ClaimType, null=True, blank=True,
                                    default=None)
-    moderation = models.ForeignKey(ModerationStatus, default='not_moderated')
-
-
-# TODO(autogestion) This data (ORG_TYPES) could be moved to separate
-# json file and loads to DB by initiate_db command together with
-# geojson wich contains organizations of this type
-
-# ORG_TYPES = (
-#     ("0", _("Unknown")),
-#     ("1", _("Міністерство фінансів України")),
-#     ("2", _("Міністерство соціальної політики України")),
-#     ("3", _("Міністерство регіонального розвитку, "
-#             "будівництва та житлово-комунального господарства України")),
-#     ("4", _("Міністерство охорони здоров'я України ")),
-#     ("5", _("Міністерство освіти і науки України")),
-#     ("6", _("Міністерство оборони України")),
-#     ("7", _("Міністерство молоді та спорту України")),
-#     ("8", _("Міністерство культури України")),
-#     ("9", _("Міністерство інфраструктури України")),
-#     ("10", _("Міністерство інформаційної політики України")),
-#     ("11", _("Міністерство закордонних справ України")),
-#     ("12", _("Міністерство енергетики та вугільної промисловості "
-#              "України")),
-#     ("13", _("Міністерство економічного розвитку і торгівлі України")),
-#     ("14", _("Міністерство екології та природних ресурсів України")),
-#     ("15", _("Міністерство внутрішніх справ України")),
-#     ("16", _("Міністерство аграрної політики та продовольства України")),
-#     ("17", _("Міністерство юстиції України")),
-# )
+    # moderation = models.ForeignKey(ModerationStatus, default='not_moderated')
+    moderation = models.CharField(choices=STATUSES, max_length=50,
+                                  default='not_moderated')

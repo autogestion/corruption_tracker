@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from claim.models import Claim, InCharge,\
-    Organization, OrganizationType, ClaimType,\
-    ModerationStatus, Moderator
+    Organization, OrganizationType, ClaimType, Moderator
+    # ModerationStatus,
 
 
 class ClaimAdmin(admin.ModelAdmin):
@@ -39,5 +39,5 @@ admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(InCharge, InChargeAdmin)
 admin.site.register(OrganizationType, OrganizationTypeAdmin)
 admin.site.register(ClaimType, ClaimTypeAdmin)
-admin.site.register(ModerationStatus)
+# admin.site.register(ModerationStatus)
 admin.site.register(Moderator)

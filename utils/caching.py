@@ -2,12 +2,13 @@ import time
 
 from django.http import HttpResponse
 from django.conf import settings
-from claim.models import Moderator, ModerationStatus, Claim
+# from claim.models import Moderator, ModerationStatus, Claim
+from claim.models import Moderator, Claim
 
 from utils.common import get_client_ip
 
 moderator = Moderator.objects.get(id=1)
-suspicous = ModerationStatus.objects.get(status_id="suspicious")
+# suspicous = ModerationStatus.objects.get(status_id="suspicious")
 
 
 class CachedRequests(object):
@@ -63,7 +64,7 @@ def caching(view):
                         complainer=request.user).\
                         order_by('-created')[:moderator.claims_per_hour]
                     for claim in claims_to_mark:
-                        claim.moderation = suspicous
+                        claim.moderation = 'suspicous'
                         claim.save()
 
                 return HttpResponse(status=403)

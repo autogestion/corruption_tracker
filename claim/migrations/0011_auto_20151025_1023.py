@@ -48,6 +48,7 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=False),
         ),
         migrations.RunPython(run_initial),
+        
         migrations.AddField(
             model_name='claim',
             name='moderation',
