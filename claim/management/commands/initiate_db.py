@@ -1,9 +1,9 @@
 import os
 
 from django.core.management.base import BaseCommand
+from django.core.management import call_command
 from django.conf import settings
 
-# from claim.models import OrganizationType
 from utils.common import get_geojson_file
 from utils.geoparser import GeoJSONParser
 
@@ -26,3 +26,5 @@ class Command(BaseCommand):
                 geo_json = get_geojson_file(os.path.join(
                     settings.INIT_GEOJSON_FOLDER, geo_json_file))
                 GeoJSONParser.geojson_to_db(geo_json)
+
+            call_command('loaddata', 'initial_data')

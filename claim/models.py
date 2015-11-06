@@ -9,18 +9,10 @@ from django.utils.translation import ugettext as _
 from multiselectfield import MultiSelectField
 
 
-# class ModerationStatus(models.Model):
-#     status_id = models.CharField(primary_key=True, max_length=155)
-#     name = models.CharField(max_length=255)
-
-#     def __str__(self):
-#         return self.status_id
-
-
-STATUSES = (('not_moderated', 'Not moderated'),
-            ('suspicious', 'Suspicious'),
-            ('anonymous', 'From anonymous'),
-            ('valid', 'Moderated'))
+STATUSES = (('not_moderated', _('Not moderated')),
+            ('suspicious', _('Suspicious')),
+            ('anonymous', _('From anonymous')),
+            ('valid', _('Moderated')))
 
 
 class Moderator(models.Model):
@@ -32,7 +24,6 @@ class Moderator(models.Model):
 
     show_claims = MultiSelectField(choices=STATUSES,
         default='not_moderated,suspicious,anonymous,valid')
-    # show_claims = models.ManyToManyField(ModerationStatus)
 
     # memcached settings
     use_memcached = models.BooleanField(default=False)
@@ -71,6 +62,9 @@ class ClaimType(models.Model):
 
     def __str__(self):
         return self.name
+
+    def linked_org_types(self):
+        return ','.join([x.type_id for x in self.org_type.all()])
 
 
 class Organization(models.Model):

@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from claim.models import Claim, InCharge,\
     Organization, OrganizationType, ClaimType, Moderator
-    # ModerationStatus,
 
 
 class ClaimAdmin(admin.ModelAdmin):
@@ -14,7 +13,7 @@ class ClaimAdmin(admin.ModelAdmin):
 
 
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'org_type', 'total_claims')
+    list_display = ('id', 'name', 'org_type', 'total_claims', 'url')
     search_fields = ('name', 'org_type')
     list_filter = ('org_type',)
 
@@ -31,7 +30,8 @@ class OrganizationTypeAdmin(admin.ModelAdmin):
 
 
 class ClaimTypeAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'linked_org_types')
+    search_fields = ('name',)
 
 
 admin.site.register(Claim, ClaimAdmin)
@@ -39,5 +39,4 @@ admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(InCharge, InChargeAdmin)
 admin.site.register(OrganizationType, OrganizationTypeAdmin)
 admin.site.register(ClaimType, ClaimTypeAdmin)
-# admin.site.register(ModerationStatus)
 admin.site.register(Moderator)
