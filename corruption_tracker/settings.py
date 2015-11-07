@@ -157,12 +157,6 @@ LEAFLET_CONFIG = {
 }
 
 MEMCACHED_HOST = ('127.0.0.1', 11211)
-# For those who develop on windows and not able to beat the drum
-# USE_CACHING = True
-
-# How much claims can be sent from uniq IP during CLAIM_TIMEOUT_PERIOD.
-CLAIMS_PER_HOUR = 3
-CLAIM_TIMEOUT_PERIOD = 3600
 
 try:
     from .local_settings import *

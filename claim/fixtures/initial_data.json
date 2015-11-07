@@ -1,6 +1,3 @@
-[{"model": "claim.moderationstatus", "pk": "not_moderated", "fields": {"name": "Claim is not moderated"}}, 
-{"model": "claim.moderationstatus", "pk": "suspicious", "fields": {"name": "Claim is suspicious"}}, 
-{"model": "claim.moderationstatus", "pk": "valid", "fields": {"name": "Claim is ok"}},
-{"pk": 1, "fields": {"use_memcached": false, "claims_per_hour": 3, 
-"show_claims": ["not_moderated", "suspicious", "valid"], "memcached_timeout": 3600}, "model": "claim.moderator"}]
-
+[{"fields": {"show_claims": "not_moderated,suspicious,anonymous,valid", 
+"claims_per_hour": 3, "memcached_timeout": 3600, "use_memcached": false}, 
+"pk": 1, "model": "claim.moderator"}]

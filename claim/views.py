@@ -58,7 +58,8 @@ def add_claim(request, deny=False):
             organization=Organization.objects.get(
                 id=request.POST.get('org_id', False)),
             claim_type=ClaimType.objects.get(
-                id=request.POST.get('claim_type', False))
+                id=request.POST.get('claim_type', False)),
+            moderation=user and 'not_moderated' or 'anonymous',
         )
         claim.save()
         # Correct insert code
