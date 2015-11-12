@@ -9,13 +9,6 @@ from django.contrib.auth import authenticate, login, logout
 from geoinfo.models import Layer
 
 
-def home(request):
-    resp_dict = Layer.objects.get(is_default=True).generate_json()
-    resp_dict['page'] = 'home'
-
-    return render(request, 'home.html', resp_dict)
-
-
 def add_page(request):
     resp_dict = Layer.objects.get(is_default=True).generate_json(add=True)
     resp_dict['page'] = 'add_page'
@@ -25,6 +18,13 @@ def add_page(request):
     resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
 
     return render(request, 'add_page.html', resp_dict)
+
+
+def map(request):
+    resp_dict = Layer.objects.get(is_default=True).generate_json()
+    resp_dict['page'] = 'map'
+
+    return render(request, 'home.html', resp_dict)
 
 
 def about(request):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-25 13:10+0000\n"
+"POT-Creation-Date: 2015-11-09 20:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,27 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: claim/models.py:86
+#: claim/models.py:12
+msgid "Not moderated"
+msgstr ""
+
+#: claim/models.py:13
+msgid "Suspicious"
+msgstr ""
+
+#: claim/models.py:14
+msgid "From anonymous"
+msgstr ""
+
+#: claim/models.py:15
+msgid "Moderated"
+msgstr ""
+
+#: claim/models.py:91
 msgid "Others"
 msgstr ""
 
-#: claim/models.py:88
+#: claim/models.py:95
 msgid "Anon"
 msgstr ""
 
@@ -57,7 +73,7 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: templates/add_page.html:38 templates/base.html:33
+#: templates/add_page.html:38 templates/base.html:32
 msgid "Add claim"
 msgstr ""
 
@@ -115,7 +131,7 @@ msgstr ""
 msgid "Forget password?"
 msgstr ""
 
-#: templates/base.html:32
+#: templates/base.html:33
 msgid "Corruption map"
 msgstr ""
 
@@ -139,19 +155,19 @@ msgstr ""
 msgid "Export to CSV"
 msgstr ""
 
-#: templates/claims.html:111 templates/home.html:51
+#: templates/claims.html:111 templates/home.html:52
 msgid "Servant"
 msgstr ""
 
-#: templates/claims.html:112 templates/home.html:50
+#: templates/claims.html:112 templates/home.html:51
 msgid "Complainer"
 msgstr ""
 
-#: templates/claims.html:113 templates/home.html:52
+#: templates/claims.html:113 templates/home.html:53
 msgid "Claim type"
 msgstr ""
 
-#: templates/claims.html:114 templates/home.html:54
+#: templates/claims.html:114 templates/home.html:55
 msgid "Created"
 msgstr ""
 
@@ -165,14 +181,14 @@ msgid ""
 "organization name in searchbox."
 msgstr ""
 
-#: templates/home.html:53
+#: templates/home.html:54
 msgid "Claim text"
 msgstr ""
 
-#: templates/home.html:59
+#: templates/home.html:60
 msgid "Show all claims as tiles"
 msgstr ""
 
-#: templates/home.html:62
+#: templates/home.html:63
 msgid "Show all claims as table"
 msgstr ""

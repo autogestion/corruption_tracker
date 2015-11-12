@@ -29,8 +29,8 @@
             <a class="navbar-brand" href="#"><img src="{% static "img/logo.png" %}" height="42" width="42"></a>
         </div>
         <ul class="nav navbar-nav">
-            <li {% if page == 'home' %} class="active"{% endif %}><a href="{% url 'home' %}">{% trans "Corruption map" %}</a></li>
             <li {% if page == 'add_page' %} class="active"{% endif %}><a href="{% url 'add_page' %}">{% trans "Add claim" %}</a></li>
+            <li {% if page == 'map' %} class="active"{% endif %}><a href="{% url 'map' %}">{% trans "Corruption map" %}</a></li>
             <li {% if page == 'about' %} class="active"{% endif %}><a href="{% url 'about' %}">{% trans "Who is here?" %}</a></li>
         </ul>
 
@@ -89,7 +89,7 @@
           <div class="container"><a href="https://github.com/autogestion/corruption_tracker" target="_blank">Powered by Corruption tracker</a>
         </div>
     </div> -->
-    <div class="github-fork-ribbon-wrapper left-bottom">
+    <div class="github-fork-ribbon-wrapper left-bottom hidden-xs">
         <div class="github-fork-ribbon">
             <a href="https://github.com/autogestion/corruption_tracker" target="_blank">Fork me on GitHub</a>
         </div>
