@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.gis',
 
     'allauth',
     'allauth.account',
@@ -130,13 +131,17 @@ LOGIN_REDIRECT_URL = '/'
 # Could be switched to another folder with geojsons
 INIT_GEOJSON_FOLDER = os.path.join(BASE_DIR, 'init_geo_data')
 
-
 LEAFLET_CONFIG = {
     # Kharkiv
     # 'DEFAULT_CENTER': (50.059605, 36.201421),
     # 'DEFAULT_ZOOM': 14,
     'RESET_VIEW': False,
-    'TILES': [(_('Streets'), 'http://server.arcgisonline.com/ArcGIS/rest/'
+    'TILES': [(_('Hydda'),  'http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png',
+                             {'attribution':
+                              'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                            }),
+
+              (_('Streets'), 'http://server.arcgisonline.com/ArcGIS/rest/'
                              'services/World_Street_Map/MapServer/tile/'
                              '{z}/{y}/{x}',
                              {'attribution':

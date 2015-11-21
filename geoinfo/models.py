@@ -1,6 +1,6 @@
 import json
 
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 
@@ -105,9 +105,11 @@ class Polygon(models.Model):
     polygon_id = models.IntegerField(primary_key=True)
     organizations = models.ManyToManyField(Organization)
     layer = models.ForeignKey(Layer)
-    shape = models.CharField(max_length=10000)
+    # shape = models.CharField(max_length=10000)
+    shape = models.PolygonField()
     centroid = models.CharField(max_length=50, null=True, blank=True)
     address = models.CharField(max_length=800, null=True, blank=True)
+    objects = models.GeoManager()
 
     @property
     def total_claims(self):
@@ -124,7 +126,7 @@ class Polygon(models.Model):
                          'claims_count': org_claims})
 
         # reverse coordinates for manualy adding polgygons
-        geometry = json.loads(self.shape)
+        geometry = json.loads(self.shape.json)
         [x.reverse() for x in geometry["coordinates"][0]]
         centroid = json.loads(self.centroid)
         centroid.reverse()
