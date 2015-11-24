@@ -12,7 +12,8 @@
         (function($) {
             $('input[name="export_layer"]').click(function() {
                 $("body").append('<iframe src="/export_layer/{{ original.id }}/" style="display: none;" ></iframe>');
-        })(django.jQuery);
+            });
+        })(django.jQuery)
     </script>    
 {% endif %}
 
