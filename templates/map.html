@@ -8,7 +8,7 @@
     {% leaflet_css %}
     <script type="text/javascript">
         /* To prevent multiple inserts of this var lets keep it in global NS */
-        var buildings = {{ buildings|default:"[]" }};
+        var polygons = {{ polygons|default:"[]" }};
         var places = {{places}};    
     </script>
     <script src="{% static "js/map_init.js" %}"></script>

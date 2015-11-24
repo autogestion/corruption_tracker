@@ -44,5 +44,10 @@ urlpatterns = [
     url(r'^get_claims/(?P<org_id>[\w.]{0,256})/$',
         claim_views.get_claims, name="get_claims"),
     url(r'^add_claim$', claim_views.add_claim, name="add_claim"),
-    url(r'^claims/(?P<org_id>[\w.]{0,256})/$', claim_views.claims, name="claims")
+    url(r'^claims/(?P<org_id>[\w.]{0,256})/$',
+        claim_views.claims, name="claims"),
+
+    url(r'^export_layer/(?P<layer_id>[\w.]{0,256})/$',
+        'geoinfo.views.export_layer', name="export_layer"),
+
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

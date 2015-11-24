@@ -73,7 +73,7 @@ class Layer(models.Model):
         }
         geo_json['features'] = data
 
-        responce = {'buildings': mark_safe(json.dumps(geo_json)),
+        responce = {'polygons': mark_safe(json.dumps(geo_json)),
                     'places': mark_safe(json.dumps(places))}
 
         if add:
