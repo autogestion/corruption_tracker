@@ -1,6 +1,6 @@
 import json
 
-from django.contrib import admin
+from django.contrib.gis import admin
 from django import forms
 # Register your models here.
 from geoinfo.models import Layer, Polygon
@@ -38,7 +38,7 @@ class LayerAdmin(admin.ModelAdmin):
     list_filter = ('layer_type', 'zoom')
 
 
-class PolygonAdmin(admin.ModelAdmin):
+class PolygonAdmin(admin.OSMGeoAdmin):
     list_display = ('polygon_id', 'layer', 'organization_count', 'address')
     search_fields = ('polygon_id', 'address')
     list_filter = ('layer',)

@@ -11,6 +11,7 @@ Test instance available on http://test.acts.pp.ua:8000/
 Prerequisites
 
     Python 3.4
+    PostgreSQL + PostGIS
     Memcached
 
 ## Quickstart
@@ -32,6 +33,7 @@ Create a default local settings file
 
 Create the tables
 
+    python manage.py migrate auth (will fail with error, thats ok, because of bug in django 1.8)
     python manage.py syncdb
     python manage.py initiate_db
 

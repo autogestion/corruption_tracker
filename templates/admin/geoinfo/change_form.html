@@ -1,0 +1,20 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+
+{% block field_sets %}
+{{ block.super }}
+
+{% if opts.model_name == 'layer' and original %}
+    <div class="submit-row">
+       <input type="button" value="{% trans 'Export layer as json' %}" name="export_layer" style="float:left"/>     
+    </div>
+    <script type="text/javascript">
+        (function($) {
+            $('input[name="export_layer"]').click(function() {
+                $("body").append('<iframe src="/export_layer/{{ original.id }}/" style="display: none;" ></iframe>');
+            });
+        })(django.jQuery)
+    </script>    
+{% endif %}
+
+{% endblock %}

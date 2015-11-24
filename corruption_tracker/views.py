@@ -24,7 +24,7 @@ def map(request):
     resp_dict = Layer.objects.get(is_default=True).generate_json()
     resp_dict['page'] = 'map'
 
-    return render(request, 'home.html', resp_dict)
+    return render(request, 'map.html', resp_dict)
 
 
 def about(request):

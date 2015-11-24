@@ -8,33 +8,33 @@ function main_map_init (map, options) {
     // Add GeoJSON layer
     var marker, org_row, orgs_set, org_rows;
 
-    // Add building markers with popups to buildings.
-    for (var i = buildings['features'].length - 1; i >= 0; i--) {
+    // Add building markers with popups to polygons.
+    for (var i = polygons['features'].length - 1; i >= 0; i--) {
 
         var myIcon = L.divIcon({
             className: 'icon_with_number',
-            html: buildings['features'][i]['properties']["polygon_claims"]
+            html: polygons['features'][i]['properties']["polygon_claims"]
         }); 
 
         marker = L.marker(
             [
-                buildings['features'][i]['properties']["centroid"][0],
-                buildings['features'][i]['properties']["centroid"][1],
+                polygons['features'][i]['properties']["centroid"][0],
+                polygons['features'][i]['properties']["centroid"][1],
             ],
             {icon: myIcon}
         )
 
-        orgs_set = buildings['features'][i]['properties']["organizations"]
+        orgs_set = polygons['features'][i]['properties']["organizations"]
 
-        var polygon = L.polygon(buildings['features'][i]["geometry"]["coordinates"]);
-        polygon.centroid = buildings['features'][i]['properties']["centroid"]
+        var polygon = L.polygon(polygons['features'][i]["geometry"]["coordinates"]);
+        polygon.centroid = polygons['features'][i]['properties']["centroid"]
 
         if (orgs_set.length==1){       
             polygon.organization = orgs_set[0]['id']
         }
 
         polygon.setStyle({
-            fillColor: buildings['features'][i]['properties']['color'],
+            fillColor: polygons['features'][i]['properties']['color'],
             weight: 2,
             color: 'blue',
             opacity: 0.3,
@@ -44,7 +44,7 @@ function main_map_init (map, options) {
         org_rows = []
         for (var ii = orgs_set.length - 1; ii >= 0; ii--) {
             org_row = document.createElement('a');
-            org_row.href = '#' + buildings['features'][i]['properties']["ID"];
+            org_row.href = '#' + polygons['features'][i]['properties']["ID"];
             org_row.id = orgs_set[ii]['id'];            
             org_row.innerHTML = orgs_set[ii]['name'] + ': &nbsp;&nbsp;' + orgs_set[ii]['claims_count'];
 
@@ -77,7 +77,7 @@ function main_map_init (map, options) {
                     fillOpacity: 0.3
             });
             };
-            map.setView(this.centroid, buildings['config']['zoom'] + 1);
+            map.setView(this.centroid, polygons['config']['zoom'] + 1);
             this.setStyle({
                 weight: 6,
                 color: 'green',
@@ -93,6 +93,6 @@ function main_map_init (map, options) {
             };
         });  
     };
-    map.setView(buildings['config']['center'], buildings['config']['zoom']);  
+    map.setView(polygons['config']['center'], polygons['config']['zoom']);  
     $_selectedPolygon = null;
 }

@@ -9,7 +9,7 @@
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <script type="text/javascript">
         /* To prevent multiple inserts of this var lets keep it in global NS */
-        var buildings = {{ buildings|default:"[]" }};
+        var polygons = {{ polygons|default:"[]" }};
         var places = {{places}};   
         var claim_types = {{claim_types}} 
         {% if not user.is_authenticated %}
