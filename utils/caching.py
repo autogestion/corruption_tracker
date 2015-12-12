@@ -7,8 +7,9 @@ from claim.models import Moderator, Claim
 
 from utils.common import get_client_ip
 
-moderator = Moderator.objects.get(id=1)
-# suspicous = ModerationStatus.objects.get(status_id="suspicious")
+
+def get_moderator():
+    return Moderator.objects.get(id=1)
 
 
 class CachedRequests(object):
@@ -17,7 +18,7 @@ class CachedRequests(object):
         return cls()
 
     def __init__(self):
-        self.moderator = moderator
+        self.moderator = get_moderator()
         if self.moderator.use_memcached:
             # if settings.USE_CACHING:
             # For those who develop on windows and not able to beat the drum
@@ -56,13 +57,13 @@ def caching(view):
     # Check if from this IP claim creation is allowed.
     def _decorated(*args, **kwargs):
         # if settings.USE_CACHING:
-        if moderator.use_memcached:
+        if get_moderator().use_memcached:
             request = args[0]
             if not CachedRequests.get().can_i_create_claim(request):
                 if not request.user.is_anonymous():
                     claims_to_mark = Claim.objects.filter(
                         complainer=request.user).\
-                        order_by('-created')[:moderator.claims_per_hour]
+                        order_by('-created')[:get_moderator().claims_per_hour]
                     for claim in claims_to_mark:
                         claim.moderation = 'suspicous'
                         claim.save()

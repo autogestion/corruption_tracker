@@ -14,29 +14,33 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url, static
-from django.contrib import admin
 from django.conf import settings
+from django.contrib import admin
+from django.contrib.auth.views import logout
+from django.views.static import serve
+
+
 from claim import views as claim_views
-from . import views
+from geoinfo import views as geo_views
+from . import views as main_vies
 
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
 
-    url(r'^static/(?P<path>.*)$',
-        'django.views.static.serve',
+    url(r'^static/(?P<path>.*)$', serve,
         {'document_root': settings.STATIC_ROOT}),
 
-    url(r'^login/$', 'corruption_tracker.views.login_user',
+    url(r'^login/$', main_vies.login_user,
         name='login'),
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',
+    url(r'^accounts/logout/$', logout,
         {'next_page': '/'}),
     url(r'^accounts/', include('allauth.urls')),
 
-    url(r'^$', views.add_page, name="add_page"),
-    url(r'^map$', views.map, name="map"),
-    url(r'^about$', views.about, name="about"),
+    url(r'^$', main_vies.add_page, name="add_page"),
+    url(r'^map$', main_vies.map, name="map"),
+    url(r'^about$', main_vies.about, name="about"),
 
     # AJAX calls
     url(r'^get_claims/(?P<org_id>[\w.]{0,256})/limit=(?P<limit>\d+)/$',
@@ -48,6 +52,6 @@ urlpatterns = [
         claim_views.claims, name="claims"),
 
     url(r'^export_layer/(?P<layer_id>[\w.]{0,256})/$',
-        'geoinfo.views.export_layer', name="export_layer"),
+        geo_views.export_layer, name="export_layer"),
 
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

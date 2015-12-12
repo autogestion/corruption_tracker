@@ -1,5 +1,5 @@
-CREATE DATABASE ctracter;
-\c ctracter;
+CREATE DATABASE ctracker;
+\c ctracker;
 CREATE EXTENSION postgis;
 CREATE USER destructor WITH PASSWORD 'password';
 GRANT ALL PRIVILEGES ON DATABASE ctracter TO destructor;

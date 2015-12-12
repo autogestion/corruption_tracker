@@ -33,13 +33,14 @@ class LayerForm(forms.ModelForm):
 class LayerAdmin(admin.ModelAdmin):
     form = LayerForm
     list_display = ('name', 'layer_type', 'is_default',
-                    'zoom', 'center')
+                    'zoom', 'center', 'higher')
     search_fields = ('name',)
     list_filter = ('layer_type', 'zoom')
 
 
 class PolygonAdmin(admin.OSMGeoAdmin):
-    list_display = ('polygon_id', 'layer', 'organization_count', 'address')
+    list_display = ('polygon_id', 'layer', 'organization_count',
+                    'address', 'centroid')
     search_fields = ('polygon_id', 'address')
     list_filter = ('layer',)
 
