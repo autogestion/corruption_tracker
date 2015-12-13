@@ -31,6 +31,9 @@ class Layer(models.Model):
     zoom = models.IntegerField()
     center = models.CharField(max_length=50)
 
+    higher = models.OneToOneField('Polygon', null=True, blank=True,
+                                  related_name='upper_level')
+
     # @property
     # def max_claims(self):
     #     return max([x.total_claims for x in self.polygon_set.all()])
@@ -102,10 +105,9 @@ class Polygon(models.Model):
         but Polygon.organizations - list of offices.
     """
 
-    polygon_id = models.IntegerField(primary_key=True)
-    organizations = models.ManyToManyField(Organization)
+    polygon_id = models.CharField(max_length=50, primary_key=True)
+    organizations = models.ManyToManyField(Organization, null=True, blank=True)
     layer = models.ForeignKey(Layer)
-    # shape = models.CharField(max_length=10000)
     shape = models.PolygonField()
     centroid = models.CharField(max_length=50, null=True, blank=True)
     address = models.CharField(max_length=800, null=True, blank=True)

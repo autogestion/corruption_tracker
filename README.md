@@ -33,8 +33,12 @@ Create a default local settings file
 
 Create the tables
 
-    python manage.py migrate auth (will fail with error, thats ok, because of bug in django 1.8)
-    python manage.py syncdb
+    PostgreSQL instructions in db_creation.txt
+
+    python manage.py makemigrations claim
+    python manage.py makemigrations geoinfo
+    python manage.py migrate
+    python manage.py createsuperuser
     python manage.py initiate_db
 
 Start the server
