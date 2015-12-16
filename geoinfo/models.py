@@ -13,18 +13,27 @@ class Layer(models.Model):
         Is a collection of polygons, united on the
         basis of type and proximity
     """
-    ORGANIZATION = 0
-    DISTRICT = 1
-    COUNTRY = 2
+
+    rn = 0
+    dsc = 1
+    towdc = 2
+    house = 3
+    # ORGANIZATIONS = 0
+    # DISTRICTS = 1
+    # REGIONS = 2
     LAYER_TYPES = (
-        (ORGANIZATION, _("Organization")),
-        (DISTRICT, _("District")),
-        (COUNTRY, _("Country")),
+        (rn, _("Regions"))
+        (dsc, _("District names or cities"))
+        (towdc, _("Towns or districts of the city"))
+        (house, _("Houses"))
+        # (ORGANIZATIONS, _("Organizations")),
+        # (DISTRICTS, _("Districts")),
+        # (REGIONS, _("Regions")),
     )
 
     name = models.CharField(max_length=250, unique=True)
     layer_type = models.IntegerField(choices=LAYER_TYPES,
-                                     default=ORGANIZATION)
+                                     default=ORGANIZATIONS)
     parse_file = models.BooleanField(default=False)
     json_file = models.FileField(null=True, blank=True, upload_to='geojsons')
     is_default = models.BooleanField(default=False)
@@ -106,11 +115,12 @@ class Polygon(models.Model):
     """
 
     polygon_id = models.CharField(max_length=50, primary_key=True)
-    organizations = models.ManyToManyField(Organization, null=True, blank=True)
+    organizations = models.ManyToManyField(Organization)
     layer = models.ForeignKey(Layer)
     shape = models.PolygonField()
     centroid = models.CharField(max_length=50, null=True, blank=True)
     address = models.CharField(max_length=800, null=True, blank=True)
+
     objects = models.GeoManager()
 
     @property
