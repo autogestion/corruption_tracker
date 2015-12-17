@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
     # 'allauth.socialaccount.providers.facebook',
+    'rest_framework',
 
 
     'leaflet',
@@ -136,9 +137,11 @@ LEAFLET_CONFIG = {
     # 'DEFAULT_CENTER': (50.059605, 36.201421),
     # 'DEFAULT_ZOOM': 14,
     'RESET_VIEW': False,
-    'TILES': [(_('Hydda'),  'http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png',
-                             {'attribution':
-                              'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    'TILES': [(_('Hydda'), 'http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png',
+                            {'attribution':
+                            'Tiles courtesy of <a href="http://openstreetmap.se/" '
+                            'target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; '
+                            '<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                             }),
 
               (_('Streets'), 'http://server.arcgisonline.com/ArcGIS/rest/'
@@ -161,7 +164,19 @@ LEAFLET_CONFIG = {
 
 }
 
+
 MEMCACHED_HOST = ('127.0.0.1', 11211)
+
+
+# REST_FRAMEWORK = {
+#     # Use Django's standard `django.contrib.auth` permissions,
+#     # or allow read-only access for unauthenticated users.
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+#     ]
+# }
+
+
 
 try:
     from .local_settings import *

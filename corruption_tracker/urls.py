@@ -29,6 +29,9 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
 
+    url(r'^api-auth/', include('rest_framework.urls',
+        namespace='rest_framework')),
+
     url(r'^static/(?P<path>.*)$', serve,
         {'document_root': settings.STATIC_ROOT}),
 
