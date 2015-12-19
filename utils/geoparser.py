@@ -1,6 +1,6 @@
 import json
 
-from geoinfo.models import Layer, Polygon
+from geoinfo.models import Polygon
 from claim.models import OrganizationType, Organization
 
 
@@ -9,80 +9,52 @@ class GeoJSONParser():
     @staticmethod
     def geojson_to_db(geo_json, return_instance=False):
 
-        # Create layer
-        layer_info = geo_json['ctracker_config']
-        global_org_type = False
-        if 'global_org_type' in layer_info:
-            try:
-                global_org_type = OrganizationType.objects.get(
-                    type_id=layer_info['global_org_type'])
-            except OrganizationType.DoesNotExist:
-                global_org_type = OrganizationType(
-                    type_id=layer_info['global_org_type'],
-                    name=layer_info['global_org_type_name'])
-                global_org_type.save()
-
-        print('Processing %s geojson...' % layer_info['layer_name'])
-        try:
-            layer = Layer.objects.get(name=layer_info['layer_name'])
-        except Layer.DoesNotExist:
-
-            if layer_info['set_default']:
-                try:
-                    ex_default = Layer.objects.get(is_default=True)
-                    ex_default.is_default = False
-                    ex_default.save()
-                except Layer.DoesNotExist:
-                    pass
-
-            layer = Layer(
-                layer_type=getattr(Layer, layer_info['layer_type']),
-                name=layer_info['layer_name'],
-                is_default=bool(layer_info['set_default']),
-                zoom=layer_info['zoom'],
-                center=json.dumps(layer_info['center']))
-            layer.save()
-
         # Create polygons
         for feature in geo_json['features']:
             try:
                 polygon = Polygon.objects.get(
                     polygon_id=feature['properties']['ID'])
-            except Polygon.DoesNotExist:
-                # Hack to avoid organizations without names
-                if not feature['properties']['NAME']:
-                    continue
 
+            except Polygon.DoesNotExist:
                 polygon = Polygon(
                     polygon_id=feature['properties']['ID'],
                     shape=json.dumps(feature['geometry']),
-                    centroid=json.dumps([
-                        feature['properties']["CEN_LAT"],
-                        feature['properties']["CEN_LONG"]]),
+                    centroid=feature['properties']['CENTROID'],
                     address=feature['properties']['ADDRESS'],
-                    layer=layer)
+                    level=geo_json['ctracker_config']['AL'],
+                    zoom=geo_json['ctracker_config']['ZOOM'])
+
+                if feature['properties']['PARENT']:
+                    parent = Polygon.objects.get(
+                        polygon_id=feature['properties']['PARENT'])
+                    polygon.layer = parent
+
                 polygon.save()
 
-            # Create organization
-            # Temporary, fix unknown organization type
-            org_type = global_org_type
+            if feature['properties']['ORG_NAMES']:
+                org_names = feature['properties']['ORG_NAMES'].split('|')
+                org_types = feature['properties']['ORG_TYPES'].split('|')
+                for index, org_name in enumerate(org_names):
+                    try:
+                        org_obj = Organization.objects.get(
+                            name=org_name)
+                    except Organization.DoesNotExist:
 
-            polygon_orgs = feature['properties']['NAME'].split('|')
-            for org_name in polygon_orgs:
-                try:
-                    org_obj = Organization.objects.get(
-                        name=org_name)
-                except Organization.DoesNotExist:
-                    org_obj = Organization(
-                        name=org_name,
-                        org_type=org_type
-                    )
-                    org_obj.save()
-                except Organization.MultipleObjectsReturned:
-                    pass
+                        try:
+                            org_type = OrganizationType.objects.get(
+                                type_id=org_types[index])
+                        except OrganizationType.DoesNotExist:
+                            org_type = OrganizationType(type_id=org_types[index],
+                                                        name='Temp name')
+                            org_type.save()
 
-                # Link them
-                polygon.organizations.add(org_obj)
+                        org_obj = Organization(
+                            name=org_name,
+                            org_type=org_type
+                        )
+                        org_obj.save()
+                    except Organization.MultipleObjectsReturned:
+                        pass
 
-        if return_instance:
-            return layer
+                    # Link them
+                    polygon.organizations.add(org_obj)

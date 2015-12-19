@@ -54,7 +54,7 @@ urlpatterns = [
     url(r'^claims/(?P<org_id>[\w.]{0,256})/$',
         claim_views.claims, name="claims"),
 
-    url(r'^export_layer/(?P<layer_id>[\w.]{0,256})/$',
-        geo_views.export_layer, name="export_layer"),
+    # url(r'^export_layer/(?P<layer_id>[\w.]{0,256})/$',
+    #     geo_views.export_layer, name="export_layer"),
 
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
