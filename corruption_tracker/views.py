@@ -1,16 +1,16 @@
 
 from django.conf import settings
-from django.http import *
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 
 # from geoinfo.views import LayerGenerator
-from geoinfo.models import Layer
+from geoinfo.models import Polygon
 
 
 def add_page(request):
-    resp_dict = Layer.objects.get(is_default=True).generate_json(add=True)
+    resp_dict = Polygon.objects.get(is_default=True).generate_layer(add=True)
     resp_dict['page'] = 'add_page'
 
     if settings.RECAPTCHA_ENABLED is False:
@@ -21,7 +21,7 @@ def add_page(request):
 
 
 def map(request):
-    resp_dict = Layer.objects.get(is_default=True).generate_json()
+    resp_dict = Polygon.objects.get(is_default=True).generate_layer()
     resp_dict['page'] = 'map'
 
     return render(request, 'map.html', resp_dict)

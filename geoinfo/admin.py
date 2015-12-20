@@ -3,47 +3,35 @@ import json
 from django.contrib.gis import admin
 from django import forms
 # Register your models here.
-from geoinfo.models import Layer, Polygon
+from geoinfo.models import Uploader, Polygon
 from utils.geoparser import GeoJSONParser
 
 
-class LayerForm(forms.ModelForm):
+class UploaderForm(forms.ModelForm):
     class Meta:
-        model = Layer
+        model = Uploader
         fields = '__all__'
 
     def save(self, commit=True):
-        instance = super(LayerForm, self).save(commit=False)
-        if instance.parse_file:
-            geojson = json.loads(instance.json_file.read().decode('utf8'))
-            return GeoJSONParser.geojson_to_db(geojson, return_instance=True)
-        else:
-            if commit:
-                instance.save()
-            return instance
-
-    # def clean(self):
-    #     if self.cleaned_data.get('parse_file') and\
-    #        self.cleaned_data.get('json_file'):
-    #         return self.cleaned_data
-    #     else:
-    #         super(LayerForm, self).clean()
+        instance = super(UploaderForm, self).save(commit=commit)
+        geojson = json.loads(instance.json_file.read().decode('utf8'))
+        GeoJSONParser.geojson_to_db(geojson)
+        return instance
 
 
-class LayerAdmin(admin.ModelAdmin):
-    form = LayerForm
-    list_display = ('name', 'layer_type', 'is_default',
-                    'zoom', 'center', 'higher')
-    search_fields = ('name',)
-    list_filter = ('layer_type', 'zoom')
+class UploaderAdmin(admin.ModelAdmin):
+    form = UploaderForm
+    # list_display = ('name', 'layer_type', 'is_default',
+    #                 'zoom', 'center', 'higher')
 
 
 class PolygonAdmin(admin.OSMGeoAdmin):
     list_display = ('polygon_id', 'layer', 'organization_count',
-                    'address', 'centroid')
+                    'address', 'centroid', 'level', 'is_default',
+                    'zoom')
     search_fields = ('polygon_id', 'address')
-    list_filter = ('layer',)
+    list_filter = ('level', 'layer__polygon_id')
 
 
-admin.site.register(Layer, LayerAdmin)
+admin.site.register(Uploader, UploaderAdmin)
 admin.site.register(Polygon, PolygonAdmin)

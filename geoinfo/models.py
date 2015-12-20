@@ -7,45 +7,80 @@ from django.utils.safestring import mark_safe
 from claim.models import Organization, OrganizationType
 
 
-class Layer(models.Model):
+class Uploader(models.Model):
+
+    json_file = models.FileField(upload_to='geojsons')
+
+    def __str__(self):
+        return self.json_file.name
+
+    class Meta:
+        verbose_name_plural = "Uploader"
+
+
+class Polygon(models.Model):
     """
-        Representation of GeoJSON.
-        Is a collection of polygons, united on the
-        basis of type and proximity
+        Polygon represent geo object,
+        and could refer to collection of lower polgygons
     """
 
-    rn = 0
-    dsc = 1
-    towdc = 2
-    house = 3
-    # ORGANIZATIONS = 0
-    # DISTRICTS = 1
-    # REGIONS = 2
-    LAYER_TYPES = (
-        (rn, _("Regions"))
-        (dsc, _("District names or cities"))
-        (towdc, _("Towns or districts of the city"))
-        (house, _("Houses"))
-        # (ORGANIZATIONS, _("Organizations")),
-        # (DISTRICTS, _("Districts")),
-        # (REGIONS, _("Regions")),
+    # Polygon as polygon
+    polygon_id = models.CharField(max_length=50, primary_key=True)
+    organizations = models.ManyToManyField(Organization, blank=True)
+    shape = models.PolygonField()
+    centroid = models.CharField(max_length=50, null=True, blank=True)
+    address = models.CharField(max_length=800, null=True, blank=True)
+    layer = models.ForeignKey('self', blank=True, null=True)
+
+    # Polygon as layer
+    country = 0
+    region = 1
+    area = 2
+    district = 3
+    building = 4
+    LEVEL = (
+        (country, _("Root polygon")),
+        (region, _("Regions of country")),
+        (area, _("Subregions or big sities")),
+        (district, _("Towns or districts of city")),
+        (building, _("Houses"))
     )
-
-    name = models.CharField(max_length=250, unique=True)
-    layer_type = models.IntegerField(choices=LAYER_TYPES,
-                                     default=ORGANIZATIONS)
-    parse_file = models.BooleanField(default=False)
-    json_file = models.FileField(null=True, blank=True, upload_to='geojsons')
+    level = models.IntegerField(choices=LEVEL, default=building)
     is_default = models.BooleanField(default=False)
-    zoom = models.IntegerField()
-    center = models.CharField(max_length=50)
+    zoom = models.IntegerField(blank=True, null=True)
 
-    higher = models.OneToOneField('Polygon', null=True, blank=True,
-                                  related_name='upper_level')
+    objects = models.GeoManager()
 
-    # @property
-    # def max_claims(self):
-    #     return max([x.total_claims for x in self.polygon_set.all()])
+    @property
+    def total_claims(self):
+        return sum([x.total_claims for x in self.organizations.all()])
+
+    def polygon_to_json(self):
+        orgs = []
+        polygon_claims = 0
+        for org in self.organizations.all():
+            org_claims = org.total_claims
+            polygon_claims += org_claims
+            orgs.append({'id': org.id,
+                        'name': org.name,
+                         'claims_count': org_claims})
+
+        # reverse coordinates for manualy adding polgygons
+        geometry = json.loads(self.shape.json)
+        [x.reverse() for x in geometry["coordinates"][0]]
+        centroid = self.centroid.split(',')
+        centroid.reverse()
+
+        return {
+            "type": "Feature",
+            "properties": {
+                "ID": self.polygon_id,
+                "organizations": orgs,
+                "centroid": centroid,
+                "polygon_claims": polygon_claims
+            },
+            "geometry": geometry
+        }
 
     def color_spot(self, value, max_value):
         percent = value * 100 / max_value
@@ -57,14 +92,14 @@ class Layer(models.Model):
         else:
             return 'red'
 
-    def generate_json(self, add=False):
+    def generate_layer(self, add=False):
         polygons = self.polygon_set.all()
         max_claims_value = max([x.total_claims for x in polygons])
 
         data = []
         organizations = []
         for polygon in polygons:
-            polygon_json = polygon.generate_map_polygon()
+            polygon_json = polygon.polygon_to_json()
             polygon_claims = polygon_json["properties"]['polygon_claims']
             polygon_json["properties"]['color'] = self.color_spot(
                 polygon_claims, max_claims_value)\
@@ -77,10 +112,12 @@ class Layer(models.Model):
                    'org_type_id': org.org_type.type_id if org.org_type else 0}
                   for org in organizations]
 
+        center = self.centroid.split(',')
+        center.reverse()
         geo_json = {
             'type': "FeatureCollection",
             'config': {
-                'center': json.loads(self.center),
+                'center': center,
                 'zoom': self.zoom},
         }
         geo_json['features'] = data
@@ -103,56 +140,6 @@ class Layer(models.Model):
             responce['claim_types'] = mark_safe(json.dumps(claim_type_sets))
 
         return responce
-
-    def __str__(self):
-        return self.name
-
-
-class Polygon(models.Model):
-    """
-        Polygon represent building,
-        but Polygon.organizations - list of offices.
-    """
-
-    polygon_id = models.CharField(max_length=50, primary_key=True)
-    organizations = models.ManyToManyField(Organization)
-    layer = models.ForeignKey(Layer)
-    shape = models.PolygonField()
-    centroid = models.CharField(max_length=50, null=True, blank=True)
-    address = models.CharField(max_length=800, null=True, blank=True)
-
-    objects = models.GeoManager()
-
-    @property
-    def total_claims(self):
-        return sum([x.total_claims for x in self.organizations.all()])
-
-    def generate_map_polygon(self):
-        orgs = []
-        polygon_claims = 0
-        for org in self.organizations.all():
-            org_claims = org.total_claims
-            polygon_claims += org_claims
-            orgs.append({'id': org.id,
-                        'name': org.name,
-                         'claims_count': org_claims})
-
-        # reverse coordinates for manualy adding polgygons
-        geometry = json.loads(self.shape.json)
-        [x.reverse() for x in geometry["coordinates"][0]]
-        centroid = json.loads(self.centroid)
-        centroid.reverse()
-
-        return {
-            "type": "Feature",
-            "properties": {
-                "ID": self.polygon_id,
-                "organizations": orgs,
-                "centroid": centroid,
-                "polygon_claims": polygon_claims
-            },
-            "geometry": geometry
-        }
 
     def organization_count(self):
         return self.organizations.all().count()

@@ -35,8 +35,6 @@ Create the tables
 
     PostgreSQL instructions in db_creation.txt
 
-    python manage.py makemigrations claim
-    python manage.py makemigrations geoinfo
     python manage.py migrate
     python manage.py createsuperuser
     python manage.py initiate_db
