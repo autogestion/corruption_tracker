@@ -22,6 +22,7 @@ from django.views.static import serve
 
 from claim import views as claim_views
 from geoinfo import views as geo_views
+# from geoinfo import serializers
 from . import views as main_vies
 
 
@@ -56,5 +57,14 @@ urlpatterns = [
 
     # url(r'^export_layer/(?P<layer_id>[\w.]{0,256})/$',
     #     geo_views.export_layer, name="export_layer"),
+
+    # Rest API
+    # url(r'^v1/polygons$', serializers.PolygonView.as_view(),
+    #     name='polygon-list'),
+    url(r'^v1/get_polygons_tree/(?P<polygon_id>[\w.]{0,256})/$',
+        geo_views.get_polygons_tree, name="get_polygons_tree"),
+
+
+
 
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

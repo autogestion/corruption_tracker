@@ -23,7 +23,6 @@ class Polygon(models.Model):
         Polygon represent geo object,
         and could refer to collection of lower polgygons
     """
-
     # Polygon as polygon
     polygon_id = models.CharField(max_length=50, primary_key=True)
     organizations = models.ManyToManyField(Organization, blank=True)
