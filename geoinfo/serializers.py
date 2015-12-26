@@ -24,7 +24,7 @@ def extractor(polygon_id):
     responce = {}
     polygon = Polygon.objects.get(polygon_id=polygon_id)
     if polygon.level == 4:
-        orgs = {x.id: [x.name, x.org_type] for x in polygon.organizations.all()}
+        orgs = {x.id: [x.name, x.org_type.name] for x in polygon.organizations.all()}
         responce[polygon.polygon_id] = {'address': polygon.address,
                                         'orgs': orgs}
         return responce

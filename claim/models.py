@@ -76,6 +76,9 @@ class Organization(models.Model):
         allowed_statuses = Moderator.objects.get(id=1).show_claims
         return self.claim_set.filter(moderation__in=allowed_statuses)
 
+    def first_polygon(self):
+        return self.polygon_set.all()[0]
+
     @property
     def total_claims(self):
         return self.moderation_filter().count()

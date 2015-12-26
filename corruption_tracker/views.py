@@ -1,3 +1,4 @@
+from pprint import pprint
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -16,7 +17,7 @@ def add_page(request):
     if settings.RECAPTCHA_ENABLED is False:
         settings.RECAPTCHA_PUBLIC = ''
     resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
-
+    # pprint(resp_dict['polygons'])
     return render(request, 'add_page.html', resp_dict)
 
 

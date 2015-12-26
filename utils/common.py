@@ -2,6 +2,7 @@ import json
 
 
 def get_geojson_file(file_path):
+    # print(file_path)
     try:
         # python 3+
         json_s = open(file_path, encoding='utf8').read()

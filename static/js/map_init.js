@@ -7,6 +7,7 @@ function main_map_init (map, options) {
     // $('.layout_chooser').addClass("leaflet-bottom");
     // Add GeoJSON layer
     var marker, org_row, orgs_set, org_rows;
+    console.log(polygons)
 
     // Add building markers with popups to polygons.
     for (var i = polygons['features'].length - 1; i >= 0; i--) {

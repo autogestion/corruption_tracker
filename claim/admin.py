@@ -13,7 +13,8 @@ class ClaimAdmin(admin.ModelAdmin):
 
 
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'org_type', 'total_claims', 'url')
+    list_display = ('id', 'name', 'org_type',
+                    'first_polygon', 'total_claims', 'url')
     search_fields = ('name', 'org_type')
     list_filter = ('org_type',)
 
