@@ -12,6 +12,12 @@ class Uploader(models.Model):
 
     json_file = models.FileField(upload_to='geojsons')
 
+    def save(self, *args, **kwargs):
+        if self.json_file:
+            from utils.geoparser import GeoJSONParser
+            geojson = json.loads(self.json_file.read().decode('utf8'))
+            GeoJSONParser.geojson_to_db(geojson)
+
     def __str__(self):
         return self.json_file.name
 

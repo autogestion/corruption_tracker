@@ -12,11 +12,11 @@ class UploaderForm(forms.ModelForm):
         model = Uploader
         fields = '__all__'
 
-    def save(self, commit=True):
-        instance = super(UploaderForm, self).save(commit=False)
-        geojson = json.loads(instance.json_file.read().decode('utf8'))
-        GeoJSONParser.geojson_to_db(geojson)
-        return instance
+    # def save(self, commit=True):
+    #     # instance = super(UploaderForm, self).save(commit=False)
+    #     geojson = json.loads(self.cleaned_data['json_file'].read().decode('utf8'))
+    #     GeoJSONParser.geojson_to_db(geojson)
+    #     # return instance
 
 
 class UploaderAdmin(admin.ModelAdmin):

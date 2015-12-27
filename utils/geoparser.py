@@ -1,13 +1,33 @@
 import json
 
 from geoinfo.models import Polygon
-from claim.models import OrganizationType, Organization
+from claim.models import OrganizationType, Organization, ClaimType
 
 
 class GeoJSONParser():
 
     @staticmethod
+    def get_geojson_file(file_path):
+        # print(file_path)
+        try:
+            # python 3+
+            json_s = open(file_path, encoding='utf8').read()
+        except TypeError:
+            # python 2
+            json_s = open(file_path).read()
+            json_s = json_s.decode('utf8')
+
+        return json.loads(json_s)
+
+    @staticmethod
     def geojson_to_db(geo_json, return_instance=False):
+
+        if geo_json['ctracker_config']['AL'] == 4:
+            try:
+                default_claim_type = ClaimType.objects.get(name='---')
+            except ClaimType.DoesNotExist:
+                default_claim_type = ClaimType(name='---')
+                default_claim_type.save()
 
         # Create polygons
         for feature in geo_json['features']:
@@ -31,7 +51,7 @@ class GeoJSONParser():
 
                 polygon.save()
 
-            if feature['properties']['ORG_NAMES']:
+            if geo_json['ctracker_config']['AL'] == 4:
                 org_names = feature['properties']['ORG_NAMES'].split('|')
                 org_types = feature['properties']['ORG_TYPES'].split('|')
                 for index, org_name in enumerate(org_names):
@@ -45,8 +65,9 @@ class GeoJSONParser():
                                 type_id=org_types[index])
                         except OrganizationType.DoesNotExist:
                             org_type = OrganizationType(type_id=org_types[index],
-                                                        name='Temp name')
+                                                        name=geo_json['ctracker_config']["ORG_TYPES"][org_types[index]])
                             org_type.save()
+                            default_claim_type.org_type.add(org_type)
 
                         org_obj = Organization(
                             name=org_name,
