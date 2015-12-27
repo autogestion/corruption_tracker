@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-24 00:03+0000\n"
+"POT-Creation-Date: 2015-12-27 16:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,51 +35,59 @@ msgstr ""
 msgid "Moderated"
 msgstr ""
 
-#: claim/models.py:91
+#: claim/models.py:94
 msgid "Others"
 msgstr ""
 
-#: claim/models.py:95
+#: claim/models.py:98
 msgid "Anon"
 msgstr ""
 
-#: corruption_tracker/settings.py:92
+#: corruption_tracker/settings.py:93
 msgid "Ukrainian"
 msgstr ""
 
-#: corruption_tracker/settings.py:93
+#: corruption_tracker/settings.py:94
 msgid "English"
 msgstr ""
 
-#: corruption_tracker/settings.py:94
+#: corruption_tracker/settings.py:95
 msgid "Russian"
 msgstr ""
 
-#: corruption_tracker/settings.py:139
+#: corruption_tracker/settings.py:140
 msgid "Hydda"
 msgstr ""
 
-#: corruption_tracker/settings.py:144
+#: corruption_tracker/settings.py:147
 msgid "Streets"
 msgstr ""
 
-#: corruption_tracker/settings.py:153
+#: corruption_tracker/settings.py:156
 msgid "Satellite"
 msgstr ""
 
-#: geoinfo/models.py:20 templates/add_page.html:47
-msgid "Organization"
+#: geoinfo/models.py:48
+msgid "Root polygon"
 msgstr ""
 
-#: geoinfo/models.py:21
-msgid "District"
+#: geoinfo/models.py:49
+msgid "Regions of country"
 msgstr ""
 
-#: geoinfo/models.py:22
-msgid "Country"
+#: geoinfo/models.py:50
+msgid "Subregions or big sities"
 msgstr ""
 
-#: templates/add_page.html:38 templates/base.html:32
+#: geoinfo/models.py:51
+msgid "Towns or districts of city"
+msgstr ""
+
+#: geoinfo/models.py:52
+msgid "Houses"
+msgstr ""
+
+#: templates/add_page.html:38 templates/base.html.py:32
 msgid "Add claim"
 msgstr ""
 
@@ -90,7 +98,11 @@ msgid ""
 "After it press 'Send claim' button."
 msgstr ""
 
-#: templates/add_page.html:48 templates/map.html:36
+#: templates/add_page.html:47
+msgid "Organization"
+msgstr ""
+
+#: templates/add_page.html:48 templates/map.html.py:36
 msgid "Organization name"
 msgstr ""
 
@@ -165,19 +177,19 @@ msgstr ""
 msgid "Export to CSV"
 msgstr ""
 
-#: templates/claims.html:111 templates/map.html:52
+#: templates/claims.html:111 templates/map.html.py:52
 msgid "Servant"
 msgstr ""
 
-#: templates/claims.html:112 templates/map.html:51
+#: templates/claims.html:112 templates/map.html.py:51
 msgid "Complainer"
 msgstr ""
 
-#: templates/claims.html:113 templates/map.html:53
+#: templates/claims.html:113 templates/map.html.py:53
 msgid "Claim type"
 msgstr ""
 
-#: templates/claims.html:114 templates/map.html:55
+#: templates/claims.html:114 templates/map.html.py:55
 msgid "Created"
 msgstr ""
 

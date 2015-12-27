@@ -1,4 +1,5 @@
 import json
+from pprint import pprint
 
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext as _
@@ -10,6 +11,12 @@ from claim.models import Organization, OrganizationType
 class Uploader(models.Model):
 
     json_file = models.FileField(upload_to='geojsons')
+
+    def save(self, *args, **kwargs):
+        if self.json_file:
+            from utils.geoparser import GeoJSONParser
+            geojson = json.loads(self.json_file.read().decode('utf8'))
+            GeoJSONParser.geojson_to_db(geojson)
 
     def __str__(self):
         return self.json_file.name
@@ -54,6 +61,16 @@ class Polygon(models.Model):
     def total_claims(self):
         return sum([x.total_claims for x in self.organizations.all()])
 
+    # def orgs_count(self):
+    #     return self.organizations.all().count()
+
+    def first_organization(self):
+        orgs = self.organizations.all()
+        if orgs:
+            return orgs[0]
+        else:
+            return None
+
     def polygon_to_json(self):
         orgs = []
         polygon_claims = 0
@@ -91,10 +108,11 @@ class Polygon(models.Model):
         else:
             return 'red'
 
-    def generate_layer(self, add=False):
+    def generate_childs(self, add=False):
         polygons = self.polygon_set.all()
         max_claims_value = max([x.total_claims for x in polygons])
 
+        responce = {}
         data = []
         organizations = []
         for polygon in polygons:
@@ -111,18 +129,21 @@ class Polygon(models.Model):
                    'org_type_id': org.org_type.type_id if org.org_type else 0}
                   for org in organizations]
 
-        center = self.centroid.split(',')
-        center.reverse()
-        geo_json = {
-            'type': "FeatureCollection",
-            'config': {
-                'center': center,
-                'zoom': self.zoom},
-        }
-        geo_json['features'] = data
+        responce = {'data': data,
+                    'places': places}
 
-        responce = {'polygons': mark_safe(json.dumps(geo_json)),
-                    'places': mark_safe(json.dumps(places))}
+        # center = self.centroid.split(',')
+        # center.reverse()
+        # geo_json = {
+        #     'type': "FeatureCollection",
+        #     'config': {
+        #         'center': center,
+        #         'zoom': self.zoom},
+        # }
+        # geo_json['features'] = data
+
+        # responce = {'polygons': mark_safe(json.dumps(geo_json)),
+        #             'places': mark_safe(json.dumps(places))}
 
         if add:
             org_types = OrganizationType.objects.filter(
@@ -136,12 +157,52 @@ class Polygon(models.Model):
                                           'value': claim_type.name})
                 claim_type_sets[org_type.type_id] = claim_type_set
 
-            responce['claim_types'] = mark_safe(json.dumps(claim_type_sets))
-
+            # responce['claim_types'] = mark_safe(json.dumps(claim_type_sets))
+            responce['claim_types'] = claim_type_sets
         return responce
 
-    def organization_count(self):
-        return self.organizations.all().count()
+    def generate_brothers(self, add=False):
+        brothers = self.layer.polygon_set.all()
+
+        responce = {'data': [],
+                    'places': []}
+        if add:
+            responce['claim_types'] = {}
+
+        for brother in brothers:
+            brother_childs = brother.generate_childs(add)
+            responce['data'].extend(brother_childs['data'])
+            responce['places'].extend(brother_childs['places'])
+            if add:
+                responce['claim_types'].update(brother_childs['claim_types'])
+        return responce
+
+    def generate_layer(self, add=False):
+        if self.level == self.district:
+            responce = self.generate_brothers(add)
+        else:
+            responce = self.generate_childs(add)
+
+        # pprint(responce)
+
+        center = self.centroid.split(',')
+        center.reverse()
+        geo_json = {
+            'type': "FeatureCollection",
+            'config': {
+                'center': center,
+                'zoom': self.zoom},
+            'features': responce['data'],
+        }
+        # pprint(geo_json)
+
+        layer = {'polygons': mark_safe(json.dumps(geo_json)),
+                 'places': mark_safe(json.dumps(responce['places']))}
+        if add:
+            layer['claim_types'] = mark_safe(json.dumps(responce['claim_types']))
+
+        # pprint(layer)
+        return layer
 
     def __str__(self):
         return 'Polygon ' + str(self.polygon_id)
