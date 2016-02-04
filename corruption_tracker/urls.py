@@ -19,6 +19,8 @@ from django.contrib import admin
 from django.contrib.auth.views import logout
 from django.views.static import serve
 
+from rest_framework.authtoken.views import obtain_auth_token
+
 
 from claim import views as claim_views
 from geoinfo import views as geo_views
@@ -26,12 +28,12 @@ from geoinfo import views as geo_views
 from . import views as main_vies
 
 
+from api.urls import router
+
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-
-    url(r'^api-auth/', include('rest_framework.urls',
-        namespace='rest_framework')),
 
     url(r'^static/(?P<path>.*)$', serve,
         {'document_root': settings.STATIC_ROOT}),
@@ -59,12 +61,13 @@ urlpatterns = [
     #     geo_views.export_layer, name="export_layer"),
 
     # Rest API
-    # url(r'^v1/polygons$', serializers.PolygonView.as_view(),
-    #     name='polygon-list'),
-    url(r'^v1/get_polygons_tree/(?P<polygon_id>[\w.]{0,256})/$',
+
+    # url(r'^api-auth/', include('rest_framework.urls',
+    #     namespace='rest_framework')),
+    url(r'^api/v1/token/', obtain_auth_token, name='api-token'),
+    url(r'^api/v1/get_polygons_tree/(?P<polygon_id>[\w.]{0,256})/$',
         geo_views.get_polygons_tree, name="get_polygons_tree"),
-
-
+    url(r'^api/', include(router.urls)),
 
 
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
