@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load leaflet_tags %}
+
+{% block head %}
+    <title>Corruption map</title>
+    {% leaflet_js %}  
+    {% leaflet_css %}
+    <script type="text/javascript">
+        /* To prevent multiple inserts of this var lets keep it in global NS */
+        var polygons = {{ polygons|default:"[]" }};
+        var places = {{places}};    
+    </script>
+    <script src="{% static "js/map_init.js" %}"></script>
+    <script src="{% static "js/get_claims.js" %}"></script>
+    <link href="{% static "css/w2ui-1.4.3.min.css" %}" rel="stylesheet" type="text/css" />    
+    <script src="{% static "vendor/w2ui-1.4.3.min.js" %}" type="text/javascript"></script>
+{% endblock %}
+
+
+{% block map %}
+{% load i18n %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            {% leaflet_map "main" callback="main_map_init" %}
+        </div>
+        <div class="col-md-4" id="float_block">
+            <h3>
+                {% trans "Search" %}
+                <small><br>{% trans "To check claims you should click on building on the map, or enter organization name in searchbox." %}</small>
+            </h3>
+
+            <div class="right_block">
+                <div class="input-group">
+                    <input type='search' id='org_id' placeholder='{% trans "Organization name" %}' class="form-control">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >{% trans "Search" %}</button>
+                    </span>
+                </div>
+                <br><br>
+                <div id="target"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="claim_template_global">
+    <div style ="float: right"></div>
+    <div class="claim_tempalte">
+        <div class="complainer"><b>{% trans "Complainer" %}:</b> <span>%complainer%</span></div>
+        <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
+        <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
+        <div class="claim"><b>{% trans "Claim text" %}:</b> <span>%text%</span></div>
+        <div class="created"><b>{% trans "Created" %}:</b> <span>%created%</span></div>
+        <hr>
+    </div>
+</div>
+<div id="show_all_button_template" class="hide_show_more_buttons">
+    <a class="btn btn-primary" href="/claims/%org_id%" target="_blank">{% trans "Show all claims as tiles" %}</a>
+</div>
+<div id="show_all_button_template_grid" class="hide_show_more_buttons" style="padding: 20px 0px">
+    <button class="btn" onclick="w2ui_popup()">{% trans "Show all claims as table" %}</button>
+</div>
+
+{% endblock %}
+

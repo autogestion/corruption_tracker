@@ -33,7 +33,23 @@ def add_page(request):
     places = [{'data': b['properties']['ID'], 'value': b['properties']['NAME']}
               for b in json_data['features'] if b['properties']['NAME']]
 
+<<<<<<< Updated upstream
     Claim.update_map(json_data)
+=======
+def single(request):
+    resp_dict = Polygon.objects.get(is_default=True).generate_layer(add=True)
+    resp_dict['page'] = 'single'
+
+    if settings.RECAPTCHA_ENABLED is False:
+        settings.RECAPTCHA_PUBLIC = ''
+    resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
+    # pprint(resp_dict['polygons'])
+    return render(request, 'single.html', resp_dict)
+
+
+def about(request):
+    return render(request, 'about.html', {'page': 'about'})
+>>>>>>> Stashed changes
 
     if settings.RECAPTCHA_ENABLED is False:
         settings.RECAPTCHA_PUBLIC = ''

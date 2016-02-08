@@ -26,9 +26,16 @@ urlpatterns = [
         {'next_page': '/'}),
     url(r'^accounts/', include('allauth.urls')),
 
+<<<<<<< Updated upstream
     url(r'^$', views.home, name="home"),
     url(r'^add_page$', views.add_page, name="add_page"),
     url(r'^about$', views.about, name="about"),
+=======
+    url(r'^$', main_vies.add_page, name="add_page"),
+    url(r'^map$', main_vies.map, name="map"),
+    url(r'^about$', main_vies.about, name="about"),
+    url(r'^single$', main_vies.single, name="single"),
+>>>>>>> Stashed changes
 
     # AJAX calls
     url(r'^get_claims/(?P<polygon_id>[\w.]{0,256})/$',

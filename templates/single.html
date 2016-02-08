@@ -1,0 +1,264 @@
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% load account %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>   
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="{% static "img/favicon.ico" %}"/>
+
+    <link href= "{% static "css/bootstrap.min.css" %}"  rel="stylesheet">
+    <link href= "{% static "css/general.css" %}"  rel="stylesheet">
+
+    <script src="{% static "vendor/jquery-1.11.3.min.js" %}"></script>
+    <script src="{% static "vendor/jquery.cookie.js" %}"></script>
+    <script src="{% static "vendor/jquery.autocomplete.min.js" %}"></script>
+    <link href= "{% static "css/gh-fork-ribbon.min.css" %}"  rel="stylesheet">
+
+
+    <title>Corruption map</title>
+    {% leaflet_js %}  
+    {% leaflet_css %}
+    <script type="text/javascript">
+        /* To prevent multiple inserts of this var lets keep it in global NS */
+        var polygons = {{ polygons|default:"[]" }};
+        var places = {{places}};    
+    </script>
+    <script src="{% static "js/map_init.js" %}"></script>
+
+    <script src="{% static "js/add_claim.js" %}"></script>
+    <script src="{% static "js/get_claims.js" %}"></script>
+    <link href="{% static "css/w2ui-1.4.3.min.css" %}" rel="stylesheet" type="text/css" />  
+    <script src="{% static "vendor/w2ui-1.4.3.min.js" %}" type="text/javascript"></script>
+
+
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script type="text/javascript">
+        var claim_types = {{claim_types}} 
+        {% if not user.is_authenticated %}
+            var grecaptcha_reset = true
+        {% else %}
+            var grecaptcha_reset = false
+        {% endif %}
+        var add_claim_url = "{% url 'add_claim' %}"
+    </script>   
+
+    <script type="text/html" id="home-template">
+        <h1>Welcome to my Scrum Board Project!</h1>
+    </script>
+</head>
+
+<body>    
+
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"><img src="{% static "img/logo.png" %}" height="42" width="42"></a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li {% if page == 'add_page' %} class="active"{% endif %}><a href="{% url 'add_page' %}">{% trans "Add claim" %}</a></li>
+                <li {% if page == 'map' %} class="active"{% endif %}><a href="{% url 'map' %}">{% trans "Corruption map" %}</a></li>
+                <li {% if page == 'about' %} class="active"{% endif %}><a href="{% url 'about' %}">{% trans "Who is here?" %}</a></li>
+                <li {% if page == 'single' %} class="active"{% endif %}><a href="{% url 'single' %}">{% trans "Single page" %}</a></li>
+            </ul>
+
+             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <form action="{% url 'set_language' %}" method="post" id="language_selector">{% csrf_token %}
+                        <input name="next" type="hidden" value="{{ redirect_to }}" />
+                        <select name="language" onchange="this.form.submit()">
+                            {% get_current_language as LANGUAGE_CODE %}
+                            {% get_available_languages as LANGUAGES %}
+                            {% get_language_info_list for LANGUAGES as languages %}
+                            {% for language in languages %}
+                                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected="selected"{% endif %}>
+                                    {{ language.name_local }} ({{ language.code }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </li>
+                {% if request.user.is_authenticated %}
+                    <li><a href="">{% user_display user %}</a></li>
+                    <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
+                    {% else %}
+                    <li><a href="{% url 'account_signup' %}">{% trans "Register" %}</a></li>
+                {% endif %}
+            </ul>
+
+            {% if not request.user.is_authenticated and not "/login" in request.get_full_path %}
+                <form class='navbar-form navbar-right login' method='POST' action='/login/'>
+                    {% csrf_token %}
+                    <div class='form-group'>
+                        <input id="id_login" type='text' class='form-control' name="username" placeholder='{% trans "Username" %}' /> 
+                    </div>
+                    <div class='form-group'>
+                        <input id="id_password" type='password' class='form-control' name='password' placeholder='{% trans "Password" %}' />
+                    </div>
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="next" value="{{ next }}" />
+                    {% endif %}
+                    <button type='submit' class='btn btn-default'>{% trans "Login" %}</button>
+                </form>
+            {% endif %}
+
+        </div>
+    </nav>
+
+
+
+    <div id="content"></div> 
+
+
+
+    <script src="{% static "vendor/underscore-min.js" %}" type="text/javascript"></script>
+    <script src="{% static "vendor/backbone-min.js" %}" type="text/javascript"></script>
+
+    <script id="config" type="text/json">
+    {
+        "models": {},
+        "collections": {},
+        "views": {},
+        "router": null
+    }
+    </script>
+    <script src="{% static 'js/app.js' %}"></script>
+    <script src="{% static 'js/models.js' %}"></script>
+    <script src="{% static 'js/views.js' %}"></script>
+    <script src="{% static 'js/router.js' %}"></script>
+
+
+
+
+
+{% load i18n %}
+<div class="container-fluid">
+    <div class="col-md-8">
+        {% leaflet_map "main" callback="main_map_init" %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-4" id="float_block">
+
+            <div class="col-md-5">
+                <h3>
+                    {% trans "Add claim" %}
+                    <small><br>{% trans "To add claim please click on building on the map, or enter organization name in searchbox 'Organization', name of servant and describe what was wrong. After it press 'Send claim' button." %}</small>
+                </h3>
+
+                <div class="right_block">
+                    <div id="processing">Processing...</div>
+                    <form role="form" id='claim_form'>
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="organization_name">{% trans "Organization" %}:</label>                  
+                            <input type="text" class="form-control" id="organization_name" placeholder='{% trans "Organization name" %}'>
+                        </div>
+                        <div class="form-group" style="display:none">                      
+                            <div id='org_id_error'></div>
+                            <input type="text" class="form-control" id="org_id" name="org_id" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="claim_type">{% trans "Choose Violation type" %}:</label>
+                            <select id="claim_type" name="claim_type">
+                              <option selected></option>                    
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="servant">{% trans "Servant name" %}:</label>
+                            <input type="text" class="form-control" id="servant" name="servant" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="claim_text">{% trans "Claim message" %}:</label>
+                            <div id='claim_text_error'></div>
+                            <textarea type="text" class="form-control" id="claim_text" name="claim_text" required></textarea>
+                        </div>
+
+                        {% if user.is_authenticated %}
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="anonymously"> {% trans "Keep me anonymously" %}
+                                    </label>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if not user.is_authenticated %}
+                            <div class="form-group">
+                                <div class="g-recaptcha" data-sitekey="{{ recaptcha_public }}"></div>
+                            </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <div id='message'></div>
+                            <button type="submit" class="btn btn-primary" id="submit_add" disabled>{% trans "Send claim" %}</button>
+                        </div>
+                    </form>
+                </div>
+
+        </div>
+
+
+
+            <div class="col-md-7">
+            <h3>
+                {% trans "Search" %}
+                <small><br>{% trans "To check claims you should click on building on the map, or enter organization name in searchbox." %}</small>
+            </h3>
+
+            <div class="right_block">
+                <div class="input-group">
+                    <input type='search' id='org_id' placeholder='{% trans "Organization name" %}' class="form-control">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >{% trans "Search" %}</button>
+                    </span>
+                </div>
+                <br><br>
+                <div id="target"></div>
+            </div>
+        </div>
+
+
+
+
+
+        </div>
+    </div>
+    </div>
+
+<div id="claim_template_global">
+    <div style ="float: right"></div>
+    <div class="claim_tempalte">
+        <div class="complainer"><b>{% trans "Complainer" %}:</b> <span>%complainer%</span></div>
+        <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
+        <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
+        <div class="claim"><b>{% trans "Claim text" %}:</b> <span>%text%</span></div>
+        <div class="created"><b>{% trans "Created" %}:</b> <span>%created%</span></div>
+        <hr>
+    </div>
+</div>
+<div id="show_all_button_template" class="hide_show_more_buttons">
+    <a class="btn btn-primary" href="/claims/%org_id%" target="_blank">{% trans "Show all claims as tiles" %}</a>
+</div>
+<div id="show_all_button_template_grid" class="hide_show_more_buttons" style="padding: 20px 0px">
+    <button class="btn" onclick="w2ui_popup()">{% trans "Show all claims as table" %}</button>
+</div>
+
+<div class="navbar-fixed-bottom row-fluid">
+<!--       <div class="navbar-inner">
+          <div class="container"><a href="https://github.com/autogestion/corruption_tracker" target="_blank">Powered by Corruption tracker</a>
+        </div>
+    </div> -->
+    <div class="github-fork-ribbon-wrapper left-bottom hidden-xs">
+        <div class="github-fork-ribbon">
+            <a href="https://github.com/autogestion/corruption_tracker" target="_blank">Fork me on GitHub</a>
+        </div>
+    </div>    
+</div>    
+</body>
+

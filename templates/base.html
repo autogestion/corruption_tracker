@@ -10,6 +10,7 @@
 <link href= "{% static "css/bootstrap.min.css" %}"  rel="stylesheet">
 <link href= "{% static "css/general.css" %}"  rel="stylesheet">
 
+<<<<<<< Updated upstream
 <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
 <script src="{% static "js/jquery.cookie.js" %}"></script>
 <script src="{% static "js/jquery.autocomplete.min.js" %}"></script>
@@ -18,6 +19,12 @@
     var buildings = {{ buildings|default:"[]" }};
 </script>
 <script src="{% static "js/map_init.js" %}"></script>
+=======
+<script src="{% static "vendor/jquery-1.11.3.min.js" %}"></script>
+<script src="{% static "vendor/jquery.cookie.js" %}"></script>
+<script src="{% static "vendor/jquery.autocomplete.min.js" %}"></script>
+<link href= "{% static "css/gh-fork-ribbon.min.css" %}"  rel="stylesheet">
+>>>>>>> Stashed changes
 
 {% block head %}
 {% endblock %}
@@ -34,6 +41,7 @@
             <li {% if page == 'home' %} class="active"{% endif %}><a href="{% url 'home' %}">{% trans "Corruption map" %}</a></li>
             <li {% if page == 'add_page' %} class="active"{% endif %}><a href="{% url 'add_page' %}">{% trans "Add claim" %}</a></li>
             <li {% if page == 'about' %} class="active"{% endif %}><a href="{% url 'about' %}">{% trans "Who is here?" %}</a></li>
+            <li {% if page == 'single' %} class="active"{% endif %}><a href="{% url 'single' %}">{% trans "Single page" %}</a></li>
         </ul>
 
          <ul class="nav navbar-nav navbar-right">
