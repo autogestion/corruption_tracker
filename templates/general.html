@@ -10,6 +10,7 @@
 <link rel="shortcut icon" type="image/png" href="{% static "img/favicon.ico" %}"/>
 
 <link href= "{% static "css/bootstrap.min.css" %}"  rel="stylesheet">
+<link href= "{% static "css/general.css" %}"  rel="stylesheet">
 
 <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
 <script src="{% static "js/jquery.cookie.js" %}"></script>
@@ -22,7 +23,8 @@
 </head>
 
 <body>    
-<nav class="navbar">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href="#"><img src="{% static "img/logo.png" %}" height="42" width="42"></a>
         </div>
@@ -41,7 +43,9 @@
             </li>{% endif %}            
         </ul>
 
-         <ul class="nav navbar-nav" style="float:right">
+         <ul class="nav navbar-nav navbar-right">
+
+
             <li>
                 <form action="{% url 'set_language' %}" method="post" id="language_selector">{% csrf_token %}
                     <input name="next" type="hidden" value="{{ redirect_to }}" />
@@ -78,6 +82,7 @@
             {% endif %}
         </ul>
 
+    </div>
 </nav>
 
 

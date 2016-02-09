@@ -47,7 +47,7 @@ function main_map_init (map, options) {
             org_row = document.createElement('a');
             org_row.href = '#' + polygons['features'][i]['properties']["ID"];
             org_row.id = orgs_set[ii]['id'];            
-            org_row.innerHTML = orgs_set[ii]['name'] + ': &nbsp;&nbsp;' + orgs_set[ii]['claims_count'];
+            org_row.innerHTML = orgs_set[ii]['name'] + ': <div class="counts">' + orgs_set[ii]['claims_count'] + '<div>';
 
             org_row.onclick = function(event) {
                 select_building($(this).attr('id'));
