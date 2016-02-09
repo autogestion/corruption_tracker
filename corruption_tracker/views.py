@@ -32,6 +32,18 @@ def about(request):
     return render(request, 'about.html', {'page': 'about'})
 
 
+def single(request):
+    resp_dict = Polygon.objects.get(is_default=True).generate_layer(add=True)
+    resp_dict['page'] = 'single'
+
+    if settings.RECAPTCHA_ENABLED is False:
+        settings.RECAPTCHA_PUBLIC = ''
+    resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
+    # pprint(resp_dict['polygons'])
+    return render(request, 'single.html', resp_dict)
+
+
+
 def login_user(request):
     logout(request)
     if request.POST:

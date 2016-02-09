@@ -94,6 +94,11 @@ function main_map_init (map, options) {
             };
         });  
     };
+    
     map.setView(polygons['config']['center'], polygons['config']['zoom']);  
+
+
+
+
     $_selectedPolygon = null;
 }
