@@ -24,7 +24,7 @@ def claims(request, org_id):
 
 
 @caching
-def add_claim(request, deny=False):
+def add_claim(request):
     if settings.RECAPTCHA_ENABLED and not request.user.is_authenticated():
         if not request.POST.get('g-recaptcha-response', False):
             raise Exception('Google reCaptcha verification not passed')
@@ -46,7 +46,7 @@ def add_claim(request, deny=False):
         False) or not request.user.is_authenticated() else request.user
 
     code = 500
-    print(request.POST)
+
     if (
         request.POST.get('org_id', False) and
         request.POST.get('claim_text', False)

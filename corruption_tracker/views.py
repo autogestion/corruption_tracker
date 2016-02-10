@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 
 # from geoinfo.views import LayerGenerator
 from geoinfo.models import Polygon
+from claim.models import OrganizationType
 
 
 def add_page(request):
@@ -36,12 +37,14 @@ def single(request):
     resp_dict = Polygon.objects.get(is_default=True).generate_layer(add=True)
     resp_dict['page'] = 'single'
 
+    resp_dict['org_types'] = OrganizationType.objects.all()
+    print(resp_dict['org_types'], "resp_dict['org_types']")
+
     if settings.RECAPTCHA_ENABLED is False:
         settings.RECAPTCHA_PUBLIC = ''
     resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
     # pprint(resp_dict['polygons'])
     return render(request, 'single.html', resp_dict)
-
 
 
 def login_user(request):

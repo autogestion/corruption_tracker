@@ -15,15 +15,19 @@ a {
 
 
 #legend {
-    width: 200px;
+    width: 300px;
     margin-left: 70px;
     padding: 7px;
     float: left;
-
 }
+#legend_text {
+    border: 3px solid red;
+    padding: 3px;
+}
+    
+    
 
-
-#submit_add{
+.button_red{
     background-color: red;
     color: white;
 }
@@ -45,6 +49,10 @@ a {
     color: red;
 }
 
+
+iframe {
+    width: 260px;
+}
 
 
 nav .navbar-brand {

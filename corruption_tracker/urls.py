@@ -55,6 +55,7 @@ urlpatterns = [
     url(r'^get_claims/(?P<org_id>[\w.]{0,256})/$',
         claim_views.get_claims, name="get_claims"),
     url(r'^add_claim$', claim_views.add_claim, name="add_claim"),
+    url(r'^add_org$', geo_views.add_org, name="add_org"),
     url(r'^claims/(?P<org_id>[\w.]{0,256})/$',
         claim_views.claims, name="claims"),
 

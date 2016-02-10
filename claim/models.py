@@ -12,7 +12,9 @@ from multiselectfield import MultiSelectField
 STATUSES = (('not_moderated', _('Not moderated')),
             ('suspicious', _('Suspicious')),
             ('anonymous', _('From anonymous')),
-            ('valid', _('Moderated')))
+            ('valid', _('Moderated')),
+            ('markers', _('Non-verified markers'))
+            )
 
 
 class Moderator(models.Model):
@@ -22,7 +24,7 @@ class Moderator(models.Model):
 
     """
 
-    show_claims = MultiSelectField(choices=STATUSES,
+    show_claims = MultiSelectField(choices=STATUSES, max_length=200,
         default='not_moderated,suspicious,anonymous,valid')
 
     # memcached settings

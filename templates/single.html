@@ -13,6 +13,10 @@
         /* To prevent multiple inserts of this var lets keep it in global NS */
         var polygons = {{ polygons|default:"[]" }};
         var places = {{places}};    
+        var claim_types = {{claim_types}} 
+        var add_claim_url = "{% url 'add_claim' %}"   
+        var add_org_url = "{% url 'add_org' %}"    
+        var layer_id = '{{layer_id}}'    
     </script>
     <script src="{% static "js/map_init.js" %}"></script>
 
@@ -24,13 +28,12 @@
 
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <script type="text/javascript">
-        var claim_types = {{claim_types}} 
         {% if not user.is_authenticated %}
             var grecaptcha_reset = true
         {% else %}
             var grecaptcha_reset = false
         {% endif %}
-        var add_claim_url = "{% url 'add_claim' %}"
+        
     </script>   
 
 {% endblock %}
@@ -39,11 +42,51 @@
 {% load i18n %}
 
 
-<div id='legend' class='map_popup'> <small>
-    {% trans "To focus on building click on building on the map, or enter organization name in searchbox." %}
-    {% trans "To claim, fill the form and press 'Send claim' button." %}
-    </small>
+<div id='legend' class='map_popup'>
+    <div id='legend_text'>
+        {% trans "To focus on building click on building on the map, or enter organization name in searchbox." %}
+        {% trans "To claim, fill the form and press 'Send claim' button." %}
+        {% trans "If organization is not on map, you can add it in form below" %} 
+        <button type="submit" class="btn" id="open_org">{% trans "Add organization" %}</button>    
+    </div>
+    <div id='org_form_block' style="display: none;">
+        <h3>
+            {% trans "Add organization" %}              
+        </h3>    
+        <form role="form" id='org_form'>
+            {% csrf_token %}
+      
+            <div class="form-group">
+                <label for="org_type">{% trans "Choose Organization type" %}:</label>
+                <select id="org_type" name="org_type">
+                    {% for org_type in org_types %}
+                      <option value='{{org_type.type_id}}'>{{org_type.name}}</option>                    
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="centroid">{% trans "Centoid" %}:</label>
+                <input type="text" class="form-control" id="centroid" name="centroid" placeholder='36.2543045,50.0075170' required>
+            </div>
+            <div class="form-group">
+                <label for="address">{% trans "Address" %}:</label>
+                <input type="text" class="form-control" id="address" name="address" placeholder='{% trans "Address" %}' required>
+            </div>
+            <div class="form-group">
+                <label for="org_name">{% trans "Organization name" %}:</label>
+                <input type="text" class="form-control" id="org_name" name="org_name" placeholder='{% trans "Organization name" %}' required>
+            </div>             
+
+            <div class="form-group">
+                <div id='message'></div>
+                <button type="submit" class="btn btn-primary">{% trans "Send organization" %}</button>
+            </div>
+        </form>
+    </div>
+
 </div>
+
+
 
 
 <div class="col-md-8">
@@ -51,7 +94,7 @@
 </div>
 
 <div class="col-md-4 map_popup" id="float_block">
-    <div class="col-md-5">
+    <div class="col-md-6" id='claim_form_block'>
         <h3>
             {% trans "Add claim" %}              
         </h3>
@@ -99,18 +142,18 @@
 
                 <div class="form-group">
                     <div id='message'></div>
-                    <button type="submit" class="" id="submit_add">{% trans "Send claim" %}</button>
+                    <button type="submit" class="button_red">{% trans "Send claim" %}</button>
                 </div>
             </form>
     </div>
 
 </div>
 
-    <div class="col-md-7">
+    <div class="col-md-6">
     <h3>
-        {% trans "Search" %}            
+        {% trans "Claims" %}            
     </h3>
-
+    
     <div class="right_block">
         <div id="target"></div>
     </div>
@@ -129,6 +172,10 @@
         <div class="created"><b>{% trans "Created" %}:</b> <span>%created%</span></div>
         <hr>
     </div>
+</div>
+
+<div id="show_all_button_template_add" class="hide_show_more_buttons">
+    <button type="submit" class="button_red" id="">{% trans "Add claim" %}</button>
 </div>
 <div id="show_all_button_template" class="hide_show_more_buttons">
     <a class="btn btn-primary" href="/claims/%org_id%" target="_blank">{% trans "Show all claims as tiles" %}</a>

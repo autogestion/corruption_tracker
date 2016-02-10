@@ -91,6 +91,8 @@ function select_building (org_id) {
                 template = document.getElementById('claim_template_global').innerHTML;
                 template_button = document.getElementById('show_all_button_template').innerHTML;
                 template_button_grid = document.getElementById('show_all_button_template_grid').innerHTML;
+                template_button_add = document.getElementById('show_all_button_template_add').innerHTML.replace('id=""', 'id="open_claim"');
+                console.log(template_button_add)
 
                 var records = [];
                 var record;
@@ -123,7 +125,7 @@ function select_building (org_id) {
                     messages = 'No claims for this polygon';
                     template_button= '';
                     template_button_grid = ''};            
-                $("#target").html(messages + template_button_grid + template_button);
+                $("#target").html(messages + template_button_add + template_button_grid + template_button);
 
             },
             error: function(data){
@@ -137,7 +139,6 @@ function select_building (org_id) {
 
 $(document).ready(function () {
 
-
     var csrftoken = $.cookie('csrftoken');
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
@@ -150,7 +151,6 @@ $(document).ready(function () {
             }
         }
     });
-
 
 
     $("#get_claims").click(function() {
@@ -172,8 +172,6 @@ $(document).ready(function () {
     $("#claim_form").submit(function(event){
         $('#processing').show();
         event.preventDefault();
-        console.log($('#org_id').val())
-        console.log($('#claim_form').serialize())
         $.ajax({
             type: "POST",
             url: add_claim_url,
@@ -210,6 +208,40 @@ $(document).ready(function () {
         return false;
     });
 
+
+    $("#org_form").submit(function(event){
+        $('#processing').show();
+        event.preventDefault();
+        post_data = $('#org_form').serialize() + '&layer_id=' + layer_id;
+        console.log(post_data)
+        $.ajax({
+            type: "POST",
+            url: add_org_url,
+            data: post_data,
+
+            success: function(data){                 
+                $('#processing').hide();           
+                window.location.reload();
+
+            },
+            error: function(data){
+                console.log(data.responseText)
+            }                
+        });
+        return false;
+    });
+
+    $( "#open_org" ).click(function() {
+      $( "#org_form_block" ).slideToggle( "slow", function() {  
+      });
+    });
+
+    $( "#open_claim" ).click(function() {
+      console.log('claim_form_block togle 0');
+      $( "#claim_form_block" ).slideToggle( "slow", function() {  
+      });
+      console.log('claim_form_block togle');
+    });    
 
     var pair;
     var hash_data = window.location.hash.replace("#", "").split("&");

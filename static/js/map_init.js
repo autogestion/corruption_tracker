@@ -3,44 +3,15 @@ function main_map_init (map, options) {
     $('.layout_chooser').removeClass("leaflet-right");
     $('.layout_chooser').addClass("leaflet-left");
 
-    // $('.layout_chooser').removeClass("leaflet-top");
-    // $('.layout_chooser').addClass("leaflet-bottom");
+
     // Add GeoJSON layer
     var marker, org_row, orgs_set, org_rows;
-    console.log(polygons)
+    // console.log(polygons)
 
     // Add building markers with popups to polygons.
     for (var i = polygons['features'].length - 1; i >= 0; i--) {
 
-        var myIcon = L.divIcon({
-            className: 'icon_with_number',
-            html: polygons['features'][i]['properties']["polygon_claims"]
-        }); 
-
-        marker = L.marker(
-            [
-                polygons['features'][i]['properties']["centroid"][0],
-                polygons['features'][i]['properties']["centroid"][1],
-            ],
-            {icon: myIcon}
-        )
-
         orgs_set = polygons['features'][i]['properties']["organizations"]
-
-        var polygon = L.polygon(polygons['features'][i]["geometry"]["coordinates"]);
-        polygon.centroid = polygons['features'][i]['properties']["centroid"]
-
-        if (orgs_set.length==1){       
-            polygon.organization = orgs_set[0]['id']
-        }
-
-        polygon.setStyle({
-            fillColor: polygons['features'][i]['properties']['color'],
-            weight: 2,
-            color: 'blue',
-            opacity: 0.3,
-            fillOpacity: 0.3
-        });
 
         org_rows = []
         for (var ii = orgs_set.length - 1; ii >= 0; ii--) {
@@ -63,42 +34,103 @@ function main_map_init (map, options) {
                 .attr('role', 'menuitem')
                 .appendTo(org_list);        
             li.html(org_rows[i]);  
-        });
-        marker.addTo(map);
-        polygon.addTo(map).bindPopup(org_list);
+        });        
 
+        if (polygons['features'][i]["geometry"]) { 
 
+            var myIcon = L.divIcon({
+                className: 'icon_with_number',
+                html: polygons['features'][i]['properties']["polygon_claims"]
+            }); 
 
-        polygon.on('click',function()  {
-            if ($_selectedPolygon) {
-                $_selectedPolygon.setStyle({
-                    weight: 2,
-                    color: 'blue',
-                    opacity: 0.3,
-                    fillOpacity: 0.3
-            });
-            };
-            map.setView(this.centroid, polygons['config']['zoom'] + 1);
-            this.setStyle({
-                weight: 6,
-                color: 'green',
-                opacity: 1,
-                fillOpacity: 0.8
-            });
-            $_selectedPolygon = this;
-            if (this.organization) {
-                select_building(this.organization);
+            marker = L.marker(
+                [
+                    polygons['features'][i]['properties']["centroid"][0],
+                    polygons['features'][i]['properties']["centroid"][1],
+                ],
+                {icon: myIcon}
+            )
+          
+            var polygon = L.polygon(polygons['features'][i]["geometry"]["coordinates"]);
+            polygon.centroid = polygons['features'][i]['properties']["centroid"]
+
+            if (orgs_set.length==1){       
+                polygon.organization = orgs_set[0]['id']
             }
-            else {
-                $('#target').empty();            
-            };
-        });  
-    };
-    
-    map.setView(polygons['config']['center'], polygons['config']['zoom']);  
 
+            polygon.setStyle({
+                fillColor: polygons['features'][i]['properties']['color'],
+                weight: 2,
+                color: 'blue',
+                opacity: 0.3,
+                fillOpacity: 0.3
+            });
+            
 
+            marker.addTo(map);
+            polygon.addTo(map).bindPopup(org_list);
 
+            polygon.on('click',function()  {
+                if ($_selectedPolygon) {
+                    $_selectedPolygon.setStyle({
+                        weight: 2,
+                        color: 'blue',
+                        opacity: 0.3,
+                        fillOpacity: 0.3
+                });
+                };
+                map.setView(this.centroid, polygons['config']['zoom'] + 1);
+                this.setStyle({
+                    weight: 6,
+                    color: 'green',
+                    opacity: 1,
+                    fillOpacity: 0.8
+                });
+                $_selectedPolygon = this;
+                if (this.organization) {
+                    select_building(this.organization);
+                }
+                else {
+                    $('#target').empty();            
+                };
+            });  
+        } else {
+            marker = L.marker(
+                [
+                    polygons['features'][i]['properties']["centroid"][0],
+                    polygons['features'][i]['properties']["centroid"][1],
+                ]           
+            )
+
+            if (orgs_set.length==1){       
+                marker.organization = orgs_set[0]['id']
+            }
+
+            marker.addTo(map).bindPopup(org_list);
+
+            marker.on('click',function()  {
+                if ($_selectedPolygon) {
+                    $_selectedPolygon.setStyle({
+                        weight: 2,
+                        color: 'blue',
+                        opacity: 0.3,
+                        fillOpacity: 0.3
+                });
+                }; 
+            
+                if (this.organization) {
+                    select_building(this.organization);
+                }
+                else {
+                    $('#target').empty();            
+                };
+            });                        
+        
+        }
+        
+    }; 
+
+    map.setView(polygons['config']['center'], polygons['config']['zoom']); 
 
     $_selectedPolygon = null;
 }

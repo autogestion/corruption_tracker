@@ -1,10 +1,10 @@
-import json
+# import json
 
 from django.contrib.gis import admin
 from django import forms
-# Register your models here.
+
 from geoinfo.models import Uploader, Polygon
-from utils.geoparser import GeoJSONParser
+# from utils.geoparser import GeoJSONParser
 
 
 class UploaderForm(forms.ModelForm):
@@ -14,7 +14,8 @@ class UploaderForm(forms.ModelForm):
 
     # def save(self, commit=True):
     #     # instance = super(UploaderForm, self).save(commit=False)
-    #     geojson = json.loads(self.cleaned_data['json_file'].read().decode('utf8'))
+    #     geojson = json.loads(
+    #       self.cleaned_data['json_file'].read().decode('utf8'))
     #     GeoJSONParser.geojson_to_db(geojson)
     #     # return instance
 
@@ -50,9 +51,9 @@ class PolygonAdmin(admin.OSMGeoAdmin):
     form = PolygonForm
     list_display = ('polygon_id', 'layer',
                     'first_organization', 'address', 'centroid',
-                    'level', 'is_default', 'zoom')
+                    'level', 'is_default', 'zoom', 'is_verified')
     search_fields = ('polygon_id', 'address')
-    list_filter = ('level', 'layer__polygon_id')
+    list_filter = ('level', 'is_verified', 'is_default')
 
 
 admin.site.register(Uploader, UploaderAdmin)
