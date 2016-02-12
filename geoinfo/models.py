@@ -5,7 +5,7 @@ from django.contrib.gis.db import models
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 
-from claim.models import Organization, OrganizationType
+from claim.models import Organization, OrganizationType, Moderator
 
 
 class Uploader(models.Model):
@@ -33,7 +33,7 @@ class Polygon(models.Model):
     # Polygon as polygon
     polygon_id = models.CharField(max_length=50, primary_key=True)
     organizations = models.ManyToManyField(Organization, blank=True)
-    shape = models.PolygonField()
+    shape = models.PolygonField(null=True, blank=True)
     centroid = models.CharField(max_length=50, null=True, blank=True)
     address = models.CharField(max_length=800, null=True, blank=True)
     layer = models.ForeignKey('self', blank=True, null=True)
@@ -55,6 +55,7 @@ class Polygon(models.Model):
     is_default = models.BooleanField(default=False)
     zoom = models.IntegerField(blank=True, null=True)
 
+    is_verified = models.BooleanField(default=True)
     objects = models.GeoManager()
 
     @property
@@ -82,8 +83,12 @@ class Polygon(models.Model):
                          'claims_count': org_claims})
 
         # reverse coordinates for manualy adding polgygons
-        geometry = json.loads(self.shape.json)
-        [x.reverse() for x in geometry["coordinates"][0]]
+        if self.shape:
+            geometry = json.loads(self.shape.json)
+            [x.reverse() for x in geometry["coordinates"][0]]
+        else:
+            geometry = None
+
         centroid = self.centroid.split(',')
         centroid.reverse()
 
@@ -109,7 +114,12 @@ class Polygon(models.Model):
             return 'red'
 
     def generate_childs(self, add=False):
-        polygons = self.polygon_set.all()
+        moderate = 'show_markers' in Moderator.objects.get(id=1).show_claims
+        if moderate:
+            polygons = self.polygon_set.filter(is_verified=True)
+        else:
+            polygons = self.polygon_set.all()
+
         max_claims_value = max([x.total_claims for x in polygons])
 
         responce = {}
@@ -131,19 +141,6 @@ class Polygon(models.Model):
 
         responce = {'data': data,
                     'places': places}
-
-        # center = self.centroid.split(',')
-        # center.reverse()
-        # geo_json = {
-        #     'type': "FeatureCollection",
-        #     'config': {
-        #         'center': center,
-        #         'zoom': self.zoom},
-        # }
-        # geo_json['features'] = data
-
-        # responce = {'polygons': mark_safe(json.dumps(geo_json)),
-        #             'places': mark_safe(json.dumps(places))}
 
         if add:
             org_types = OrganizationType.objects.filter(
@@ -197,7 +194,8 @@ class Polygon(models.Model):
         # pprint(geo_json)
 
         layer = {'polygons': mark_safe(json.dumps(geo_json)),
-                 'places': mark_safe(json.dumps(responce['places']))}
+                 'places': mark_safe(json.dumps(responce['places'])),
+                 'layer_id': self.polygon_id}
         if add:
             layer['claim_types'] = mark_safe(json.dumps(responce['claim_types']))
 

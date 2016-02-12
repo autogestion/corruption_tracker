@@ -6,7 +6,7 @@ from django.conf import settings
 
 # from utils.common import get_geojson_file
 from utils.geoparser import GeoJSONParser
-
+from geoinfo.models import Polygon
 
 class Command(BaseCommand):
     help = 'Fullfill database with basic data'
@@ -31,6 +31,17 @@ class Command(BaseCommand):
         geojsons = list(map(GeoJSONParser.get_geojson_file, fullpathes))
         geojsons.sort(key=lambda x: x['ctracker_config']['AL'])
         list(map(GeoJSONParser.geojson_to_db, geojsons))
+
+
+        try:
+            default = Polygon.objects.get(polygon_id='21citzhovt')
+            default.is_default = True
+            default.centroid = '36.226147,49.986106'
+            default.save()
+        except Polygon.DoesNotExist:
+            pass
+
+
 
         # for geo_json_file in os.listdir(settings.INIT_GEOJSON_FOLDER):
         #     geo_json = get_geojson_file(os.path.join(
