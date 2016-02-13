@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 # from rest_framework.reverse import reverse
-from claim.models import Claim
+from claim.models import Claim, Organization
 
 
 class ClaimSerializer(serializers.ModelSerializer):
@@ -15,9 +15,11 @@ class ClaimSerializer(serializers.ModelSerializer):
                   # 'links'
                   )
 
-    # def get_links(self, obj):
-    #     request = self.context['request']
-    #     return {
-    #         'self': reverse('claim-detail',
-    #          kwargs={'pk': obj.pk}, request=request),
-    #     }
+
+class OrganizationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Organization
+        fields = ('id', 'name', 'org_type', 'total_claims')
+                  
+
