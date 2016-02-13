@@ -133,4 +133,16 @@ function main_map_init (map, options) {
     map.setView(polygons['config']['center'], polygons['config']['zoom']); 
 
     $_selectedPolygon = null;
+	
+	
+	// reset selected polygon highlight to default
+	map.on('click', function() {
+		$_selectedPolygon.setStyle({
+			weight: 2,
+			color: 'blue',
+			opacity: 0.3,
+			fillOpacity: 0.3
+		});
+	});	
+	
 }
