@@ -6,13 +6,10 @@ from claim.models import Claim, Organization
 
 class ClaimSerializer(serializers.ModelSerializer):
 
-    # links = serializers.SerializerMethodField()
-
     class Meta:
         model = Claim
         fields = ('text', 'created', 'live', 'organization',
                   'servant', 'complainer', 'claim_type',
-                  # 'links'
                   )
 
 

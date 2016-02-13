@@ -124,23 +124,42 @@ class Polygon(models.Model):
 
         responce = {}
         data = []
-        organizations = []
+        places = []
         for polygon in polygons:
             polygon_json = polygon.polygon_to_json()
             polygon_claims = polygon_json["properties"]['polygon_claims']
             polygon_json["properties"]['color'] = self.color_spot(
                 polygon_claims, max_claims_value)\
                 if polygon_claims else 'grey'
-            data.append(polygon_json)
-            organizations.extend(polygon.organizations.all())
+            data.append(polygon_json)            
+            for org in polygon.organizations.all():
+                places.append({'data': org.id,
+                            'value': org.name,
+                            "centroid": polygon_json["properties"]['centroid'],
+                            'org_type_id': org.org_type.type_id if org.org_type else 0})
 
-        places = [{'data': org.id,
-                  'value': org.name,
-                   'org_type_id': org.org_type.type_id if org.org_type else 0}
-                  for org in organizations]
+
+
+        # organizations = []
+        # for polygon in polygons:
+        #     polygon_json = polygon.polygon_to_json()
+        #     polygon_claims = polygon_json["properties"]['polygon_claims']
+        #     polygon_json["properties"]['color'] = self.color_spot(
+        #         polygon_claims, max_claims_value)\
+        #         if polygon_claims else 'grey'
+        #     data.append(polygon_json)
+        #     organizations.extend(polygon.organizations.all())
+
+        # places = [{'data': org.id,
+        #           'value': org.name,
+        #            'org_type_id': org.org_type.type_id if org.org_type else 0}
+        #           for org in organizations]
+
+
 
         responce = {'data': data,
                     'places': places}
+
 
         if add:
             org_types = OrganizationType.objects.filter(
