@@ -41,6 +41,7 @@ var AddPage = {
             AddPage.validate();
         });
 
+		/*
         $('#organization_name').autocomplete({
             lookup: places,
             onSelect: function (suggestion) {
@@ -49,7 +50,8 @@ var AddPage = {
                 AddPage.validate();
             }
         });
-
+		*/
+		
         $("#claim_form").submit(function(event){
             AddPage.show_processing();
             event.preventDefault();
