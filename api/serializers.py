@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 # from rest_framework.reverse import reverse
-from claim.models import Claim, Organization
+from claim.models import Claim, Organization, ClaimType
 
 
 class ClaimSerializer(serializers.ModelSerializer):
@@ -20,3 +20,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'org_type', 'total_claims')
                   
 
+
+class ClaimTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ClaimType
+        fields = ('id', 'name', 'org_type', 'icon')

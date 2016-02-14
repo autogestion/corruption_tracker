@@ -11,28 +11,19 @@ from geoinfo.models import Polygon
 class Command(BaseCommand):
     help = 'Fullfill database with basic data'
 
-    # def add_arguments(self, parser):
-    #     parser.add_argument('--file', type=str)
-
     def handle(self, *args, **options):
-
-        # Polygons n Orgs
-        # if options['file']:
-        #     geo_json = get_geojson_file(os.path.join(
-        #         settings.INIT_GEOJSON_FOLDER, options['file']))
-        #     GeoJSONParser.geojson_to_db(geo_json)
-        # else:
 
         call_command('loaddata', 'initial_data')
 
         geofilenames = os.listdir(settings.INIT_GEOJSON_FOLDER)
         fullpathes = [os.path.join(
-                      settings.INIT_GEOJSON_FOLDER, x) for x in geofilenames]
+                      settings.INIT_GEOJSON_FOLDER,
+                      x) for x in geofilenames if x.endswith('.geojson')]
         geojsons = list(map(GeoJSONParser.get_geojson_file, fullpathes))
         geojsons.sort(key=lambda x: x['ctracker_config']['AL'])
         list(map(GeoJSONParser.geojson_to_db, geojsons))
 
-
+        
         try:
             default = Polygon.objects.get(polygon_id='21citzhovt')
             default.is_default = True
@@ -42,8 +33,3 @@ class Command(BaseCommand):
             pass
 
 
-
-        # for geo_json_file in os.listdir(settings.INIT_GEOJSON_FOLDER):
-        #     geo_json = get_geojson_file(os.path.join(
-        #         settings.INIT_GEOJSON_FOLDER, geo_json_file))
-        #     GeoJSONParser.geojson_to_db(geo_json)

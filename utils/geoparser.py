@@ -1,4 +1,7 @@
 import json
+import os
+from django.core.files import File
+from django.conf import settings
 
 from geoinfo.models import Polygon
 from claim.models import OrganizationType, Organization, ClaimType
@@ -8,7 +11,7 @@ class GeoJSONParser():
 
     @staticmethod
     def get_geojson_file(file_path):
-        # print(file_path)
+        # print(file_path)        
         try:
             # python 3+
             json_s = open(file_path, encoding='utf8').read()
@@ -28,6 +31,12 @@ class GeoJSONParser():
             except ClaimType.DoesNotExist:
                 default_claim_type = ClaimType(name='---')
                 default_claim_type.save()
+                with open(os.path.join(
+                    settings.BASE_DIR, 'init_geo_data',
+                    'habar.jpg'), 'rb') as x_logo:
+                    xabar_file = File(reopen)
+                
+                xabar = ClaimType(name='Xabar', icon=xabar_file, save=True)
 
         # Create polygons
         for feature in geo_json['features']:
@@ -67,7 +76,7 @@ class GeoJSONParser():
                             org_type = OrganizationType(type_id=org_types[index],
                                                         name=geo_json['ctracker_config']["ORG_TYPES"][org_types[index]])
                             org_type.save()
-                            default_claim_type.org_type.add(org_type)
+                            org_type.claimtype.add(default_claim_type, xabar)
 
                         org_obj = Organization(
                             name=org_name,
