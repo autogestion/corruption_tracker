@@ -31,3 +31,5 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+TEST_SERVER = False

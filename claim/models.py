@@ -79,7 +79,10 @@ class Organization(models.Model):
         return self.claim_set.filter(moderation__in=allowed_statuses)
 
     def first_polygon(self):
-        return self.polygon_set.all()[0]
+        try:
+            return self.polygon_set.all()[0]
+        except IndexError:
+            return None
 
     @property
     def total_claims(self):

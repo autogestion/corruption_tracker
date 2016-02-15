@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
+# from django.utils.translation import ugettext as _
 
 # from geoinfo.views import LayerGenerator
 from geoinfo.models import Polygon
@@ -18,6 +19,12 @@ def add_page(request):
     if settings.RECAPTCHA_ENABLED is False:
         settings.RECAPTCHA_PUBLIC = ''
     resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
+
+    test_alarm = None
+    if settings.TEST_SERVER:
+        test_alarm = '<p style="color:red">%s</p>' %'УВАГА! Ресурс працює в тестовому режимі. *'
+    resp_dict['test_alarm'] = test_alarm
+
     # pprint(resp_dict['polygons'])
     return render(request, 'add_page.html', resp_dict)
 
@@ -25,6 +32,11 @@ def add_page(request):
 def map(request):
     resp_dict = Polygon.objects.get(is_default=True).generate_layer()
     resp_dict['page'] = 'map'
+
+    test_alarm = None
+    if settings.TEST_SERVER:
+        test_alarm = '<p style="color:red">%s</p>' %"*  Усі П.І.Б. посадовців та назви організацій уявні, співпадіння випадкові."
+    resp_dict['test_alarm'] = test_alarm
 
     return render(request, 'map.html', resp_dict)
 

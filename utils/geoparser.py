@@ -11,7 +11,7 @@ class GeoJSONParser():
 
     @staticmethod
     def get_geojson_file(file_path):
-        # print(file_path)        
+        # print(file_path)
         try:
             # python 3+
             json_s = open(file_path, encoding='utf8').read()
@@ -31,12 +31,13 @@ class GeoJSONParser():
             except ClaimType.DoesNotExist:
                 default_claim_type = ClaimType(name='---')
                 default_claim_type.save()
-                with open(os.path.join(
-                    settings.BASE_DIR, 'init_geo_data',
-                    'habar.jpg'), 'rb') as x_logo:
-                    xabar_file = File(reopen)
-                
-                xabar = ClaimType(name='Xabar', icon=xabar_file, save=True)
+
+                with open(os.path.join(settings.INIT_GEOJSON_FOLDER,
+                          'habar.jpg'), 'rb') as x_logo:
+                    xabar_file = File(x_logo)
+
+                    xabar = ClaimType(name='Xabar', icon=xabar_file)
+                    xabar.save()
 
         # Create polygons
         for feature in geo_json['features']:
@@ -76,7 +77,7 @@ class GeoJSONParser():
                             org_type = OrganizationType(type_id=org_types[index],
                                                         name=geo_json['ctracker_config']["ORG_TYPES"][org_types[index]])
                             org_type.save()
-                            org_type.claimtype.add(default_claim_type, xabar)
+                            org_type.claimtype_set.add(default_claim_type, xabar)
 
                         org_obj = Organization(
                             name=org_name,
