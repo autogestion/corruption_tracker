@@ -138,6 +138,17 @@ LEAFLET_CONFIG = {
     # 'DEFAULT_CENTER': (50.059605, 36.201421),
     # 'DEFAULT_ZOOM': 14,
     'RESET_VIEW': False,
+	'PLUGINS': {
+	'fontawesome': {
+        'css': 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css',
+        'auto-include': True
+    },	
+    'geolocation': {
+        'css': 'https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.css',
+        'js': 'https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js', 
+        'auto-include': True
+    }  
+	},	
     'TILES': [(_('Hydda'), 'http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png',
                             {'attribution':
                             'Tiles courtesy of <a href="http://openstreetmap.se/" '
