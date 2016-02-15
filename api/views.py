@@ -1,8 +1,9 @@
 from rest_framework import viewsets, filters
 
-from claim.models import Claim, Organization
+from claim.models import Claim, Organization,\
+	ClaimType
 from api.serializers import ClaimSerializer,\
-	OrganizationSerializer
+	OrganizationSerializer, ClaimTypeSerializer
 
 
 class ClaimViewSet(viewsets.ModelViewSet):
@@ -30,3 +31,18 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         filters.DjangoFilterBackend,  
     )
     filter_fields = ('polygon__polygon_id', )
+
+
+
+class ClaimTypeViewSet(viewsets.ModelViewSet):
+    """API endpoint for listing and creating claims."""
+
+    queryset = ClaimType.objects.all()
+    serializer_class = ClaimTypeSerializer
+
+    filter_backends = (
+        filters.DjangoFilterBackend,  
+    )
+    filter_fields = ('org_type__type_id', )
+
+
