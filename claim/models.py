@@ -142,4 +142,4 @@ class Claim(models.Model):
     # moderation = models.ForeignKey(ModerationStatus, default='not_moderated')
     moderation = models.CharField(choices=STATUSES, max_length=50,
                                   default='not_moderated')
-    bribe = models.IntegerField(blank=True, default=None)
+    bribe = models.IntegerField(blank=True, null=True)
