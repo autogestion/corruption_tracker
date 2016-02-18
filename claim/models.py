@@ -109,7 +109,8 @@ class Organization(models.Model):
                     'complainer': username,
                     'claim_type': claim_type,
                     'created': claim.created.strftime('%Y-%m-%d %H:%M:%S'),
-                    'claim_icon': claim_icon
+                    'claim_icon': claim_icon,
+                    'bribe': claim.bribe
                 })
 
         return json.dumps(claims_list[:limit])
@@ -141,3 +142,4 @@ class Claim(models.Model):
     # moderation = models.ForeignKey(ModerationStatus, default='not_moderated')
     moderation = models.CharField(choices=STATUSES, max_length=50,
                                   default='not_moderated')
+    bribe = models.IntegerField(blank=True, default=None)

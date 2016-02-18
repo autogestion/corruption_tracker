@@ -1,7 +1,8 @@
 import json
-import os
+import os, re
 from django.core.files import File
 from django.conf import settings
+from django.contrib.gis.geos import fromstr
 
 from geoinfo.models import Polygon
 from claim.models import OrganizationType, Organization, ClaimType
@@ -24,6 +25,7 @@ class GeoJSONParser():
 
     @staticmethod
     def geojson_to_db(geo_json, return_instance=False):
+        centroidPattern = re.compile("(-?\d+(?:\.\d+)?)\D+(-?\d+(?:\.\d+)?)")
 
         if geo_json['ctracker_config']['AL'] == 4:
             try:
@@ -49,7 +51,11 @@ class GeoJSONParser():
                 polygon = Polygon(
                     polygon_id=feature['properties']['ID'],
                     shape=json.dumps(feature['geometry']),
-                    centroid=feature['properties']['CENTROID'],
+                    # centroid=GEOSGeometry('POINT(%s %s)') % (
+                    #     feature['properties']['CENTROID'].split(',')),
+                    centroid=fromstr("POINT(%s %s)" % centroidPattern.search(
+                        feature['properties']['CENTROID']).groups(),
+                        srid=4326),
                     address=feature['properties']['ADDRESS'],
                     level=geo_json['ctracker_config']['AL'],
                     zoom=geo_json['ctracker_config']['ZOOM'])
@@ -74,10 +80,12 @@ class GeoJSONParser():
                             org_type = OrganizationType.objects.get(
                                 type_id=org_types[index])
                         except OrganizationType.DoesNotExist:
-                            org_type = OrganizationType(type_id=org_types[index],
-                                                        name=geo_json['ctracker_config']["ORG_TYPES"][org_types[index]])
+                            org_type = OrganizationType(
+                                type_id=org_types[index],
+                                name=geo_json['ctracker_config']["ORG_TYPES"][org_types[index]])
                             org_type.save()
-                            org_type.claimtype_set.add(default_claim_type, xabar)
+                            org_type.claimtype_set.add(
+                                default_claim_type, xabar)
 
                         org_obj = Organization(
                             name=org_name,

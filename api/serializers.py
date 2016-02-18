@@ -18,7 +18,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = ('id', 'name', 'org_type', 'total_claims')
-                  
 
 
 class ClaimTypeSerializer(serializers.ModelSerializer):

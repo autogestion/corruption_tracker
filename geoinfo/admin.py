@@ -50,7 +50,8 @@ class PolygonForm(forms.ModelForm):
 class PolygonAdmin(admin.OSMGeoAdmin):
     form = PolygonForm
     list_display = ('polygon_id', 'layer',
-                    'first_organization', 'address', 'centroid',
+                    'first_organization', 'address', 
+                    'centroid',
                     'level', 'is_default', 'zoom', 'is_verified')
     search_fields = ('polygon_id', 'address')
     list_filter = ('level', 'is_verified', 'is_default')

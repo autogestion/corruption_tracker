@@ -105,6 +105,7 @@ function select_building (org_id) {
                         message = message.replace('%claim_type%', data[i]['claim_type']);
                         message = message.replace('%text%', data[i]['text']);
                         message = message.replace('%created%', data[i]['created']);
+                        message = message.replace('%bribe%', data[i]['bribe']);
 
                         if (data[i]['claim_icon']) {
                             message = message.replace('<div style="float: right"></div>',  '<div style ="float: right"><img src="' + data[i]['claim_icon'] + '" height="50em" width="50em"></div>');

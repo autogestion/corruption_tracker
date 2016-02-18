@@ -69,6 +69,10 @@ urlpatterns = [
     url(r'^api/v1/token/', obtain_auth_token, name='api-token'),
     url(r'^api/v1/get_polygons_tree/(?P<polygon_id>[\w.]{0,256})/$',
         geo_views.get_polygons_tree, name="get_polygons_tree"),
+    url(r'^api/v1/get_nearest_polygons/(?P<layer>\d+)/(?P<distance>.*)/(?P<coord>.*)$',
+        geo_views.get_nearest_polygons, name="get_nearest_polygons"),
+    url(r'^api/v1/check_in_building/(?P<layer>\d+)/(?P<coord>.*)$',
+        geo_views.check_in_building, name="check_in_building"),
     url(r'^api/', include(router.urls)),
 
 

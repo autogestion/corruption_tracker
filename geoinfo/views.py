@@ -2,7 +2,8 @@ import json
 
 from django.http import HttpResponse
 from django.utils.safestring import mark_safe
-
+from django.contrib.gis.geos import fromstr
+from django.contrib.gis.measure import D
 
 from geoinfo.models import Polygon
 from geoinfo.serializers import extractor
@@ -20,6 +21,25 @@ from claim.models import Organization, OrganizationType
 
 def get_polygons_tree(request, polygon_id):
     data = mark_safe(json.dumps(extractor(polygon_id)))
+    return HttpResponse(data, content_type='application/json')
+
+
+def get_nearest_polygons(request, layer, distance, coord):
+    pnt = fromstr("POINT(%s %s)" % tuple(coord.split(',')))
+    # pnt.transform(900913)
+    selected = Polygon.objects.filter(
+        centroid__dwithin=(pnt, float(distance)), level=int(layer))
+
+    data = mark_safe(json.dumps([x.polygon_to_json() for x in selected]))
+    return HttpResponse(data, content_type='application/json')
+
+
+def check_in_building(request, layer, coord):
+    pnt = fromstr("POINT(%s %s)" % tuple(coord.split(',')))
+
+    selected = Polygon.objects.filter(shape__contains=pnt, level=int(layer))
+
+    data = mark_safe(json.dumps([x.polygon_to_json() for x in selected]))
     return HttpResponse(data, content_type='application/json')
 
 

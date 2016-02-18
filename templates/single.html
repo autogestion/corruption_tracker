@@ -123,6 +123,10 @@
                     <div id='claim_text_error'></div>
                     <textarea type="text" class="form-control" id="claim_text" name="claim_text" required></textarea>
                 </div>
+                <div class="form-group">
+                    <label for="bribe">{% trans "Bribe amount" %}:</label>
+                    <input type="text" class="form-control" id="bribe" name="bribe" required>
+                </div>
 
                 {% if user.is_authenticated %}
                     <div class="form-group">
@@ -168,6 +172,7 @@
         <div class="complainer"><b>{% trans "Complainer" %}:</b> <span>%complainer%</span></div>
         <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
         <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
+        <div class="bribe"><b>{% trans "Bribe amount" %}:</b> <span>%bribe%</span></div>
         <div class="claim"><b>{% trans "Claim text" %}:</b> <span>%text%</span></div>
         <div class="created"><b>{% trans "Created" %}:</b> <span>%created%</span></div>
         <hr>
