@@ -19,6 +19,7 @@ var grid = {
             { field: 'servant', caption: 'servant', size: '15%', sortable: true, searchable: true },
             { field: 'claim_type', caption: 'claim_type', size: '20%', sortable: true, searchable: true},
             { field: 'text', caption: 'text', size: '35%', searchable: true},
+            { field: 'bribe', caption: 'bribe', size: '15%', sortable: true},
             { field: 'created', caption: 'created', size: '15%', sortable: true},
         ],};
 
@@ -115,7 +116,7 @@ function select_building (org_id) {
                         count += 1
                     } 
                     record = {recid: i+1, complainer: data[i]['complainer'], servant: data[i]['servant'], claim_type: data[i]['claim_type'],
-                                text: data[i]['text'], created: data[i]['created']};
+                                text: data[i]['text'], bribe: data[i]['bribe'], created: data[i]['created']};
                     records.push(record); 
                 }
 

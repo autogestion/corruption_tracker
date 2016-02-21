@@ -101,6 +101,7 @@ class Organization(models.Model):
                     claim.claim_type.icon else False
                 username = claim.complainer.username if\
                     claim.complainer else _("Anon")
+                bribe = claim.bribe if claim.bribe else 0
                 claims_list.append({
                     'organization_id': self.id,
                     'organization_name': self.name,
@@ -110,7 +111,7 @@ class Organization(models.Model):
                     'claim_type': claim_type,
                     'created': claim.created.strftime('%Y-%m-%d %H:%M:%S'),
                     'claim_icon': claim_icon,
-                    'bribe': claim.bribe
+                    'bribe': bribe
                 })
 
         return json.dumps(claims_list[:limit])
