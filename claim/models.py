@@ -101,6 +101,7 @@ class Organization(models.Model):
                     claim.claim_type.icon else False
                 username = claim.complainer.username if\
                     claim.complainer else _("Anon")
+                bribe = claim.bribe if claim.bribe else 0
                 claims_list.append({
                     'organization_id': self.id,
                     'organization_name': self.name,
@@ -109,7 +110,8 @@ class Organization(models.Model):
                     'complainer': username,
                     'claim_type': claim_type,
                     'created': claim.created.strftime('%Y-%m-%d %H:%M:%S'),
-                    'claim_icon': claim_icon
+                    'claim_icon': claim_icon,
+                    'bribe': bribe
                 })
 
         return json.dumps(claims_list[:limit])
@@ -141,3 +143,4 @@ class Claim(models.Model):
     # moderation = models.ForeignKey(ModerationStatus, default='not_moderated')
     moderation = models.CharField(choices=STATUSES, max_length=50,
                                   default='not_moderated')
+    bribe = models.IntegerField(blank=True, null=True)

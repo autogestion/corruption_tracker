@@ -34,7 +34,7 @@ class Polygon(models.Model):
     polygon_id = models.CharField(max_length=50, primary_key=True)
     organizations = models.ManyToManyField(Organization, blank=True)
     shape = models.PolygonField(null=True, blank=True)
-    centroid = models.CharField(max_length=50, null=True, blank=True)
+    centroid = models.PointField(null=True, blank=True)
     address = models.CharField(max_length=800, null=True, blank=True)
     layer = models.ForeignKey('self', blank=True, null=True)
 
@@ -89,7 +89,7 @@ class Polygon(models.Model):
         else:
             geometry = None
 
-        centroid = self.centroid.split(',')
+        centroid = list(self.centroid.coords)
         centroid.reverse()
 
         return {
@@ -131,35 +131,15 @@ class Polygon(models.Model):
             polygon_json["properties"]['color'] = self.color_spot(
                 polygon_claims, max_claims_value)\
                 if polygon_claims else 'grey'
-            data.append(polygon_json)            
+            data.append(polygon_json)
             for org in polygon.organizations.all():
                 places.append({'data': org.id,
-                            'value': org.name,
-                            "centroid": polygon_json["properties"]['centroid'],
-                            'org_type_id': org.org_type.type_id if org.org_type else 0})
-
-
-
-        # organizations = []
-        # for polygon in polygons:
-        #     polygon_json = polygon.polygon_to_json()
-        #     polygon_claims = polygon_json["properties"]['polygon_claims']
-        #     polygon_json["properties"]['color'] = self.color_spot(
-        #         polygon_claims, max_claims_value)\
-        #         if polygon_claims else 'grey'
-        #     data.append(polygon_json)
-        #     organizations.extend(polygon.organizations.all())
-
-        # places = [{'data': org.id,
-        #           'value': org.name,
-        #            'org_type_id': org.org_type.type_id if org.org_type else 0}
-        #           for org in organizations]
-
-
+                               'value': org.name,
+                               "centroid": polygon_json["properties"]['centroid'],
+                               'org_type_id': org.org_type.type_id if org.org_type else 0})
 
         responce = {'data': data,
                     'places': places}
-
 
         if add:
             org_types = OrganizationType.objects.filter(
@@ -200,8 +180,7 @@ class Polygon(models.Model):
             responce = self.generate_childs(add)
 
         # pprint(responce)
-
-        center = self.centroid.split(',')
+        center = list(self.centroid.coords)
         center.reverse()
         geo_json = {
             'type': "FeatureCollection",
