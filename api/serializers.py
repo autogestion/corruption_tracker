@@ -25,7 +25,7 @@ class ClaimTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClaimType
-        fields = ('id', 'name', 'org_type', 'icon')
+        fields = ('id', 'name', 'icon')
 
 
 def extractor(polygon_id):

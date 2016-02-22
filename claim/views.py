@@ -54,7 +54,7 @@ def add_claim(request):
         claim = Claim(
             text=escape(request.POST.get('claim_text', False)),
             servant=escape(request.POST.get('servant', False)),
-            bribe=escape(request.POST.get('bribe', False)),
+            bribe=escape(request.POST.get('bribe', 0)),
             complainer=user,
             organization=Organization.objects.get(
                 id=request.POST.get('org_id', False)),
