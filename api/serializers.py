@@ -21,6 +21,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'org_type', 'total_claims')
 
 
+
 class ClaimTypeSerializer(serializers.ModelSerializer):
 
     class Meta:

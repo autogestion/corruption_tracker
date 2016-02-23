@@ -1,5 +1,6 @@
 
 from django.http import HttpResponse
+from django.contrib.gis.geos import fromstr
 
 from geoinfo.models import Polygon
 from claim.models import Organization, OrganizationType
@@ -21,7 +22,8 @@ def add_org(request):
 
     polygon = Polygon(
         polygon_id=request.POST['centroid'],
-        centroid=request.POST['centroid'],
+        centroid=fromstr("POINT(%s %s)" % tuple(request.POST['centroid'].split(','))),
+        shape=request.POST['shape'],
         address=request.POST['address'],
         layer=layer,
         level=Polygon.building,

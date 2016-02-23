@@ -32,6 +32,6 @@ router.register(r'v1.1/claim_types', views_1_1.ClaimTypeViewSet, base_name='clai
 router.register(r'v1.1/get_polygons_tree', views_1_1.GetPolygonsTree, base_name='get_polygons_tree')
 router.register(r'v1.1/get_nearest_polygons', views_1_1.GetNearestPolygons, base_name='get_nearest_polygons')
 router.register(r'v1.1/check_in_polygon', views_1_1.CheckInPolygon, base_name='check_in_polygon')
-
+router.register(r'v1.1/add_organization', views_1_1.AddOrganization, base_name='add_organization')
 
 urlpatterns += router.urls

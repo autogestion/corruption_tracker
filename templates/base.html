@@ -31,6 +31,7 @@
             <li {% if page == 'map' %} class="active"{% endif %}><a href="{% url 'map' %}">{% trans "Corruption map" %}</a></li>
             <li {% if page == 'about' %} class="active"{% endif %}><a href="{% url 'about' %}">{% trans "Who is here?" %}</a></li>
             <li {% if page == 'single' %} class="active"{% endif %}><a href="{% url 'single' %}">{% trans "Single page" %}</a> </li>
+            <li><a href="api" target="_blank">{% trans "API" %}</a> </li>
              {% if page == 'single' %}<li>
                 <div class="input-group" style="width: 400px;padding:7px; margin-left:50px;">
                     <input type='search' id='organization_name' placeholder='{% trans "Organization name" %}' class="form-control">

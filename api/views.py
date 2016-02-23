@@ -78,7 +78,6 @@ def get_polygons_tree(request, polygon_id):
 
 def get_nearest_polygons(request, layer, distance, coord):
     pnt = fromstr("POINT(%s %s)" % tuple(coord.split(',')))
-    # pnt.transform(900913)
     selected = Polygon.objects.filter(
         centroid__dwithin=(pnt, float(distance)), level=int(layer))
 
