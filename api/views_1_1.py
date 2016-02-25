@@ -71,7 +71,13 @@ class ClaimViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         queryset = Claim.objects.filter(organization__id=pk)   
         serializer = ClaimSerializer(queryset, many=True)
-        return Response(serializer.data)        
+        return Response(serializer.data)      
+
+    def perform_create(self, serializer):
+        print(self.request.user)
+        user = None if self.request.user.is_anonymous() else self.request.user
+        serializer.save(complainer=user)
+
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):

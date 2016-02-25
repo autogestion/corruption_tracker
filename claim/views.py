@@ -1,4 +1,4 @@
-
+import json
 import requests
 
 from django.http import HttpResponse
@@ -15,7 +15,7 @@ def get_claims(request, org_id, limit=999):
     # For unknown reason django do not check type param, event if in urls.py
     # we have coorect \d pattern.
     limit = int(limit)
-    data = Organization.objects.get(id=org_id).json_claims(limit=limit)
+    data = json.dumps(Organization.objects.get(id=org_id).json_claims(limit=limit))
     return HttpResponse(data, content_type='application/json')
 
 

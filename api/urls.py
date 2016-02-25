@@ -1,5 +1,5 @@
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 
@@ -14,8 +14,8 @@ router.register(r'v1/claim_types', views.ClaimTypeViewSet)
 
 
 urlpatterns = [
-    # url(r'^api-auth/', include('rest_framework.urls',
-    #     namespace='rest_framework')),
+    url(r'^api-auth/', include('rest_framework.urls',
+        namespace='rest_framework')),
     url(r'^v1/token/', obtain_auth_token, name='api-token'),
     url(r'^v1/get_polygons_tree/(?P<polygon_id>[\w.]{0,256})/$',
         views.get_polygons_tree, name="get_polygons_tree"),
