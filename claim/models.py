@@ -88,6 +88,19 @@ class Organization(models.Model):
     def total_claims(self):
         return self.moderation_filter().count()
 
+
+    def claim_types(self):
+        claim_types = ClaimType.objects.filter(org_type=self.org_type)
+        claim_types_list = []
+
+        for claim_type in claim_types:
+            claim_types_list.append({
+                'name':claim_type.name,               
+                'icon': claim_type.icon.url if\
+                    claim_type.icon else False
+                })
+        return claim_types_list
+
     def json_claims(self, limit=999):
         claims = self.moderation_filter()
 
@@ -114,7 +127,7 @@ class Organization(models.Model):
                     'bribe': bribe
                 })
 
-        return json.dumps(claims_list[:limit])
+        return claims_list[:limit]
 
     def __str__(self):
         return self.name

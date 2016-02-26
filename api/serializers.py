@@ -7,6 +7,10 @@ from geoinfo.models import Polygon
 
 class ClaimSerializer(serializers.ModelSerializer):
 
+
+    complainer = serializers.ReadOnlyField(source='complainer.username')
+    created = serializers.ReadOnlyField()
+
     class Meta:
         model = Claim
         fields = ('text', 'created', 'live', 'organization',
@@ -16,16 +20,21 @@ class ClaimSerializer(serializers.ModelSerializer):
 
 class OrganizationSerializer(serializers.ModelSerializer):
 
+    # claims = serializers.PrimaryKeyRelatedField(many=True, queryset=Claim.objects.all())
+
     class Meta:
         model = Organization
-        fields = ('id', 'name', 'org_type', 'total_claims')
+        fields = ('id', 'name', 'org_type', 'total_claims', 
+            # 'claims'
+            'json_claims', 'claim_types')
+
 
 
 class ClaimTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClaimType
-        fields = ('id', 'name', 'org_type', 'icon')
+        fields = ('id', 'name', 'icon')
 
 
 def extractor(polygon_id):
