@@ -5,6 +5,21 @@ from rest_framework.routers import DefaultRouter
 
 from api import views, views_1_1
 
+# from rest_framework.decorators import api_view
+# from rest_framework.response import Response
+# from rest_framework.reverse import reverse
+
+
+# @api_view(('GET',))
+# def api_root(request, format=None):
+#     return Response({
+#         'get_polygons_tree': reverse('get_polygons_tree', request=request, format=format),
+#         'get_nearest_polygons': reverse('get_nearest_polygons', request=request, format=format),
+#         'check_in_building': reverse('check_in_building', request=request, format=format)
+#     })
+
+
+
 router = DefaultRouter()
 
 # -----   v1 api
@@ -14,6 +29,7 @@ router.register(r'v1/claim_types', views.ClaimTypeViewSet)
 
 
 urlpatterns = [
+	# url(r'^v1/$', api_root),
     url(r'^api-auth/', include('rest_framework.urls',
         namespace='rest_framework')),
     url(r'^v1/token/', obtain_auth_token, name='api-token'),
