@@ -26,7 +26,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
         model = Organization
         fields = ('id', 'name', 'org_type', 'total_claims', 
             # 'claims'
-            'json_claims', 'claim_types')
+            # 'json_claims', 
+            'claim_types'
+            )
 
 
 
