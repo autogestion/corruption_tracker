@@ -12,7 +12,7 @@ from geoinfo.models import Polygon
 from claim.models import Claim, Organization,\
     ClaimType
 from api.serializers import ClaimSerializer,\
-    OrganizationSerializer, ClaimTypeSerializer, extractor
+    OrganizationSerializer, extractor
 
 
 class IsSafe(BasePermission):
@@ -40,13 +40,18 @@ class CanPost(BasePermission):
 class ClaimViewSet(viewsets.ModelViewSet):
     """
     API endpoint for listing and creating Claims.
-    
+
     - to get claims for organization, use .../claims/_org_id_
     Example:  .../claims/13/
 
     - to add claim use POST request with next parameters:
         'text', 'live', 'organization', 'servant', 'claim_type',
-
+    Example:
+        'text': 'Покусали комарі', 
+        'claim_type': '2', 
+        'servant': 'Бабця', 
+        'live': 'true', 
+        'organization': '13'
     .
     """
 
@@ -69,7 +74,7 @@ class ClaimViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)      
 
     def perform_create(self, serializer):
-        print(self.request.user)
+        print(self.request.data)
         user = None if self.request.user.is_anonymous() else self.request.user
         serializer.save(complainer=user)
 
@@ -108,16 +113,16 @@ class OrganizationViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        print(request.POST)
+        print(request.data)
 
         layer = Polygon.objects.get(
-            polygon_id=request.POST['layer_id'])
+            polygon_id=request.data['layer_id'])
 
         polygon = Polygon(
-            polygon_id=request.POST['centroid'],
-            centroid=fromstr("POINT(%s %s)" % tuple(request.POST['centroid'].split(','))),
-            shape=request.POST['shape'],
-            address=request.POST['address'],
+            polygon_id=request.data['centroid'],
+            centroid=fromstr("POINT(%s %s)" % tuple(request.data['centroid'].split(','))),
+            shape=request.data['shape'],
+            address=request.data['address'],
             layer=layer,
             level=Polygon.building,
             zoom=17,
@@ -125,10 +130,10 @@ class OrganizationViewSet(viewsets.ViewSet):
         polygon.save()
 
         org_type = OrganizationType.objects.get(
-            type_id=request.POST['org_type'])
+            type_id=request.data['org_type'])
 
         organization = Organization(
-            name=request.POST['org_name'],
+            name=request.data['org_name'],
             org_type=org_type)
         organization.save()
 
@@ -176,11 +181,15 @@ class GetPolygonsTree(viewsets.ViewSet):
     """
     API endpoint for getting polygons ierarchy.
     - GET returns hole tree from 'root' polygon
-    - to get tree from certain node, use .../get_polygons_tree/_polygon_id_
+    - to get tree from certain node, use .../polygon/get_tree/_polygon_id_
     
     Example:  .../polygon/get_tree/21citdzerz/
     .
     """
+
+    queryset = Polygon.objects.all()
+    permission_classes = (IsSafe,)
+
 
     def list(self, request):
         return Response(extractor('root'))
@@ -188,18 +197,25 @@ class GetPolygonsTree(viewsets.ViewSet):
     def retrieve(self, request, pk='root'):     
         return Response(extractor(pk))
 
-    queryset = Polygon.objects.all()
-    permission_classes = (IsSafe,)
-
 
 class GetNearestPolygons(viewsets.ViewSet):
     """
     API endpoint for getting nearest polygons.  
-    - to get nearest polygons, use .../get_nearest_polygons/_layer_distance_lat_lang_
+    - to get nearest polygons, use .../polygon/get_nearest/_layer_/_distance_/_coordinates_
+    Available layers:
+        region = 1
+        area = 2
+        district = 3
+        building = 4
     
     Example:  .../polygon/get_nearest/4/0.05/36.226147,49.986106/
     .
     """
+
+    queryset = Polygon.objects.all()
+    permission_classes = (IsSafe,)
+    polygon = 'get_nearest'
+
 
     def list(self, request):
         docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
@@ -213,19 +229,25 @@ class GetNearestPolygons(viewsets.ViewSet):
         data = [x.polygon_to_json() for x in selected]
         return Response(data)
 
-    queryset = Polygon.objects.all()
-    permission_classes = (IsSafe,)
-    polygon = 'get_nearest'
-
 
 class CheckInPolygon(viewsets.ViewSet):
     """
-    API endpoint for check in polygon.  
-    - to check in polygon, use .../check_in_polygon/_layer_lat_lang_
-    
+    API endpoint for check if coordinates in polygon.  
+    - to check in polygon, use  .../polygon/check_in/_layer_/_coordinates_  
+    Available layers:
+        region = 1
+        area = 2
+        district = 3
+        building = 4    
+
     Example:  .../polygon/check_in/4/36.2218621,49.9876059/
     .
     """
+
+    queryset = Polygon.objects.all()
+    permission_classes = (IsSafe,)
+    polygon = 'check_in'
+
 
     def list(self, request):
         docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
@@ -238,8 +260,6 @@ class CheckInPolygon(viewsets.ViewSet):
         data = [x.polygon_to_json() for x in selected]
         return Response(data)
 
-    queryset = Polygon.objects.all()
-    permission_classes = (IsSafe,)
-    polygon = 'check_in'
+
 
 

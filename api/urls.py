@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework import viewsets
 
 from api import views, views_1_1, views_1_2
-from claim.models import Claim
+# from claim.models import Claim
 # from rest_framework.decorators import api_view
 # from rest_framework.response import Response
 # from rest_framework.reverse import reverse

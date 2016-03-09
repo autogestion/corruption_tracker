@@ -95,6 +95,7 @@ class Organization(models.Model):
 
         for claim_type in claim_types:
             claim_types_list.append({
+                'id': claim_type.id,
                 'name':claim_type.name,               
                 'icon': claim_type.icon.url if\
                     claim_type.icon else False
