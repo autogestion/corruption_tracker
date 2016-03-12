@@ -80,7 +80,9 @@ class Polygon(models.Model):
             polygon_claims += org_claims
             orgs.append({'id': org.id,
                         'name': org.name,
-                         'claims_count': org_claims})
+                         'claims_count': org_claims,
+                         'claim_types': org.claim_types()
+                         })
 
         # reverse coordinates for manualy adding polgygons
         if self.shape:
