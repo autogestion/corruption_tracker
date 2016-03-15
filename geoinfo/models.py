@@ -123,7 +123,7 @@ class Polygon(models.Model):
         else:
             responce["properties"]["polygon_claims"] = self.total_claims
 
-        print(responce)
+        # print(responce)
         return responce
 
 

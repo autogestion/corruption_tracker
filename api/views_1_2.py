@@ -141,6 +141,34 @@ class OrganizationViewSet(viewsets.ViewSet):
 
 
 
+class PolygonViewSet(viewsets.ViewSet):
+    """
+    API endpoint for obtainin poligons.  
+    - GET returns all polygons ordered by creation date
+    - to get polygons, filtered by layer use .../polygon/_layer_/
+    Available layers:
+        region = 1
+        area = 2
+        district = 3
+        building = 4
+    
+    Example:  .../polygon/3/
+    .
+    """
+
+    queryset = Polygon.objects.all().order_by('created')
+    permission_classes = (IsSafe,)
+
+    def list(self, request):
+        data = [x.polygon_to_json() for x in self.queryset]
+        return Response(data)
+
+    def retrieve(self, request, pk=4):
+        selected = self.queryset.filter(level=int(pk))
+        data = [x.polygon_to_json() for x in selected]
+        return Response(data)
+
+
 
 class GetPolygonsTree(viewsets.ViewSet):
     """

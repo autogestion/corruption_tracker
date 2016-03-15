@@ -68,7 +68,6 @@ def increment_claims(sender, instance, created, **kwargs):
 
 def decrement_claims(sender, instance, **kwargs):
     houses = instance.organization.polygon_set.all()
-    print(houses)
     for house in houses:
         house.claims -= 1
         house.save()
