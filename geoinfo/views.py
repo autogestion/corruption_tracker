@@ -1,9 +1,9 @@
 
 from django.http import HttpResponse
 from django.contrib.gis.geos import fromstr
-
+from django.db.models.signals import post_save, post_delete
 from geoinfo.models import Polygon
-from claim.models import Organization, OrganizationType
+from claim.models import Claim, Organization, OrganizationType
 
 
 # def export_layer(request, layer_id):
@@ -42,3 +42,44 @@ def add_org(request):
     polygon.organizations.add(organization)
 
     return HttpResponse(status=201)
+
+
+
+
+def increment_claims(sender, instance, created, **kwargs):
+    if created:
+        houses = instance.organization.polygon_set.all()
+        for house in houses:
+            house.claims += 1
+            house.save()
+            # add to district
+            house.layer.claims += 1
+            house.layer.save()
+            # add to city
+            house.layer.layer.claims += 1
+            house.layer.layer.save()
+            # add to region
+            house.layer.layer.layer.claims += 1
+            house.layer.layer.layer.save()       
+
+# post_save.connect(increment_claims, sender=Claim)
+
+
+
+def decrement_claims(sender, instance, **kwargs):
+    houses = instance.organization.polygon_set.all()
+    print(houses)
+    for house in houses:
+        house.claims -= 1
+        house.save()
+        # sub from district
+        house.layer.claims -= 1
+        house.layer.save()
+        # sub from city
+        house.layer.layer.claims -= 1
+        house.layer.layer.save()
+        # sub from region
+        house.layer.layer.layer.claims -= 1
+        house.layer.layer.layer.save()       
+
+# post_delete.connect(decrement_claims, sender=Claim)

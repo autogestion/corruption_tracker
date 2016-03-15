@@ -74,7 +74,7 @@ class ClaimViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)      
 
     def perform_create(self, serializer):
-        print(self.request.data)
+        # print(self.request.data)
         user = None if self.request.user.is_anonymous() else self.request.user
         serializer.save(complainer=user)
 
@@ -113,7 +113,7 @@ class OrganizationViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        print(request.data)
+        # print(request.data)
 
         layer = Polygon.objects.get(
             polygon_id=request.data['layer_id'])
@@ -142,41 +142,6 @@ class OrganizationViewSet(viewsets.ViewSet):
 
 
 
-# class PolygonViewSet(viewsets.ViewSet):
-
-#     """
-#     API endpoint for getting polygons ierarchy.
-#     - GET returns hole tree from 'root' polygon
-#     - to get tree from certain node, use .../get_polygons_tree/_polygon_id_
-    
-#     Example:  .../get_polygons_tree/21citdzerz/
-#     .
-#     """
-
-#     queryset = Polygon.objects.all()
-#     permission_classes = (IsSafe,)
-
-#     def list(self, request):
-#         docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
-#         return Response(docs)
-
-#     @detail_route()
-#     def get_tree(self, request, *args, **kwargs):
-#         snippet = self.get_object()
-#         return Response(snippet)   
-
-#     @detail_route()
-#     def get_nearest(self, request, *args, **kwargs):
-#         snippet = self.get_object()
-#         return Response(snippet)             
-
-#     @detail_route()
-#     def check_in(self, request, *args, **kwargs):
-#         snippet = self.get_object()
-#         return Response(snippet)  
-
-
-
 class GetPolygonsTree(viewsets.ViewSet):
     """
     API endpoint for getting polygons ierarchy.
@@ -194,8 +159,9 @@ class GetPolygonsTree(viewsets.ViewSet):
     def list(self, request):
         return Response(extractor('root'))
 
-    def retrieve(self, request, pk='root'):     
+    def retrieve(self, request, pk='root'):
         return Response(extractor(pk))
+
 
 
 class GetNearestPolygons(viewsets.ViewSet):
@@ -228,6 +194,7 @@ class GetNearestPolygons(viewsets.ViewSet):
 
         data = [x.polygon_to_json() for x in selected]
         return Response(data)
+
 
 
 class CheckInPolygon(viewsets.ViewSet):
@@ -263,3 +230,38 @@ class CheckInPolygon(viewsets.ViewSet):
 
 
 
+
+# class PolygonViewSet2(viewsets.ViewSet):
+
+#     """
+#     API endpoint for getting polygons ierarchy.
+#     - GET returns hole tree from 'root' polygon
+#     - to get tree from certain node, use .../get_polygons_tree/_polygon_id_
+    
+#     Example:  .../get_polygons_tree/21citdzerz/
+#     .
+#     """
+#     polygon = True
+#     queryset = Polygon.objects.all()
+#     permission_classes = (IsSafe,)
+
+
+#     def list(self, request):
+#         docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
+#         return Response(docs)
+
+#     @detail_route()
+#     def get_tree(self, request, *args, **kwargs):
+#         self.lookup_field = 'get_tree'
+#         snippet = self.get_object()        
+#         return Response(snippet)   
+
+#     @detail_route()
+#     def get_nearest(self, request, *args, **kwargs):
+#         snippet = self.get_object()
+#         return Response(snippet)             
+
+#     @detail_route()
+#     def check_in(self, request, *args, **kwargs):
+#         snippet = self.get_object()
+#         return Response(snippet)  
