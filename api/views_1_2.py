@@ -158,14 +158,15 @@ class PolygonViewSet(viewsets.ViewSet):
 
     queryset = Polygon.objects.all().order_by('created')
     permission_classes = (IsSafe,)
+    lookup_value_regex = '\d'
 
     def list(self, request):
-        data = [x.polygon_to_json() for x in self.queryset]
+        data = [x.polygon_to_json(shape=False) for x in self.queryset]
         return Response(data)
 
     def retrieve(self, request, pk=4):
         selected = self.queryset.filter(level=int(pk))
-        data = [x.polygon_to_json() for x in selected]
+        data = [x.polygon_to_json(shape=False) for x in selected]
         return Response(data)
 
 

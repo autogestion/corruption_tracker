@@ -84,9 +84,9 @@ class Polygon(models.Model):
         else:
             return None
 
-    def polygon_to_json(self):
+    def polygon_to_json(self, shape=True):
         # reverse coordinates for manualy adding polgygons
-        if self.shape:
+        if shape and self.shape:
             geometry = json.loads(self.shape.json)
             [x.reverse() for x in geometry["coordinates"][0]]
         else:
@@ -99,7 +99,8 @@ class Polygon(models.Model):
             "type": "Feature",
             "properties": {
                 "ID": self.polygon_id,                
-                "centroid": centroid,        
+                "centroid": centroid,
+                'address': self.address,
                 # "polygon_claims": self.claims
             },
             "geometry": geometry
