@@ -1,7 +1,8 @@
 
 from rest_framework import serializers
 # from rest_framework.reverse import reverse
-from claim.models import Claim, Organization, ClaimType
+from claim.models import Claim, Organization, ClaimType,\
+    OrganizationType
 from geoinfo.models import Polygon
 
 
@@ -16,6 +17,15 @@ class ClaimSerializer(serializers.ModelSerializer):
         fields = ('text', 'created', 'live', 'organization',
                   'servant', 'complainer', 'claim_type',
                   )
+
+
+
+class OrganizationTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OrganizationType
+        fields = ('type_id', 'name')
+
 
 
 class OrganizationSerializer(serializers.ModelSerializer):

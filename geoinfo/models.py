@@ -101,6 +101,8 @@ class Polygon(models.Model):
                 "ID": self.polygon_id,                
                 "centroid": centroid,
                 'address': self.address,
+                'parent_id': self.layer.polygon_id if self.layer else None,
+                'level': self.level,
                 # "polygon_claims": self.claims
             },
             "geometry": geometry

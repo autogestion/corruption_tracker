@@ -6,13 +6,14 @@ from django.contrib.gis.geos import fromstr
 from rest_framework import viewsets, filters
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 
 from geoinfo.models import Polygon
 from claim.models import Claim, Organization,\
-    ClaimType
+    ClaimType, OrganizationType
 from api.serializers import ClaimSerializer,\
-    OrganizationSerializer, extractor
+    OrganizationSerializer, OrganizationTypeSerializer, \
+    extractor
 
 
 class IsSafe(BasePermission):
@@ -41,8 +42,8 @@ class ClaimViewSet(viewsets.ModelViewSet):
     """
     API endpoint for listing and creating Claims.
 
-    - to get claims for organization, use .../claims/_org_id_
-    Example:  .../claims/13/
+    - to get claims for organization, use .../claim/_org_id_
+    Example:  .../claim/13/
 
     - to add claim use POST request with next parameters:
         'text', 'live', 'organization', 'servant', 'claim_type',
@@ -71,7 +72,7 @@ class ClaimViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         queryset = Claim.objects.filter(organization__id=pk)   
         serializer = ClaimSerializer(queryset, many=True)
-        return Response(serializer.data)      
+        return Response(serializer.data)
 
     def perform_create(self, serializer):
         # print(self.request.data)
@@ -84,8 +85,10 @@ class OrganizationViewSet(viewsets.ViewSet):
     """
     API endpoint for listing and creating Organizations.
 
-    - to get organizations for polygon, use .../organizations/_polygon_id_    
-    Example:  .../organizations/21citzhovt0002/
+    - to get organizations for polygon, use .../organization/_polygon_id_    
+    Example:  .../organization/21citzhovt0002/
+
+    - to get list of organization types, use /organization/orgtypes/
 
     - to add organization use POST with next parameters:
     Example:
@@ -101,6 +104,13 @@ class OrganizationViewSet(viewsets.ViewSet):
 
     queryset = Organization.objects.all()
     permission_classes = (CanPost,)
+
+
+    @list_route()
+    def orgtypes(self, request):
+        org_types = OrganizationType.objects.all()
+        serializer = OrganizationTypeSerializer(org_types, many=True)
+        return Response(serializer.data)
 
 
     def list(self, request):
@@ -143,8 +153,10 @@ class OrganizationViewSet(viewsets.ViewSet):
 
 class PolygonViewSet(viewsets.ViewSet):
     """
-    API endpoint for obtainin poligons.  
+    API endpoint for obtaining poligons.  
+
     - GET returns all polygons ordered by creation date
+
     - to get polygons, filtered by layer use .../polygon/_layer_/
     Available layers:
         region = 1
@@ -174,7 +186,9 @@ class PolygonViewSet(viewsets.ViewSet):
 class GetPolygonsTree(viewsets.ViewSet):
     """
     API endpoint for getting polygons ierarchy.
+
     - GET returns hole tree from 'root' polygon
+
     - to get tree from certain node, use .../polygon/get_tree/_polygon_id_
     
     Example:  .../polygon/get_tree/21citdzerz/
@@ -196,6 +210,7 @@ class GetPolygonsTree(viewsets.ViewSet):
 class GetNearestPolygons(viewsets.ViewSet):
     """
     API endpoint for getting nearest polygons.  
+
     - to get nearest polygons, use .../polygon/get_nearest/_layer_/_distance_/_coordinates_
     Available layers:
         region = 1
@@ -228,7 +243,8 @@ class GetNearestPolygons(viewsets.ViewSet):
 
 class CheckInPolygon(viewsets.ViewSet):
     """
-    API endpoint for check if coordinates in polygon.  
+    API endpoint for check if coordinates in polygon. 
+
     - to check in polygon, use  .../polygon/check_in/_layer_/_coordinates_  
     Available layers:
         region = 1
