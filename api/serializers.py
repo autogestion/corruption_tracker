@@ -24,7 +24,7 @@ class OrganizationTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrganizationType
-        fields = ('type_id', 'name')
+        fields = ('type_id', 'name', 'claim_types')
 
 
 
@@ -37,7 +37,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'org_type', 'total_claims', 
             # 'claims'
             # 'json_claims', 
-            'claim_types'
+            # 'claim_types'
             )
 
 
@@ -46,7 +46,8 @@ class ClaimTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClaimType
-        fields = ('id', 'name', 'icon')
+        fields = ('id', 'name', 'icon',             
+            )
 
 
 def extractor(polygon_id):

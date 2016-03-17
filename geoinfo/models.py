@@ -117,7 +117,8 @@ class Polygon(models.Model):
                 orgs.append({'id': org.id,
                             'name': org.name,
                              'claims_count': org_claims,
-                             'claim_types': org.claim_types()
+                             # 'claim_types': org.claim_types()
+                             'org_type_id': org.org_type.type_id
                              })
 
             responce["properties"]["organizations"] = orgs

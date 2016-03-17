@@ -47,6 +47,22 @@ class OrganizationType(models.Model):
     type_id = models.CharField(primary_key=True, max_length=155)
     name = models.CharField(max_length=255)
 
+
+    def claim_types(self):
+        claim_types = self.claimtype_set.all()
+        claim_types_list = []
+
+        for claim_type in claim_types:
+            claim_types_list.append({
+                'id': claim_type.id,
+                'name':claim_type.name,               
+                'icon': claim_type.icon.url if\
+                    claim_type.icon else False
+                })
+        return claim_types_list
+
+
+
     def __str__(self):
         return self.type_id
 
@@ -89,18 +105,18 @@ class Organization(models.Model):
         return self.moderation_filter().count()
 
 
-    def claim_types(self):
-        claim_types = ClaimType.objects.filter(org_type=self.org_type)
-        claim_types_list = []
+    # def claim_types(self):
+    #     claim_types = ClaimType.objects.filter(org_type=self.org_type)
+    #     claim_types_list = []
 
-        for claim_type in claim_types:
-            claim_types_list.append({
-                'id': claim_type.id,
-                'name':claim_type.name,               
-                'icon': claim_type.icon.url if\
-                    claim_type.icon else False
-                })
-        return claim_types_list
+    #     for claim_type in claim_types:
+    #         claim_types_list.append({
+    #             'id': claim_type.id,
+    #             'name':claim_type.name,               
+    #             'icon': claim_type.icon.url if\
+    #                 claim_type.icon else False
+    #             })
+    #     return claim_types_list
 
     def json_claims(self, limit=999):
         claims = self.moderation_filter()
