@@ -29,6 +29,7 @@ class CustomRouter(DefaultRouter):
                 return '(?P<layer>\d+)/(?P<distance>.*)/(?P<coord>.*)'
             elif viewset.polygon == 'check_in':
                 return '(?P<layer>\d+)/(?P<coord>.*)'
+       
 
         return super(CustomRouter, self).get_lookup_regex(viewset, lookup_prefix)
  
@@ -71,6 +72,7 @@ router.register(r'v1.2/polygon', views_1_2.PolygonViewSet, base_name='polygon2')
 router.register(r'v1.2/polygon/get_tree', views_1_2.GetPolygonsTree, base_name='get_polygons_tree2')
 router.register(r'v1.2/polygon/get_nearest', views_1_2.GetNearestPolygons, base_name='get_nearest_polygons2')
 router.register(r'v1.2/polygon/check_in', views_1_2.CheckInPolygon, base_name='check_in_polygon2')
+router.register(r'v1.2/update', views_1_2.GetUpdatedViewSet, base_name='updated2')
 # router.register(r'v1.2/polygons', views_1_2.PolygonViewSet2, base_name='polygons2')
 
 urlpatterns += router.urls

@@ -56,7 +56,7 @@ class Polygon(models.Model):
     zoom = models.IntegerField(blank=True, null=True)
 
     is_verified = models.BooleanField(default=True)
-    created = models.DateTimeField(default=datetime.datetime.now)
+    updated = models.DateTimeField(auto_now=True)
 
     claims = models.IntegerField(default=0)
     objects = models.GeoManager()

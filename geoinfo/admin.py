@@ -55,7 +55,7 @@ class PolygonAdmin(admin.OSMGeoAdmin):
                     # 'claims', 
                     'centroid', 'level',
                      'is_default', 'zoom', 'is_verified',
-                     'created')
+                     'updated')
     search_fields = ('polygon_id', 'address')
     list_filter = ('level', 'is_verified', 'is_default')
 

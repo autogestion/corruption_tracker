@@ -90,6 +90,8 @@ class Organization(models.Model):
     url = models.URLField(null=True, blank=True)
     org_type = models.ForeignKey(OrganizationType, null=True, blank=True)
 
+    updated = models.DateTimeField(auto_now=True)
+
     def moderation_filter(self):
         allowed_statuses = Moderator.objects.get(id=1).show_claims
         return self.claim_set.filter(moderation__in=allowed_statuses)

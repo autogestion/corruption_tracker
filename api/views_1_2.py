@@ -1,4 +1,4 @@
-import json
+import json, datetime
 
 from django.http import HttpResponse
 from django.utils.safestring import mark_safe
@@ -101,10 +101,7 @@ class OrganizationViewSet(viewsets.ViewSet):
 
     .
     """
-
-    queryset = Organization.objects.all()
     permission_classes = (CanPost,)
-
 
     @list_route()
     def orgtypes(self, request):
@@ -150,7 +147,6 @@ class OrganizationViewSet(viewsets.ViewSet):
         polygon.organizations.add(organization)
 
 
-
 class PolygonViewSet(viewsets.ViewSet):
     """
     API endpoint for obtaining poligons.  
@@ -182,6 +178,44 @@ class PolygonViewSet(viewsets.ViewSet):
         return Response(data)
 
 
+class GetUpdatedViewSet(viewsets.ViewSet):
+    """
+    API endpoint for getting new added organizations and poligons.  
+
+    - to get organizations, created or updated after certain date, 
+    use  .../updated/_date_/organization/
+    Example:  .../update/2016-03-01/organization/
+
+    - to get polygons, created or updated after certain date, 
+    use  .../updated/_date_/polygon/
+    Example:  .../update/2016-03-01/polygon/
+
+    date must be in ISO format
+    
+    .
+    """
+    permission_classes = (IsSafe,)
+    lookup_value_regex = '\d{4}-\d{2}-\d{2}'
+
+    def list(self, request):
+        docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
+        return Response(docs)
+
+    @detail_route()
+    def polygon(self, request, pk=None):
+        start_date = datetime.datetime.strptime(pk, '%Y-%m-%d')
+        selected = Polygon.objects.filter(updated__gte=start_date)
+        data = [x.polygon_to_json(shape=False) for x in selected]
+        return Response(data)
+
+    @detail_route()
+    def organization(self, request, pk=None):
+        start_date = datetime.datetime.strptime(pk, '%Y-%m-%d')
+        selected = Organization.objects.filter(updated__gte=start_date)   
+        serializer = OrganizationSerializer(selected, many=True)
+        return Response(serializer.data)
+
+
 
 class GetPolygonsTree(viewsets.ViewSet):
     """
@@ -194,8 +228,6 @@ class GetPolygonsTree(viewsets.ViewSet):
     Example:  .../polygon/get_tree/21citdzerz/
     .
     """
-
-    queryset = Polygon.objects.all()
     permission_classes = (IsSafe,)
 
 
@@ -221,8 +253,6 @@ class GetNearestPolygons(viewsets.ViewSet):
     Example:  .../polygon/get_nearest/4/0.05/36.226147,49.986106/
     .
     """
-
-    queryset = Polygon.objects.all()
     permission_classes = (IsSafe,)
     polygon = 'get_nearest'
 
@@ -255,8 +285,6 @@ class CheckInPolygon(viewsets.ViewSet):
     Example:  .../polygon/check_in/4/36.2218621,49.9876059/
     .
     """
-
-    queryset = Polygon.objects.all()
     permission_classes = (IsSafe,)
     polygon = 'check_in'
 
