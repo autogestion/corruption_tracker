@@ -1,4 +1,4 @@
-import json
+import json, datetime
 from pprint import pprint
 
 from django.contrib.gis.db import models
@@ -56,11 +56,23 @@ class Polygon(models.Model):
     zoom = models.IntegerField(blank=True, null=True)
 
     is_verified = models.BooleanField(default=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    claims = models.IntegerField(default=0)
     objects = models.GeoManager()
+
 
     @property
     def total_claims(self):
-        return sum([x.total_claims for x in self.organizations.all()])
+        claims = 0
+        if self.level == self.building:
+            claims += sum([x.total_claims for x in self.organizations.all()])
+        else:
+            childs = self.polygon_set.all()
+            for child in childs:
+                claims += child.total_claims
+    
+        return claims
 
     # def orgs_count(self):
     #     return self.organizations.all().count()
@@ -72,20 +84,9 @@ class Polygon(models.Model):
         else:
             return None
 
-    def polygon_to_json(self):
-        orgs = []
-        polygon_claims = 0
-        for org in self.organizations.all():
-            org_claims = org.total_claims
-            polygon_claims += org_claims
-            orgs.append({'id': org.id,
-                        'name': org.name,
-                         'claims_count': org_claims,
-                         'claim_types': org.claim_types()
-                         })
-
+    def polygon_to_json(self, shape=True):
         # reverse coordinates for manualy adding polgygons
-        if self.shape:
+        if shape and self.shape:
             geometry = json.loads(self.shape.json)
             [x.reverse() for x in geometry["coordinates"][0]]
         else:
@@ -94,16 +95,41 @@ class Polygon(models.Model):
         centroid = list(self.centroid.coords)
         centroid.reverse()
 
-        return {
+        responce = {
             "type": "Feature",
             "properties": {
-                "ID": self.polygon_id,
-                "organizations": orgs,
+                "ID": self.polygon_id,                
                 "centroid": centroid,
-                "polygon_claims": polygon_claims
+                'address': self.address,
+                'parent_id': self.layer.polygon_id if self.layer else None,
+                'level': self.level,
+                # "polygon_claims": self.claims
             },
             "geometry": geometry
         }
+
+        if self.level == self.building:
+            orgs = []
+            polygon_claims = 0
+            for org in self.organizations.all():
+                org_claims = org.total_claims
+                polygon_claims += org_claims
+                orgs.append({'id': org.id,
+                            'name': org.name,
+                             'claims_count': org_claims,
+                             # 'claim_types': org.claim_types()
+                             'org_type_id': org.org_type.type_id
+                             })
+
+            responce["properties"]["organizations"] = orgs
+            responce["properties"]["polygon_claims"] = polygon_claims
+
+        else:
+            responce["properties"]["polygon_claims"] = self.total_claims
+
+        # print(responce)
+        return responce
+
 
     def color_spot(self, value, max_value):
         percent = value * 100 / max_value

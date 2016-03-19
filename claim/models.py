@@ -47,6 +47,22 @@ class OrganizationType(models.Model):
     type_id = models.CharField(primary_key=True, max_length=155)
     name = models.CharField(max_length=255)
 
+
+    def claim_types(self):
+        claim_types = self.claimtype_set.all()
+        claim_types_list = []
+
+        for claim_type in claim_types:
+            claim_types_list.append({
+                'id': claim_type.id,
+                'name':claim_type.name,               
+                'icon': claim_type.icon.url if\
+                    claim_type.icon else False
+                })
+        return claim_types_list
+
+
+
     def __str__(self):
         return self.type_id
 
@@ -74,6 +90,8 @@ class Organization(models.Model):
     url = models.URLField(null=True, blank=True)
     org_type = models.ForeignKey(OrganizationType, null=True, blank=True)
 
+    updated = models.DateTimeField(auto_now=True)
+
     def moderation_filter(self):
         allowed_statuses = Moderator.objects.get(id=1).show_claims
         return self.claim_set.filter(moderation__in=allowed_statuses)
@@ -89,18 +107,18 @@ class Organization(models.Model):
         return self.moderation_filter().count()
 
 
-    def claim_types(self):
-        claim_types = ClaimType.objects.filter(org_type=self.org_type)
-        claim_types_list = []
+    # def claim_types(self):
+    #     claim_types = ClaimType.objects.filter(org_type=self.org_type)
+    #     claim_types_list = []
 
-        for claim_type in claim_types:
-            claim_types_list.append({
-                'id': claim_type.id,
-                'name':claim_type.name,               
-                'icon': claim_type.icon.url if\
-                    claim_type.icon else False
-                })
-        return claim_types_list
+    #     for claim_type in claim_types:
+    #         claim_types_list.append({
+    #             'id': claim_type.id,
+    #             'name':claim_type.name,               
+    #             'icon': claim_type.icon.url if\
+    #                 claim_type.icon else False
+    #             })
+    #     return claim_types_list
 
     def json_claims(self, limit=999):
         claims = self.moderation_filter()

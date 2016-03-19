@@ -1,7 +1,8 @@
 
 from rest_framework import serializers
 # from rest_framework.reverse import reverse
-from claim.models import Claim, Organization, ClaimType
+from claim.models import Claim, Organization, ClaimType,\
+    OrganizationType
 from geoinfo.models import Polygon
 
 
@@ -18,6 +19,15 @@ class ClaimSerializer(serializers.ModelSerializer):
                   )
 
 
+
+class OrganizationTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OrganizationType
+        fields = ('type_id', 'name', 'claim_types')
+
+
+
 class OrganizationSerializer(serializers.ModelSerializer):
 
     # claims = serializers.PrimaryKeyRelatedField(many=True, queryset=Claim.objects.all())
@@ -27,7 +37,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'org_type', 'total_claims', 
             # 'claims'
             # 'json_claims', 
-            'claim_types'
+            # 'claim_types'
             )
 
 
@@ -36,7 +46,8 @@ class ClaimTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClaimType
-        fields = ('id', 'name', 'icon')
+        fields = ('id', 'name', 'icon',             
+            )
 
 
 def extractor(polygon_id):

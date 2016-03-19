@@ -51,8 +51,11 @@ class PolygonAdmin(admin.OSMGeoAdmin):
     form = PolygonForm
     list_display = ('polygon_id', 'layer',
                     'first_organization', 'address', 
-                    'centroid',
-                    'level', 'is_default', 'zoom', 'is_verified')
+                    'total_claims',
+                    # 'claims', 
+                    'centroid', 'level',
+                     'is_default', 'zoom', 'is_verified',
+                     'updated')
     search_fields = ('polygon_id', 'address')
     list_filter = ('level', 'is_verified', 'is_default')
 
