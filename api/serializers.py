@@ -32,12 +32,20 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
     # claims = serializers.PrimaryKeyRelatedField(many=True, queryset=Claim.objects.all())
 
+    polygons = serializers.SerializerMethodField()
+
+    def get_polygons(self, instance):
+        return Polygon.objects.filter(
+            organizations=instance).values_list('polygon_id', flat=True)
+
+
     class Meta:
         model = Organization
         fields = ('id', 'name', 'org_type', 'total_claims', 
             # 'claims'
             # 'json_claims', 
             # 'claim_types'
+            'polygons'
             )
 
 

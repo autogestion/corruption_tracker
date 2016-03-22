@@ -164,7 +164,7 @@ class PolygonViewSet(viewsets.ViewSet):
     .
     """
 
-    queryset = Polygon.objects.all().order_by('created')
+    queryset = Polygon.objects.all().order_by('updated')
     permission_classes = (IsSafe,)
     lookup_value_regex = '\d'
 
