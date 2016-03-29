@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.utils.safestring import mark_safe
 from django.contrib.gis.geos import fromstr
 from rest_framework import viewsets, filters
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 
@@ -14,26 +14,9 @@ from claim.models import Claim, Organization,\
 from api.serializers import ClaimSerializer,\
     OrganizationSerializer, OrganizationTypeSerializer, \
     extractor
+from api.permissions import IsSafe, CanPost, PostThrottle
 
 
-class IsSafe(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS:
-            return True
-
-    def has_permission(self, request, view):
-        if request.method in SAFE_METHODS:
-            return True
-
-
-class CanPost(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS + ('POST',):
-            return True
-
-    def has_permission(self, request, view):
-        if request.method in SAFE_METHODS + ('POST',):
-            return True
 
 
 
@@ -52,13 +35,16 @@ class ClaimViewSet(viewsets.ModelViewSet):
         'claim_type': '2', 
         'servant': 'Бабця', 
         'live': 'true', 
-        'organization': '13'
+        'organization': '13',
+        'bribe': '50'
     .
     """
 
     queryset = Claim.objects.all()
     serializer_class = ClaimSerializer
+
     permission_classes = (CanPost,)
+    throttle_classes = (PostThrottle,)
 
     filter_backends = (
         filters.OrderingFilter,
@@ -81,6 +67,7 @@ class ClaimViewSet(viewsets.ModelViewSet):
 
 
 
+# class OrganizationViewSet(viewsets.ModelViewSet):
 class OrganizationViewSet(viewsets.ViewSet):
     """
     API endpoint for listing and creating Organizations.
@@ -102,6 +89,9 @@ class OrganizationViewSet(viewsets.ViewSet):
     .
     """
     permission_classes = (CanPost,)
+    throttle_classes = (PostThrottle,)
+    # serializer_class = OrganizationSerializer
+    # queryset = Organization.objects.all()
 
     @list_route()
     def orgtypes(self, request):

@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls',
         namespace='rest_framework')),
     url(r'^v1/token/', obtain_auth_token, name='api-token'),
+    
     url(r'^v1/get_polygons_tree/(?P<polygon_id>[\w.]{0,256})/$',
         views.get_polygons_tree, name="get_polygons_tree"),
     url(r'^v1/get_nearest_polygons/(?P<layer>\d+)/(?P<distance>.*)/(?P<coord>.*)$',

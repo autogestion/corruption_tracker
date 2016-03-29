@@ -1,3 +1,4 @@
+from pprint import pprint
 
 from rest_framework import serializers
 # from rest_framework.reverse import reverse
@@ -6,18 +7,26 @@ from claim.models import Claim, Organization, ClaimType,\
 from geoinfo.models import Polygon
 
 
+
+class ClaimTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ClaimType
+        fields = '__all__'
+
+
 class ClaimSerializer(serializers.ModelSerializer):
 
 
     complainer = serializers.ReadOnlyField(source='complainer.username')
-    created = serializers.ReadOnlyField()
+
 
     class Meta:
         model = Claim
         fields = ('text', 'created', 'live', 'organization',
-                  'servant', 'complainer', 'claim_type',
+                  'servant', 'complainer', 'claim_type', 'bribe'
                   )
-
+        read_only_fields = ('created',)
 
 
 class OrganizationTypeSerializer(serializers.ModelSerializer):
@@ -32,30 +41,17 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
     # claims = serializers.PrimaryKeyRelatedField(many=True, queryset=Claim.objects.all())
 
-    polygons = serializers.SerializerMethodField()
-
-    def get_polygons(self, instance):
-        return Polygon.objects.filter(
-            organizations=instance).values_list('polygon_id', flat=True)
-
+    polygons = serializers.CharField(max_length=2000000)
 
     class Meta:
         model = Organization
         fields = ('id', 'name', 'org_type', 'total_claims', 
             # 'claims'
             # 'json_claims', 
-            # 'claim_types'
+            # 'claim_types'       
             'polygons'
             )
 
-
-
-class ClaimTypeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ClaimType
-        fields = ('id', 'name', 'icon',             
-            )
 
 
 def extractor(polygon_id):

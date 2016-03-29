@@ -11,8 +11,6 @@ from geoinfo import views as geo_views
 from . import views as main_vies
 
 
-# from api.urls import router
-# import api
 
 
 urlpatterns = [
@@ -48,7 +46,6 @@ urlpatterns = [
 
     # Rest API
     url(r'^api/', include('api.urls')),
-    # url(r'^api/', include(router.urls)),
 
 
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
