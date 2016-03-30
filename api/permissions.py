@@ -38,12 +38,11 @@ class PostThrottle(SimpleRateThrottle):
         return '%d/hour' % self.moderator.claims_per_hour
 
 
-    def get_cache_key(self, request, view):
-        print('request.method == and self.moderator.use_memcached', request.method == 'POST' and self.moderator.use_memcached)
+    def get_cache_key(self, request, view):        
         if request.method == 'POST' and self.moderator.use_memcached:
             return self.cache_format % {
                 'scope': self.scope,
                 'ident': self.get_ident(request)
             }
         else:
-            return None  
+            return None

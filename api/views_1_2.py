@@ -13,12 +13,8 @@ from claim.models import Claim, Organization,\
     ClaimType, OrganizationType
 from api.serializers import ClaimSerializer,\
     OrganizationSerializer, OrganizationTypeSerializer, \
-    extractor
+    extractor, PolygonSerializer
 from api.permissions import IsSafe, CanPost, PostThrottle
-
-
-
-
 
 
 class ClaimViewSet(viewsets.ModelViewSet):
@@ -37,8 +33,9 @@ class ClaimViewSet(viewsets.ModelViewSet):
         'live': 'true', 
         'organization': '13',
         'bribe': '50'
+
     .
-    """
+    """ 
 
     queryset = Claim.objects.all()
     serializer_class = ClaimSerializer
@@ -46,10 +43,9 @@ class ClaimViewSet(viewsets.ModelViewSet):
     permission_classes = (CanPost,)
     throttle_classes = (PostThrottle,)
 
-    filter_backends = (
-        filters.OrderingFilter,
-    )
-    ordering_fields = ('created', )
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('created',)
+    ordering = ('created',)
 
     def list(self, request):
         docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
@@ -67,13 +63,16 @@ class ClaimViewSet(viewsets.ModelViewSet):
 
 
 
-# class OrganizationViewSet(viewsets.ModelViewSet):
-class OrganizationViewSet(viewsets.ViewSet):
+class OrganizationViewSet(viewsets.ModelViewSet):
+
     """
     API endpoint for listing and creating Organizations.
 
     - to get organizations for polygon, use .../organization/_polygon_id_    
     Example:  .../organization/21citzhovt0002/
+
+    - to search organizations by name, use .../organization/?search=_value_
+    Example:  .../organization/?search=прок
 
     - to get list of organization types, use /organization/orgtypes/
 
@@ -88,10 +87,14 @@ class OrganizationViewSet(viewsets.ViewSet):
 
     .
     """
+    queryset = Organization.objects.all()
+    serializer_class = OrganizationSerializer
+
     permission_classes = (CanPost,)
     throttle_classes = (PostThrottle,)
-    # serializer_class = OrganizationSerializer
-    # queryset = Organization.objects.all()
+
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
     @list_route()
     def orgtypes(self, request):
@@ -99,10 +102,13 @@ class OrganizationViewSet(viewsets.ViewSet):
         serializer = OrganizationTypeSerializer(org_types, many=True)
         return Response(serializer.data)
 
-
     def list(self, request):
-        docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
-        return Response(docs)
+        search = self.request.query_params.get('search', None)
+        if search:
+            return super(OrganizationViewSet, self).list(request)
+        else:
+            docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
+            return Response(docs)
 
     def retrieve(self, request, pk=None):
         queryset = Organization.objects.filter(polygon__polygon_id=pk)   
@@ -137,35 +143,39 @@ class OrganizationViewSet(viewsets.ViewSet):
         polygon.organizations.add(organization)
 
 
-class PolygonViewSet(viewsets.ViewSet):
+class PolygonViewSet(viewsets.ModelViewSet):
     """
     API endpoint for obtaining poligons.  
 
     - GET returns all polygons ordered by creation date
+
+    - to search polygons by addres, use .../polygon/?search=_value_
+    Example:  .../polygon/?search=студ
 
     - to get polygons, filtered by layer use .../polygon/_layer_/
     Available layers:
         region = 1
         area = 2
         district = 3
-        building = 4
-    
+        building = 4    
     Example:  .../polygon/3/
+
     .
     """
-
     queryset = Polygon.objects.all().order_by('updated')
+    serializer_class = PolygonSerializer
+
     permission_classes = (IsSafe,)
     lookup_value_regex = '\d'
 
-    def list(self, request):
-        data = [x.polygon_to_json(shape=False) for x in self.queryset]
-        return Response(data)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('address',)
 
     def retrieve(self, request, pk=4):
-        selected = self.queryset.filter(level=int(pk))
-        data = [x.polygon_to_json(shape=False) for x in selected]
-        return Response(data)
+        queryset = self.queryset.filter(level=int(pk))
+        serializer = PolygonSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 
 class GetUpdatedViewSet(viewsets.ViewSet):
@@ -207,25 +217,7 @@ class GetUpdatedViewSet(viewsets.ViewSet):
 
 
 
-class GetPolygonsTree(viewsets.ViewSet):
-    """
-    API endpoint for getting polygons ierarchy.
 
-    - GET returns hole tree from 'root' polygon
-
-    - to get tree from certain node, use .../polygon/get_tree/_polygon_id_
-    
-    Example:  .../polygon/get_tree/21citdzerz/
-    .
-    """
-    permission_classes = (IsSafe,)
-
-
-    def list(self, request):
-        return Response(extractor('root'))
-
-    def retrieve(self, request, pk='root'):
-        return Response(extractor(pk))
 
 
 
@@ -238,14 +230,16 @@ class GetNearestPolygons(viewsets.ViewSet):
         region = 1
         area = 2
         district = 3
-        building = 4
-    
+        building = 4    
     Example:  .../polygon/get_nearest/4/0.05/36.226147,49.986106/
+
+    - to search polygon by addres in nearest polygons., use .../polygon/get_nearest/_layer_/_distance_/_coordinates_/?search=_value_
+    Example:  .../polygon/get_nearest/4/0.05/36.226147,49.986106/?search=студ
+
     .
     """
     permission_classes = (IsSafe,)
     polygon = 'get_nearest'
-
 
     def list(self, request):
         docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
@@ -256,9 +250,12 @@ class GetNearestPolygons(viewsets.ViewSet):
         selected = Polygon.objects.filter(
             centroid__dwithin=(pnt, float(distance)), level=int(layer))
 
+        search = self.request.query_params.get('search', None)
+        if search:
+            selected = selected.filter(address__icontains=search)
+
         data = [x.polygon_to_json() for x in selected]
         return Response(data)
-
 
 
 class CheckInPolygon(viewsets.ViewSet):
@@ -278,7 +275,6 @@ class CheckInPolygon(viewsets.ViewSet):
     permission_classes = (IsSafe,)
     polygon = 'check_in'
 
-
     def list(self, request):
         docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
         return Response(docs)
@@ -291,40 +287,21 @@ class CheckInPolygon(viewsets.ViewSet):
         return Response(data)
 
 
+class GetPolygonsTree(viewsets.ViewSet):
+    """
+    API endpoint for getting polygons ierarchy.
 
+    - GET returns hole tree from 'root' polygon
 
+    - to get tree from certain node, use .../polygon/get_tree/_polygon_id_    
+    Example:  .../polygon/get_tree/21citdzerz/
 
-# class PolygonViewSet2(viewsets.ViewSet):
+    .
+    """
+    permission_classes = (IsSafe,)
 
-#     """
-#     API endpoint for getting polygons ierarchy.
-#     - GET returns hole tree from 'root' polygon
-#     - to get tree from certain node, use .../get_polygons_tree/_polygon_id_
-    
-#     Example:  .../get_polygons_tree/21citdzerz/
-#     .
-#     """
-#     polygon = True
-#     queryset = Polygon.objects.all()
-#     permission_classes = (IsSafe,)
+    def list(self, request):
+        return Response(extractor('root'))
 
-
-#     def list(self, request):
-#         docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x }
-#         return Response(docs)
-
-#     @detail_route()
-#     def get_tree(self, request, *args, **kwargs):
-#         self.lookup_field = 'get_tree'
-#         snippet = self.get_object()        
-#         return Response(snippet)   
-
-#     @detail_route()
-#     def get_nearest(self, request, *args, **kwargs):
-#         snippet = self.get_object()
-#         return Response(snippet)             
-
-#     @detail_route()
-#     def check_in(self, request, *args, **kwargs):
-#         snippet = self.get_object()
-#         return Response(snippet)  
+    def retrieve(self, request, pk='root'):
+        return Response(extractor(pk))

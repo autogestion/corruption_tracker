@@ -70,10 +70,11 @@ router.register(r'----------------1.2', views_1_1.ClaimViewSet, base_name='zdeli
 router.register(r'v1.2/claim', views_1_2.ClaimViewSet, base_name='claims2')
 router.register(r'v1.2/organization', views_1_2.OrganizationViewSet, base_name='organizations2')
 router.register(r'v1.2/polygon', views_1_2.PolygonViewSet, base_name='polygon2')
-router.register(r'v1.2/polygon/get_tree', views_1_2.GetPolygonsTree, base_name='get_polygons_tree2')
 router.register(r'v1.2/polygon/get_nearest', views_1_2.GetNearestPolygons, base_name='get_nearest_polygons2')
 router.register(r'v1.2/polygon/check_in', views_1_2.CheckInPolygon, base_name='check_in_polygon2')
+router.register(r'v1.2/polygon/get_tree', views_1_2.GetPolygonsTree, base_name='get_polygons_tree2')
 router.register(r'v1.2/update', views_1_2.GetUpdatedViewSet, base_name='updated2')
+
 # router.register(r'v1.2/polygons', views_1_2.PolygonViewSet2, base_name='polygons2')
 
 urlpatterns += router.urls

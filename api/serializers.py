@@ -41,7 +41,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
     # claims = serializers.PrimaryKeyRelatedField(many=True, queryset=Claim.objects.all())
 
-    polygons = serializers.CharField(max_length=2000000)
+    # polygons = serializers.CharField(max_length=2000000)
 
     class Meta:
         model = Organization
@@ -51,6 +51,16 @@ class OrganizationSerializer(serializers.ModelSerializer):
             # 'claim_types'       
             'polygons'
             )
+
+
+class PolygonSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Polygon
+
+
+    def to_representation(self, instance):
+        return instance.polygon_to_json(shape=False)
 
 
 
