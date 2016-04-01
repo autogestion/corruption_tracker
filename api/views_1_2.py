@@ -52,9 +52,19 @@ class ClaimViewSet(viewsets.ModelViewSet):
         return Response(docs)
 
     def retrieve(self, request, pk=None):
+
         queryset = Claim.objects.filter(organization__id=pk)   
-        serializer = ClaimSerializer(queryset, many=True)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+        # serializer = ClaimSerializer(queryset, many=True)
+        # return Response(serializer.data)
 
     def perform_create(self, serializer):
         # print(self.request.data)
@@ -172,9 +182,18 @@ class PolygonViewSet(viewsets.ModelViewSet):
     search_fields = ('address',)
 
     def retrieve(self, request, pk=4):
+
         queryset = self.queryset.filter(level=int(pk))
-        serializer = PolygonSerializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+        
+        # serializer = PolygonSerializer(queryset, many=True)
+        # return Response(serializer.data)
 
 
 
@@ -204,20 +223,17 @@ class GetUpdatedViewSet(viewsets.ViewSet):
     @detail_route()
     def polygon(self, request, pk=None):
         start_date = datetime.datetime.strptime(pk, '%Y-%m-%d')
-        selected = Polygon.objects.filter(updated__gte=start_date)
-        data = [x.polygon_to_json(shape=False) for x in selected]
+        queryset = Polygon.objects.filter(updated__gte=start_date)
+
+        data = [x.polygon_to_json(shape=False) for x in queryset]
         return Response(data)
 
     @detail_route()
     def organization(self, request, pk=None):
         start_date = datetime.datetime.strptime(pk, '%Y-%m-%d')
-        selected = Organization.objects.filter(updated__gte=start_date)   
-        serializer = OrganizationSerializer(selected, many=True)
+        queryset = Organization.objects.filter(updated__gte=start_date)   
+        serializer = OrganizationSerializer(queryset, many=True)
         return Response(serializer.data)
-
-
-
-
 
 
 
