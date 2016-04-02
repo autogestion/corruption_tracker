@@ -42,6 +42,10 @@ class Moderator(models.Model):
     def delete(self, *args, **kwargs):
         pass
 
+    @classmethod
+    def get_moderator(cls):
+        return cls.objects.get(id=1)
+
 
 class OrganizationType(models.Model):
     type_id = models.CharField(primary_key=True, max_length=155)
@@ -101,6 +105,11 @@ class Organization(models.Model):
             return self.polygon_set.all()[0]
         except IndexError:
             return None
+
+    def polygons(self):
+        return self.polygon_set.all().values_list('polygon_id', flat=True)
+
+
 
     @property
     def total_claims(self):
