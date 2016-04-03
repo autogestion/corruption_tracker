@@ -1,3 +1,5 @@
+
+import json
 from pprint import pprint
 
 from rest_framework import serializers
@@ -5,7 +7,6 @@ from rest_framework import serializers
 from claim.models import Claim, Organization, ClaimType,\
     OrganizationType
 from geoinfo.models import Polygon
-
 
 
 class ClaimTypeSerializer(serializers.ModelSerializer):
@@ -17,9 +18,7 @@ class ClaimTypeSerializer(serializers.ModelSerializer):
 
 class ClaimSerializer(serializers.ModelSerializer):
 
-
     complainer = serializers.ReadOnlyField(source='complainer.username')
-
 
     class Meta:
         model = Claim
@@ -34,7 +33,6 @@ class OrganizationTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrganizationType
         fields = ('type_id', 'name', 'claim_types')
-
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -58,10 +56,55 @@ class PolygonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Polygon
 
+    def to_representation(self, instance):
+        if instance.shape:
+            geometry = json.loads(instance.shape.json)
+        else:
+            geometry = None
+
+        responce = {
+            "type": "Feature",
+            "properties": {
+                "ID": instance.polygon_id,
+                "centroid": list(instance.centroid.coords),
+                'address': instance.address,
+                'parent_id': instance.layer.polygon_id if instance.layer else None,
+                'level': instance.level,
+                # "polygon_claims": instance.claims
+            },
+            "geometry": geometry
+        }
+
+        if instance.level == instance.building:
+            orgs = []
+            polygon_claims = 0
+            for org in instance.organizations.all():
+                org_claims = org.total_claims
+                polygon_claims += org_claims
+                orgs.append({'id': org.id,
+                            'name': org.name,
+                             'claims_count': org_claims,
+                             # 'claim_types': org.claim_types()
+                             'org_type_id': org.org_type.type_id
+                             })
+
+            responce["properties"]["organizations"] = orgs
+            responce["properties"]["polygon_claims"] = polygon_claims
+
+        else:
+            responce["properties"]["polygon_claims"] = instance.total_claims
+
+        # print(responce)
+        return responce
+
+
+class PolygonNoShapeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Polygon
 
     def to_representation(self, instance):
         return instance.polygon_to_json(shape=False)
-
 
 
 def extractor(polygon_id):
