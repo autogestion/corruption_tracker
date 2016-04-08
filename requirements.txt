@@ -1,6 +1,7 @@
 Django==1.9
 django-leaflet==0.16.0
 djangorestframework==3.3.2
+django-rest-swagger==0.3.5
 django-allauth==0.24.1
 requests==2.7.0
 python-memcached==1.57

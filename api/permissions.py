@@ -7,22 +7,26 @@ from claim.models import Moderator
 
 class IsSafe(BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS:
+        if request.method in ('GET',):
             return True
+        return False
 
     def has_permission(self, request, view):
-        if request.method in SAFE_METHODS:
+        if request.method in ('GET',):
             return True
+        return False
 
 
 class CanPost(BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS + ('POST',):
+        if request.method in ('POST', 'GET'):
             return True
+        return False
 
     def has_permission(self, request, view):
-        if request.method in SAFE_METHODS + ('POST',):
+        if request.method in ('POST', 'GET'):
             return True
+        return False
 
 
 class PostThrottle(SimpleRateThrottle):    

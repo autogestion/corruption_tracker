@@ -1,5 +1,5 @@
 
-# from django.conf.urls import url, include
+from django.conf.urls import url, include
 # from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 
@@ -34,7 +34,9 @@ class CustomRouter(DefaultRouter):
 
 router = CustomRouter()
 
-urlpatterns = []
+urlpatterns = [
+    url(r'^docs/', include('rest_framework_swagger.urls'))
+    ]
 
 
 # ----    v1.2 api

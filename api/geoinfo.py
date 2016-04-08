@@ -2,7 +2,7 @@
 from django.contrib.gis import geos
 
 from rest_framework.response import Response
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, mixins, filters
 
 from geoinfo.models import Polygon
 
@@ -11,21 +11,28 @@ from api.serializers import PolygonSerializer,\
 from api.permissions import IsSafe
 
 
-class PolygonViewSet(viewsets.ModelViewSet):
+class PolygonViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
     API endpoint for obtaining poligons.
 
     - GET returns all polygons ordered by creation date
 
+    .
+
     - to search polygons by addres, use .../polygon/?search=_value_
+
     Example:  .../polygon/?search=студ
 
+    .
+    
     - to get polygons, filtered by layer use .../polygon/_layer_/
+
     Available layers:
         region = 1
         area = 2
         district = 3
         building = 4
+
     Example:  .../polygon/3/
 
     .
@@ -36,11 +43,12 @@ class PolygonViewSet(viewsets.ModelViewSet):
 
     permission_classes = (IsSafe,)
     lookup_value_regex = '\d'
+    lookup_field = 'layer'
 
     filter_backends = (filters.SearchFilter,)
     search_fields = ('address',)
 
-    def retrieve(self, request, pk=4):
+    def retrieve(self, request, layer=4):
 
         queryset = self.queryset.filter(level=int(pk))
         page = self.paginate_queryset(queryset)
@@ -58,15 +66,20 @@ class GetNearestPolygons(viewsets.ViewSet):
     API endpoint for getting polygons in radius (_distance_) to point (_coordinates_)
 
     - to get nearest polygons, use .../polygon/get_nearest/_layer_/_distance_/_coordinates_
+
     Available layers:
         region = 1
         area = 2
         district = 3
         building = 4
+
     Example:  .../polygon/get_nearest/4/0.05/36.226147,49.986106/
 
+    .
+    
     - to search polygon by addres in nearest polygons, 
     use .../polygon/get_nearest/_layer_/_distance_/_coordinates_/?search=_value_
+
     Example:  .../polygon/get_nearest/4/0.05/36.226147,49.986106/?search=студ
 
     .
@@ -75,9 +88,9 @@ class GetNearestPolygons(viewsets.ViewSet):
     permission_classes = (IsSafe,)
     polygon = 'get_nearest'
 
-    def list(self, request):
-        docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-        return Response(docs)
+    # def list(self, request):
+    #     docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
+    #     return Response(docs)
 
     def retrieve(self, request, layer, distance, coord):
         pnt = geos.fromstr("POINT(%s %s)" % tuple(coord.split(',')))
@@ -97,16 +110,21 @@ class FitBoundsPolygons(viewsets.ViewSet):
     API endpoint for getting polygons that fit to bounds (_coordinates_ in W, S, E, N).
 
     - to get polygons, use .../polygon/fit_bounds/_layer_/_coordinates_
+
     Available layers:
         region = 1
         area = 2
         district = 3
         building = 4
+
     Example:  .../polygon/fit_bounds/4/2.81,18.15,86.04,60.89/
 
+    .
+    
     - to search polygon by addres in polygons that fit bounds,
     use .../polygon/fit_bounds/_layer_/_coordinates_/?search=_value_
-    Example:  .../polygon/fit_bounds/4/2.81,18.15,86.04,60.89//?search=студ
+
+    Example:  .../polygon/fit_bounds/4/2.81,18.15,86.04,60.89/?search=студ
 
     .
     """
@@ -114,9 +132,9 @@ class FitBoundsPolygons(viewsets.ViewSet):
     permission_classes = (IsSafe,)
     polygon = 'fit_bounds'
 
-    def list(self, request):
-        docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-        return Response(docs)
+    # def list(self, request):
+    #     docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
+    #     return Response(docs)
 
     def retrieve(self, request, layer, coord):
 
@@ -143,6 +161,7 @@ class CheckInPolygon(viewsets.ViewSet):
     API endpoint for check if coordinates in polygon.
 
     - to check in polygon, use  .../polygon/check_in/_layer_/_coordinates_
+
     Available layers:
         region = 1
         area = 2
@@ -156,9 +175,9 @@ class CheckInPolygon(viewsets.ViewSet):
     permission_classes = (IsSafe,)
     polygon = 'check_in'
 
-    def list(self, request):
-        docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-        return Response(docs)
+    # def list(self, request):
+    #     docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
+    #     return Response(docs)
 
     def retrieve(self, request, layer, coord):
         pnt = geos.fromstr("POINT(%s %s)" % tuple(coord.split(',')))
@@ -175,15 +194,17 @@ class GetPolygonsTree(viewsets.ViewSet):
     - GET returns hole tree from 'root' polygon
 
     - to get tree from certain node, use .../polygon/get_tree/_polygon_id_
+
     Example:  .../polygon/get_tree/21citdzerz/
 
     .
     """
 
     permission_classes = (IsSafe,)
+    lookup_field = 'polygon_id'
 
     def list(self, request):
         return Response(extractor('root'))
 
-    def retrieve(self, request, pk='root'):
+    def retrieve(self, request, polygon_id='root'):
         return Response(extractor(pk))

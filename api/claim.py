@@ -1,7 +1,7 @@
 
 
 from rest_framework.response import Response
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, mixins, filters
 from rest_framework.decorators import list_route
 
 from claim.models import Claim, Organization,\
@@ -13,15 +13,19 @@ from api.serializers import ClaimSerializer,\
 from api.permissions import CanPost, PostThrottle
 
 
-class ClaimViewSet(viewsets.ModelViewSet):
+class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
     API endpoint for listing and creating Claims.
 
     - to get claims for organization, use .../claim/_org_id_
+
     Example:  .../claim/13/
 
+    .
+    
     - to add claim use POST request with next parameters:
         'text', 'live', 'organization', 'servant', 'claim_type',
+
     Example:
         'text': 'Покусали комарі',
         'claim_type': '2',
@@ -38,18 +42,19 @@ class ClaimViewSet(viewsets.ModelViewSet):
 
     permission_classes = (CanPost,)
     throttle_classes = (PostThrottle,)
+    lookup_field = 'org_id'
 
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ('created',)
     ordering = ('created',)
 
-    def list(self, request):
-        docs = {ind: x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-        return Response(docs)
+    # def list(self, request):
+    #     docs = {ind: x for ind, x in enumerate(self.__doc__.split('\n')) if x}
+    #     return Response(docs)
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, org_id=None):
 
-        queryset = Claim.objects.filter(organization__id=pk)
+        queryset = Claim.objects.filter(organization__id=org_id)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -68,19 +73,28 @@ class ClaimViewSet(viewsets.ModelViewSet):
         serializer.save(complainer=user)
 
 
-class OrganizationViewSet(viewsets.ModelViewSet):
+class OrganizationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
     API endpoint for listing and creating Organizations.
 
     - to get organizations for polygon, use .../organization/_polygon_id_
+
     Example:  .../organization/21citzhovt0002/
 
+    .
+    
     - to search organizations by name, use .../organization/?search=_value_
+
     Example:  .../organization/?search=прок
 
+    .
+    
     - to get list of organization types, use /organization/orgtypes/
 
+    .
+    
     - to add organization use POST with next parameters:
+
     Example:
         'shape': '{'type': 'Polygon', 'coordinates': [ [ [ 36.296753463843954, 50.006170131432199 ], [ 36.296990304344928, 50.006113443092367 ], [ 36.296866409713009, 50.005899627208827 ], [ 36.296629569212049, 50.00595631580083 ], [ 36.296753463843954, 50.006170131432199 ] ] ]}', 
         'org_type': 'prosecutors',
@@ -97,6 +111,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 
     permission_classes = (CanPost,)
     throttle_classes = (PostThrottle,)
+    lookup_field = 'polygon_id'
 
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -112,11 +127,12 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         if search:
             return super(OrganizationViewSet, self).list(request)
         else:
-            docs = {ind: x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-            return Response(docs)
+            # docs = {ind: x for ind, x in enumerate(self.__doc__.split('\n')) if x}
+            # return Response(docs)
+            return Response('can be used only with ?search=')
 
-    def retrieve(self, request, pk=None):
-        queryset = Organization.objects.filter(polygon__polygon_id=pk)
+    def retrieve(self, request, polygon_id=None):
+        queryset = Organization.objects.filter(polygon__polygon_id=polygon_id)
         serializer = OrganizationSerializer(queryset, many=True)
         return Response(serializer.data)
 

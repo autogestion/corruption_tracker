@@ -4,6 +4,7 @@ from pprint import pprint
 
 from rest_framework import serializers
 # from rest_framework.reverse import reverse
+
 from claim.models import Claim, Organization, ClaimType,\
     OrganizationType
 from geoinfo.models import Polygon
@@ -40,15 +41,19 @@ class OrganizationSerializer(serializers.ModelSerializer):
     # claims = serializers.PrimaryKeyRelatedField(many=True, queryset=Claim.objects.all())
 
     # polygons = serializers.CharField(max_length=2000000)
+    # get_claims = reverse('ClaimViewSet', pk=self.id)
 
     class Meta:
         model = Organization
-        fields = ('id', 'name', 'org_type', 'total_claims', 
-            # 'claims'
-            # 'json_claims', 
-            # 'claim_types'       
+        fields = ('id', 'name', 'org_type', 
+            # 'total_claims', 
+            'claims', 
+            # 'get_claims',      
             'polygons'
-            )
+        )
+        # extra_kwargs = {
+        #     'get_claims': {'view_name': 'ClaimViewSet', 'lookup_field': 'organization_id'}  
+        # }      
 
 
 class PolygonSerializer(serializers.ModelSerializer):
@@ -76,26 +81,32 @@ class PolygonSerializer(serializers.ModelSerializer):
         }
 
         if instance.level == instance.building:
-            orgs = []
-            polygon_claims = 0
-            for org in instance.organizations.all():
-                org_claims = org.total_claims
-                polygon_claims += org_claims
-                orgs.append({'id': org.id,
-                            'name': org.name,
-                             'claims_count': org_claims,
-                             # 'claim_types': org.claim_types()
-                             'org_type_id': org.org_type.type_id
-                             })
+            # orgs = []
+            # polygon_claims = 0
+            # for org in instance.organizations.all():
+            #     org_claims = org.total_claims
+            #     polygon_claims += org_claims
+            #     orgs.append({'id': org.id,
+            #                 'name': org.name,
+            #                  'claims_count': org_claims,
+            #                  # 'claim_types': org.claim_types()
+            #                  'org_type_id': org.org_type.type_id
+            #                  })
+            queryset = instance.organizations.all()
+            serializer = OrganizationSerializer(queryset, many=True)
 
-            responce["properties"]["organizations"] = orgs
-            responce["properties"]["polygon_claims"] = polygon_claims
+            responce["properties"]["organizations"] = serializer.data
+            # responce["properties"]["organizations"]
+         
+            # responce["properties"]["organizations"] = orgs
+            # responce["properties"]["polygon_claims"] = polygon_claims
 
-        else:
-            responce["properties"]["polygon_claims"] = instance.total_claims
+        # else:
+        responce["properties"]["polygon_claims"] = instance.total_claims
 
         # print(responce)
         return responce
+
 
 
 class PolygonNoShapeSerializer(serializers.ModelSerializer):
@@ -105,6 +116,7 @@ class PolygonNoShapeSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return instance.polygon_to_json(shape=False)
+
 
 
 def extractor(polygon_id):
