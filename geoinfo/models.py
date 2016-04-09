@@ -66,7 +66,7 @@ class Polygon(models.Model):
     def total_claims(self):
         claims = 0
         if self.level == self.building:
-            claims += sum([x.total_claims for x in self.organizations.all()])
+            claims += sum([x.claims for x in self.organizations.all()])
         else:
             childs = self.polygon_set.all()
             for child in childs:
@@ -112,7 +112,7 @@ class Polygon(models.Model):
             orgs = []
             polygon_claims = 0
             for org in self.organizations.all():
-                org_claims = org.total_claims
+                org_claims = org.claims
                 polygon_claims += org_claims
                 orgs.append({'id': org.id,
                             'name': org.name,

@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     # 'allauth.socialaccount.providers.facebook',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_swagger',
     'leaflet',
 
     'claim',
@@ -177,6 +178,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ),
    'PAGE_SIZE': 50,
+   # 'URL_FORMAT_OVERRIDE': None,
 }
 
 

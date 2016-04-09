@@ -112,7 +112,7 @@ class Organization(models.Model):
 
 
     @property
-    def total_claims(self):
+    def claims(self):
         return self.moderation_filter().count()
 
 
