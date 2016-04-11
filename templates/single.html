@@ -1,6 +1,5 @@
 {% load staticfiles %}
 {% load leaflet_tags %}
-{% load account %}
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
@@ -59,7 +58,7 @@
             <li {% if page == 'map' %} class="active"{% endif %}><a href="{% url 'map' %}">{% trans "Corruption map" %}</a></li>
             <li {% if page == 'about' %} class="active"{% endif %}><a href="{% url 'about' %}">{% trans "Who is here?" %}</a></li>
             <li {% if page == 'single' %} class="active"{% endif %}><a href="{% url 'single' %}">{% trans "Single page" %}</a> </li>
-            <li><a href="api/docs" target="_blank">{% trans "API Dosc" %}</a> </li>
+            <li><a href="api/docs" target="_blank">{% trans "API Docs" %}</a> </li>
              {% if page == 'single' %}<li>
                 <div class="input-group" style="width: 400px;padding:7px; margin-left:50px;">
                     <input type='search' id='organization_name' placeholder='{% trans "Organization name" %}' class="form-control">
@@ -87,7 +86,7 @@
                 </form>
             </li>
             {% if request.user.is_authenticated %}
-                <li><a href="">{% user_display user %}</a></li>
+                <li><a href="">{{ request.user }}</a></li>
                 <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
                 {% else %}
                 <li><form class='navbar-form navbar-right login' method='POST' action='/login/'>
@@ -103,7 +102,7 @@
                     {% endif %}
                     <button type='submit' class='btn btn-default'>{% trans "Login" %}</button>
                 </form> </li>               
-                <li><a href="{% url 'account_signup' %}">{% trans "Register" %}</a></li>
+                <li><a href="">{% trans "Register" %}</a></li>
             {% endif %}
         </ul>
 

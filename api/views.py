@@ -43,14 +43,14 @@ class GetUpdatedViewSet(viewsets.ViewSet):
 
     @detail_route()
     def polygon(self, request, date=None):
-        start_date = datetime.datetime.strptime(pk, '%Y-%m-%d')
+        start_date = datetime.datetime.strptime(date, '%Y-%m-%d')
         queryset = Polygon.objects.filter(updated__gte=start_date)
         serializer = PolygonNoShapeSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @detail_route()
     def organization(self, request, date=None):
-        start_date = datetime.datetime.strptime(pk, '%Y-%m-%d')
+        start_date = datetime.datetime.strptime(date, '%Y-%m-%d')
         queryset = Organization.objects.filter(updated__gte=start_date)
         serializer = OrganizationSerializer(queryset, many=True)
         return Response(serializer.data)

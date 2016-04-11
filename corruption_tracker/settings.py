@@ -29,12 +29,13 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.gis',
 
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
     # 'allauth.socialaccount.providers.facebook',
+    'oauth2_provider',
     'rest_framework',
-    'rest_framework.authtoken',
+    # 'rest_framework.authtoken',
     'rest_framework_swagger',
     'leaflet',
 
@@ -107,7 +108,7 @@ MEDIA_URL = '/media/'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend'
+    # 'allauth.account.auth_backends.AuthenticationBackend'
 )
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
@@ -171,9 +172,9 @@ MEMCACHED_HOST = ('127.0.0.1', 11211)
 
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_AUTHENTICATION_CLASSES': (
-    #     'rest_framework.authentication.TokenAuthentication',
-    # ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
+    ),
    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
     ),

@@ -50,7 +50,7 @@ class PolygonViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def retrieve(self, request, layer=4):
 
-        queryset = self.queryset.filter(level=int(pk))
+        queryset = self.queryset.filter(level=int(layer))
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -207,4 +207,4 @@ class GetPolygonsTree(viewsets.ViewSet):
         return Response(extractor('root'))
 
     def retrieve(self, request, polygon_id='root'):
-        return Response(extractor(pk))
+        return Response(extractor(polygon_id))
