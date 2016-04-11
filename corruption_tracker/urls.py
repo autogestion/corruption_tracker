@@ -16,7 +16,7 @@ from . import views as main_vies
 urlpatterns = [
     # Rest API
     url(r'^api/', include('api.urls')),
-    url(r'^auth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'^oauth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^i18n/', include('django.conf.urls.i18n')),
