@@ -2,12 +2,30 @@
 import json
 from pprint import pprint
 
+from django.contrib.auth.models import User
 from rest_framework import serializers
 # from rest_framework.reverse import reverse
 
 from claim.models import Claim, Organization, ClaimType,\
     OrganizationType
 from geoinfo.models import Polygon
+
+
+
+class SignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+
+        return user
 
 
 class ClaimTypeSerializer(serializers.ModelSerializer):
@@ -75,36 +93,16 @@ class PolygonSerializer(serializers.ModelSerializer):
                 'address': instance.address,
                 'parent_id': instance.layer.polygon_id if instance.layer else None,
                 'level': instance.level,
-                # "polygon_claims": instance.claims
+                "polygon_claims": instance.total_claims
             },
             "geometry": geometry
         }
 
-        if instance.level == instance.building:
-            # orgs = []
-            # polygon_claims = 0
-            # for org in instance.organizations.all():
-            #     org_claims = org.total_claims
-            #     polygon_claims += org_claims
-            #     orgs.append({'id': org.id,
-            #                 'name': org.name,
-            #                  'claims_count': org_claims,
-            #                  # 'claim_types': org.claim_types()
-            #                  'org_type_id': org.org_type.type_id
-            #                  })
+        if instance.level == instance.building:    
             queryset = instance.organizations.all()
             serializer = OrganizationSerializer(queryset, many=True)
-
             responce["properties"]["organizations"] = serializer.data
-            # responce["properties"]["organizations"]
-         
-            # responce["properties"]["organizations"] = orgs
-            # responce["properties"]["polygon_claims"] = polygon_claims
-
-        # else:
-        responce["properties"]["polygon_claims"] = instance.total_claims
-
-        # print(responce)
+      
         return responce
 
 

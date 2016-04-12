@@ -1,11 +1,19 @@
 
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework import permissions
 from rest_framework.throttling import SimpleRateThrottle
 
 from claim.models import Moderator
 
 
-class IsSafe(BasePermission):
+class IsAuthenticatedOrCreate(permissions.IsAuthenticated):
+    def has_permission(self, request, view):
+        if request.method == 'POST':
+            return True
+        return super(IsAuthenticatedOrCreate, self).has_permission(request, view)
+
+
+
+class IsSafe(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in ('GET',):
             return True
@@ -17,7 +25,7 @@ class IsSafe(BasePermission):
         return False
 
 
-class CanPost(BasePermission):
+class CanPost(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in ('POST', 'GET'):
             return True

@@ -88,7 +88,7 @@
             {% if request.user.is_authenticated %}
                 <li><a href="">{{ request.user }}</a></li>
                 <li><a href="">{% trans "Logout" %}</a></li>
-                {% else %}
+            {% else %}
                 <li><form class='navbar-form navbar-right login' method='POST' action='/login/'>
                     {% csrf_token %}
                     <div class='form-group'>
