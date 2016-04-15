@@ -48,9 +48,6 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     ordering_fields = ('created',)
     ordering = ('created',)
 
-    # def list(self, request):
-    #     docs = {ind: x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-    #     return Response(docs)
 
     def retrieve(self, request, org_id=None):
 
@@ -64,11 +61,8 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-        # serializer = ClaimSerializer(queryset, many=True)
-        # return Response(serializer.data)
 
     def perform_create(self, serializer):
-        # print(self.request.data)
         user = None if self.request.user.is_anonymous() else self.request.user
         serializer.save(complainer=user)
 
@@ -127,8 +121,6 @@ class OrganizationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         if search:
             return super(OrganizationViewSet, self).list(request)
         else:
-            # docs = {ind: x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-            # return Response(docs)
             return Response('can be used only with ?search=')
 
     def retrieve(self, request, polygon_id=None):
@@ -137,8 +129,6 @@ class OrganizationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        # print(request.data)
-
         layer = Polygon.objects.get(
             polygon_id=request.data['layer_id'])
 

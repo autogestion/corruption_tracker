@@ -27,7 +27,6 @@ def get_test_app_client():
         return 'Application with name "test_app" have to be created'
 
 
-
 class SignUp(mixins.CreateModelMixin, viewsets.GenericViewSet):
     __doc__ = """
     To authorize user make next steps:
@@ -49,7 +48,6 @@ class SignUp(mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = SignUpSerializer
     permission_classes = (IsAuthenticatedOrCreate,)
-
 
 
 class GetUpdatedViewSet(viewsets.ViewSet):
@@ -74,10 +72,6 @@ class GetUpdatedViewSet(viewsets.ViewSet):
     permission_classes = (IsSafe,)
     lookup_value_regex = '\d{4}-\d{2}-\d{2}'
     lookup_field = 'date'
-
-    # def list(self, request):
-    #     docs = {ind: x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-    #     return Response(docs)
 
     @detail_route()
     def polygon(self, request, date=None):

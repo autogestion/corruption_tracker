@@ -1,10 +1,9 @@
 
 import json
-from pprint import pprint
+# from pprint import pprint
 
 from django.contrib.auth.models import User
 from rest_framework import serializers
-# from rest_framework.reverse import reverse
 
 from claim.models import Claim, Organization, ClaimType,\
     OrganizationType
@@ -56,22 +55,13 @@ class OrganizationTypeSerializer(serializers.ModelSerializer):
 
 class OrganizationSerializer(serializers.ModelSerializer):
 
-    # claims = serializers.PrimaryKeyRelatedField(many=True, queryset=Claim.objects.all())
-
-    # polygons = serializers.CharField(max_length=2000000)
-    # get_claims = reverse('ClaimViewSet', pk=self.id)
-
     class Meta:
         model = Organization
-        fields = ('id', 'name', 'org_type', 
-            # 'total_claims', 
-            'claims', 
-            # 'get_claims',      
+        fields = ('id', 'name', 'org_type',
+            'claims',
             'polygons'
         )
-        # extra_kwargs = {
-        #     'get_claims': {'view_name': 'ClaimViewSet', 'lookup_field': 'organization_id'}  
-        # }      
+  
 
 
 class PolygonSerializer(serializers.ModelSerializer):

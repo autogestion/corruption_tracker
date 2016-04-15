@@ -88,10 +88,6 @@ class GetNearestPolygons(viewsets.ViewSet):
     permission_classes = (IsSafe,)
     polygon = 'get_nearest'
 
-    # def list(self, request):
-    #     docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-    #     return Response(docs)
-
     def retrieve(self, request, layer, distance, coord):
         pnt = geos.fromstr("POINT(%s %s)" % tuple(coord.split(',')))
         queryset = Polygon.objects.filter(
@@ -132,10 +128,6 @@ class FitBoundsPolygons(viewsets.ViewSet):
     permission_classes = (IsSafe,)
     polygon = 'fit_bounds'
 
-    # def list(self, request):
-    #     docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-    #     return Response(docs)
-
     def retrieve(self, request, layer, coord):
 
         raw = [x for x in coord.split(',')]
@@ -174,10 +166,6 @@ class CheckInPolygon(viewsets.ViewSet):
 
     permission_classes = (IsSafe,)
     polygon = 'check_in'
-
-    # def list(self, request):
-    #     docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-    #     return Response(docs)
 
     def retrieve(self, request, layer, coord):
         pnt = geos.fromstr("POINT(%s %s)" % tuple(coord.split(',')))
