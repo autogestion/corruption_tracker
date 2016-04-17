@@ -44,6 +44,8 @@ class Moderator(models.Model):
 
     @classmethod
     def get_moderator(cls):
+        print('cls.objects.get(id=1).values_list()')
+        print(cls.objects.filter(id=1).values_list())
         return cls.objects.get(id=1)
 
 

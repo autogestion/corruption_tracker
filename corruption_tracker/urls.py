@@ -14,8 +14,13 @@ from . import views as main_vies
 
 
 urlpatterns = [
+    # Rest API
+    url(r'^api/', include('api.urls')),
+    # url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^admin/', include(admin.site.urls)),
+
     url(r'^i18n/', include('django.conf.urls.i18n')),
+
 
     url(r'^static/(?P<path>.*)$', serve,
         {'document_root': settings.STATIC_ROOT}),
@@ -24,7 +29,7 @@ urlpatterns = [
         name='login'),
     url(r'^accounts/logout/$', logout,
         {'next_page': '/'}),
-    url(r'^accounts/', include('allauth.urls')),
+    # url(r'^accounts/', include('allauth.urls')),
 
     url(r'^$', main_vies.add_page, name="add_page"),
     url(r'^map$', main_vies.map, name="map"),
@@ -44,8 +49,8 @@ urlpatterns = [
     # url(r'^export_layer/(?P<layer_id>[\w.]{0,256})/$',
     #     geo_views.export_layer, name="export_layer"),
 
-    # Rest API
-    url(r'^api/', include('api.urls')),
+
+
 
 
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

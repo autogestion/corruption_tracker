@@ -4,6 +4,7 @@ from pprint import pprint
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
+from django.core.cache import cache
 
 from claim.models import Organization, OrganizationType, Moderator
 
@@ -67,10 +68,17 @@ class Polygon(models.Model):
         claims = 0
         if self.level == self.building:
             claims += sum([x.claims for x in self.organizations.all()])
+
         else:
-            childs = self.polygon_set.all()
-            for child in childs:
-                claims += child.total_claims
+            cached = cache.get('claims_for::%s' %self.polygon_id)
+            if cached is not None:
+                claims = cached
+            else:    
+                childs = self.polygon_set.all()
+                for child in childs:
+                    claims += child.total_claims
+
+                cache.set('claims_for::%s' %self.polygon_id, claims)
     
         return claims
 

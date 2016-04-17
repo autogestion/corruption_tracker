@@ -50,7 +50,7 @@ class PolygonViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def retrieve(self, request, layer=4):
 
-        queryset = self.queryset.filter(level=int(pk))
+        queryset = self.queryset.filter(level=int(layer))
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -87,10 +87,6 @@ class GetNearestPolygons(viewsets.ViewSet):
 
     permission_classes = (IsSafe,)
     polygon = 'get_nearest'
-
-    # def list(self, request):
-    #     docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-    #     return Response(docs)
 
     def retrieve(self, request, layer, distance, coord):
         pnt = geos.fromstr("POINT(%s %s)" % tuple(coord.split(',')))
@@ -132,10 +128,6 @@ class FitBoundsPolygons(viewsets.ViewSet):
     permission_classes = (IsSafe,)
     polygon = 'fit_bounds'
 
-    # def list(self, request):
-    #     docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-    #     return Response(docs)
-
     def retrieve(self, request, layer, coord):
 
         raw = [x for x in coord.split(',')]
@@ -175,10 +167,6 @@ class CheckInPolygon(viewsets.ViewSet):
     permission_classes = (IsSafe,)
     polygon = 'check_in'
 
-    # def list(self, request):
-    #     docs = {ind:x for ind, x in enumerate(self.__doc__.split('\n')) if x}
-    #     return Response(docs)
-
     def retrieve(self, request, layer, coord):
         pnt = geos.fromstr("POINT(%s %s)" % tuple(coord.split(',')))
         queryset = Polygon.objects.filter(shape__contains=pnt, level=int(layer))
@@ -207,4 +195,4 @@ class GetPolygonsTree(viewsets.ViewSet):
         return Response(extractor('root'))
 
     def retrieve(self, request, polygon_id='root'):
-        return Response(extractor(pk))
+        return Response(extractor(polygon_id))
