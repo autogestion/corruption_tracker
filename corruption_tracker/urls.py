@@ -27,8 +27,10 @@ urlpatterns = [
 
     url(r'^login/$', main_vies.login_user,
         name='login'),
-    url(r'^accounts/logout/$', logout,
-        {'next_page': '/'}),
+    url(r'^logout/$', main_vies.logout_view,
+        name='logout'),    
+    # url(r'^accounts/logout/$', logout,
+    #     {'next_page': '/'}),
     # url(r'^accounts/', include('allauth.urls')),
 
     url(r'^$', main_vies.add_page, name="add_page"),

@@ -29,7 +29,7 @@ Create a virtual environment
 
 Install dependencies and project
 
-    sudo apt-get install python3-dev libpq-dev postgresql postgresql-contrib postgis postgresql-9.3-postgis-2.1 memcached
+    sudo apt-get install python3.4-dev libpq-dev postgresql postgresql-contrib postgis postgresql-9.5-postgis-2.2 memcached
     git clone git@github.com:autogestion/corruption_tracker.git
     cd YOUR_SOURCE_DIR
     pip install -r requirements.txt

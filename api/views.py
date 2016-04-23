@@ -14,6 +14,7 @@ from api.serializers import OrganizationSerializer, \
     PolygonNoShapeSerializer, SignUpSerializer
 
 from django.contrib.auth.models import User
+from django.db.utils import ProgrammingError
 from rest_framework import generics
 
 from oauth2_provider.models import Application
@@ -27,22 +28,25 @@ def get_test_app_client():
         return 'Application with name "test_app" have to be created'
 
 
+
 class SignUp(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    __doc__ = """
-    To authorize user make next steps:
 
-    1) To create user, make POST .../sign_up/ call with username and password
+    def __init__(self):
+        self.__doc__ = """
+            To authorize user make next steps:
 
-    2) To get token, make POST .../token/ call with username, password, grant_type(='password') and client_id 
+            1) To create user, make POST .../sign_up/ call with username and password
 
-    Request must be x-www-form-urlencoded. Client_id for test requests: %s
+            2) To get token, make POST .../token/ call with username, password, grant_type(='password') and client_id 
 
-    Client_id for real client must be created in admin, and set client type to "public" and grant type to "resource owner password based"
+            Request must be x-www-form-urlencoded. Client_id for test requests: %s
 
-    3) To make an authenticated request, just pass the Authorization header in your requests. It's value will be "Bearer YOUR_ACCESS_TOKEN".
+            Client_id for real client must be created in admin, and set client type to "public" and grant type to "resource owner password based"
 
-    .
-    """ % get_test_app_client()
+            3) To make an authenticated request, just pass the Authorization header in your requests. It's value will be "Bearer YOUR_ACCESS_TOKEN".
+
+            .
+            """ % get_test_app_client()
 
 
     queryset = User.objects.all()
