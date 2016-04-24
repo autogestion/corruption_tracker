@@ -45,9 +45,6 @@ function w2ui_popup() {
 
 
 
-
-
-
 function update_dropdown (org_type_id){
     // console.log(org_type_id)
     var $dropdown = $("#claim_type");
@@ -76,7 +73,7 @@ function get_name_by_id (org_id) {
 
 
 function select_building (org_id) {
-    $('#org_id').val(org_id);
+    $('#organization').val(org_id);
     $('#organization_name').val(get_name_by_id(org_id));    
     window.location.hash = "organization=" + org_id; 
 
@@ -92,15 +89,13 @@ function select_building (org_id) {
                 template = document.getElementById('claim_template_global').innerHTML;
                 template_button = document.getElementById('show_all_button_template').innerHTML;
                 template_button_grid = document.getElementById('show_all_button_template_grid').innerHTML;
-                template_button_add = document.getElementById('show_all_button_template_add').innerHTML.replace('id=""', 'id="open_claim"');
-                // console.log(template_button_add)
-
+                
                 var records = [];
                 var record;
                 var count = 0
                 for (var i = data.length - 1; i >= 0; i--) {
 
-                    if (count < 4) {
+                    if (count < 3) {
                         message = template.replace('%complainer%', data[i]['complainer']);
                         message = message.replace('%servant%', data[i]['servant']);
                         message = message.replace('%claim_type%', data[i]['claim_type']);
@@ -110,7 +105,7 @@ function select_building (org_id) {
 
                         if (data[i]['claim_icon']) {
                             message = message.replace('<div style="float: right"></div>',  '<div style ="float: right"><img src="' + data[i]['claim_icon'] + '" height="50em" width="50em"></div>');
-                            console.log (message);
+                            // console.log (message);
                         }
                         messages += message;
                         count += 1
@@ -124,10 +119,12 @@ function select_building (org_id) {
 
                 template_button = template_button.replace('%org_id%', org_id);
                 if (messages == "") {
-                    messages = 'No claims for this polygon';
+                    messages = '<h3>Claims</h3>No claims for this polygon';
                     template_button= '';
-                    template_button_grid = ''};            
-                $("#target").html(messages + template_button_add + template_button_grid + template_button);
+                    template_button_grid = ''} else {
+                    messages = '<h3>Claims</h3>' + messages
+                    };            
+                $("#claims_list").html(messages + template_button_grid + template_button);
 
             },
             error: function(data){
@@ -156,7 +153,7 @@ $(document).ready(function () {
 
 
     $("#get_claims").click(function() {
-        var org_id = $('#org_id').val();
+        var org_id = $('#organization').val();
         select_building(org_id);
     });
 
@@ -164,7 +161,7 @@ $(document).ready(function () {
     $('#organization_name').autocomplete({
         lookup: places,
         onSelect: function (suggestion) {
-            $('#org_id').val(suggestion.data);
+            $('#organization').val(suggestion.data);
             update_dropdown(suggestion.org_type_id);
             AddPage.validate();
         }
@@ -176,7 +173,7 @@ $(document).ready(function () {
         event.preventDefault();
         $.ajax({
             type: "POST",
-            url: add_claim_url,
+            url: api_url + 'claim/',
             data: $('#claim_form').serialize(),
             statusCode: {
                 200: function (response) {
@@ -215,7 +212,7 @@ $(document).ready(function () {
         $('#processing').show();
         event.preventDefault();
         post_data = $('#org_form').serialize() + '&layer_id=' + layer_id;
-        console.log(post_data)
+        // console.log(post_data)
         $.ajax({
             type: "POST",
             url: add_org_url,
@@ -239,10 +236,10 @@ $(document).ready(function () {
     });
 
     $( "#open_claim" ).click(function() {
-      console.log('claim_form_block togle 0');
+      // console.log('claim_form_block togle 0');
       $( "#claim_form_block" ).slideToggle( "slow", function() {  
       });
-      console.log('claim_form_block togle');
+      // console.log('claim_form_block togle');
     });    
 
     var pair;

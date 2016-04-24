@@ -208,6 +208,7 @@ function main_map_init (map, options) {
           opacity: 0.3,
           fillOpacity: 0.3
         });
+        $("#claims_list").empty()
         // reselect_selected = false;
       // };
   }); 
@@ -217,7 +218,7 @@ function main_map_init (map, options) {
   $('#organization_name').autocomplete({
     lookup: places,
     onSelect: function (suggestion) {
-    $('#org_id').val(suggestion.data);
+    $('#organization').val(suggestion.data);
       update_dropdown(suggestion.org_type_id);
       AddPage.validate();
       

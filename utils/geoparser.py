@@ -34,6 +34,9 @@ class GeoJSONParser():
                 default_claim_type = ClaimType(name='---')
                 default_claim_type.save()
 
+            try:
+                xabar = ClaimType.objects.get(name='Xabar')
+            except ClaimType.DoesNotExist:
                 with open(os.path.join(settings.INIT_GEOJSON_FOLDER,
                           'habar.jpg'), 'rb') as x_logo:
                     xabar_file = File(x_logo)

@@ -44,6 +44,7 @@ class ClaimSerializer(serializers.ModelSerializer):
                   'servant', 'complainer', 'claim_type', 'bribe'
                   )
         read_only_fields = ('created',)
+        extra_kwargs = {'claim_type': {'required': True}}
 
 
 class OrganizationTypeSerializer(serializers.ModelSerializer):
@@ -78,13 +79,7 @@ class PolygonSerializer(serializers.ModelSerializer):
 
         centroid = list(instance.centroid.coords)
         centroid.reverse()   
-              
-        max_claims_value = max([x.total_claims for x in instance.layer.polygon_set.all()])
 
-
-        color = instance.color_spot(
-            instance.total_claims, max_claims_value)\
-            if instance.total_claims else 'grey'              
 
         responce = {
             "type": "Feature",
@@ -96,7 +91,7 @@ class PolygonSerializer(serializers.ModelSerializer):
                 'level': instance.level,
                 "polygon_claims": instance.total_claims,
                 'zoom' : instance.zoom,
-                'color': color
+                'color': instance.get_color
             },
             "geometry": geometry
         }

@@ -1,7 +1,6 @@
 
 body {
     background-color: black;
-    color: white;    
 }
 
 a {
@@ -20,38 +19,23 @@ a {
     padding: 7px;
     float: left;
 }
-#legend_text {
-    border: 3px solid red;
-    padding: 3px;
-}
-    
-    
-
+ 
 .button_red{
     background-color: red;
     color: white;
 }
 
-
 .leaflet-popup-content-wrapper {
     background-color: black;
-     
 }
 
-
-.leaflet-container a{
+.ui-menu-item a{
     color: white; 
 }
-
 
 .counts {
     text-align: center;
     color: red;
-}
-
-
-iframe {
-    width: 260px;
 }
 
 
@@ -78,24 +62,19 @@ nav .navbar-brand {
     line-height: 2em !important;
     text-align: center;
     border-radius: 1em;
-    color: white;
+    color: black;
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGO6UAQAAhsBRcwUOXgAAAAASUVORK5CYII=');
 }
 
 /* Copypaste from github, just to keep it nicer */
 .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
-.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+.autocomplete-suggestion { padding: 2px 5px; 
+    /*white-space: nowrap; */
+    overflow: hidden; }
 .autocomplete-selected { background: #F0F0F0; }
 .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
 .autocomplete-group { padding: 2px 5px; }
 .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
-
-.leaflet-container {  /* all maps */
-    width: 100%;
-}
-.right_block {
-    width: 100%;
-}
 
 .layout_chooser {
     padding-top: 95px;
@@ -238,6 +217,6 @@ h5 {
 .claim_page_claim_text {
     padding:10px;
 }
-#target {
+#claims_list {
     padding-bottom: 12px;
 }

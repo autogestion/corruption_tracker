@@ -25,7 +25,7 @@ function get_name_by_id (org_id) {
 
 
 function select_building (org_id) {
-    $('#org_id').val(org_id);
+    $('#organization').val(org_id);
     $('#organization_name').val(get_name_by_id(org_id));
 }
 
@@ -34,7 +34,7 @@ var AddPage = {
     // 50 too much for testing        
     min_claim_text_len: 10,
     init: function (){
-        $('#org_id').on('change', function(){
+        $('#organization').on('change', function(){
             AddPage.validate();
         });
         $('#claim_text').on('change', function(){
@@ -94,7 +94,7 @@ var AddPage = {
     inputs_to_validate: [
         // $('#organization_name'),
         $('#claim_text'),
-        $('#org_id'),
+        $('#organization'),
     ],
     show_processing: function (){
         $('#processing').show();

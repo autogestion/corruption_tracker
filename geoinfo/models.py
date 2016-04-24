@@ -82,6 +82,26 @@ class Polygon(models.Model):
     
         return claims
 
+
+    @property
+    def get_color(self):
+        cached = cache.get('color_for::%s' %self.polygon_id)
+        if cached is not None:
+            color = cached
+        else:
+            if self.layer:
+                max_claims_value = max([x.total_claims for x in self.layer.polygon_set.all()])
+            else:
+                max_claims_value = 0
+
+            color = self.color_spot(
+                self.total_claims, max_claims_value)\
+                if self.total_claims else 'grey'
+
+            cache.set('color_for::%s' %self.polygon_id, color)
+    
+        return color
+
     # def orgs_count(self):
     #     return self.organizations.all().count()
 
@@ -156,9 +176,11 @@ class Polygon(models.Model):
         else:
             polygons = self.polygon_set.all()
 
-        max_claims_value = max([x.total_claims for x in polygons])
-
         responce = {}
+        # if not polygons:
+        #     return responce
+        max_claims_value = max([x.total_claims for x in polygons])
+        
         data = []
         places = []
         for polygon in polygons:
@@ -203,10 +225,11 @@ class Polygon(models.Model):
 
         for brother in brothers:
             brother_childs = brother.generate_childs(add)
-            responce['data'].extend(brother_childs['data'])
-            responce['places'].extend(brother_childs['places'])
-            if add:
-                responce['claim_types'].update(brother_childs['claim_types'])
+            if brother_childs:
+                responce['data'].extend(brother_childs['data'])
+                responce['places'].extend(brother_childs['places'])
+                if add:
+                    responce['claim_types'].update(brother_childs['claim_types'])
         return responce
 
     def generate_layer(self, add=False):

@@ -5,6 +5,7 @@ import json
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
+from django.core.cache import cache
 
 from multiselectfield import MultiSelectField
 
@@ -100,7 +101,8 @@ class Organization(models.Model):
 
     def moderation_filter(self):
         allowed_statuses = Moderator.objects.get(id=1).show_claims
-        return self.claim_set.filter(moderation__in=allowed_statuses)
+        return self.claim_set.filter(
+            moderation__in=allowed_statuses).order_by('created')
 
     def first_polygon(self):
         try:
@@ -116,20 +118,6 @@ class Organization(models.Model):
     @property
     def claims(self):
         return self.moderation_filter().count()
-
-
-    # def claim_types(self):
-    #     claim_types = ClaimType.objects.filter(org_type=self.org_type)
-    #     claim_types_list = []
-
-    #     for claim_type in claim_types:
-    #         claim_types_list.append({
-    #             'id': claim_type.id,
-    #             'name':claim_type.name,               
-    #             'icon': claim_type.icon.url if\
-    #                 claim_type.icon else False
-    #             })
-    #     return claim_types_list
 
     def json_claims(self, limit=999):
         claims = self.moderation_filter()
@@ -187,3 +175,11 @@ class Claim(models.Model):
     moderation = models.CharField(choices=STATUSES, max_length=50,
                                   default='not_moderated')
     bribe = models.IntegerField(blank=True, null=True)
+
+
+
+    def save(self, *args, **kwargs):
+        super(Claim, self).save(*args, **kwargs)
+        key = 'color_for::%s' %self.organization.first_polygon().polygon_id
+        if cache.has_key(key):   
+            cache.delete(key)
