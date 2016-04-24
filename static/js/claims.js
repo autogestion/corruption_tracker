@@ -13,7 +13,7 @@ var grid = {
             toolbar : true,
             footer : true,
             lineNumbers : true
-        },         
+        },
         columns: [
             { field: 'complainer', caption: 'complainer', size: '15%', sortable: true, searchable: true },
             { field: 'servant', caption: 'servant', size: '15%', sortable: true, searchable: true },
@@ -43,8 +43,6 @@ function w2ui_popup() {
     });
 }
 
-
-
 function update_dropdown (org_type_id){
     // console.log(org_type_id)
     var $dropdown = $("#claim_type");
@@ -58,7 +56,6 @@ function update_dropdown (org_type_id){
     });    
     }
 }
-
 
 
 function get_name_by_id (org_id) {
@@ -88,8 +85,7 @@ function select_building (org_id) {
 
                 template = document.getElementById('claim_template_global').innerHTML;
                 template_button = document.getElementById('show_all_button_template').innerHTML;
-                template_button_grid = document.getElementById('show_all_button_template_grid').innerHTML;
-                
+
                 var records = [];
                 var record;
                 var count = 0
@@ -124,7 +120,7 @@ function select_building (org_id) {
                     template_button_grid = ''} else {
                     messages = '<h3>Claims</h3>' + messages
                     };            
-                $("#claims_list").html(messages + template_button_grid + template_button);
+                $("#claims_list").html(messages + template_button);
 
             },
             error: function(data){

@@ -6,19 +6,6 @@ body {
 a {
     color: white; 
 }
-
-.map_popup{
-    background-color: black;
-    color: white;    
-}
-
-
-#legend {
-    width: 300px;
-    margin-left: 70px;
-    padding: 7px;
-    float: left;
-}
  
 .button_red{
     background-color: red;
@@ -27,6 +14,7 @@ a {
 
 .leaflet-popup-content-wrapper {
     background-color: black;
+    color: white; 
 }
 
 .ui-menu-item a{
@@ -70,9 +58,10 @@ nav .navbar-brand {
 .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
 .autocomplete-suggestion { padding: 2px 5px; 
     /*white-space: nowrap; */
-    overflow: hidden; }
-.autocomplete-selected { background: #F0F0F0; }
+    overflow: hidden;
+    cursor: pointer; }
 .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
+.autocomplete-selected { background: #F0F0F0; }
 .autocomplete-group { padding: 2px 5px; }
 .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
 
@@ -80,8 +69,28 @@ nav .navbar-brand {
     padding-top: 95px;
 }
 
+#language_selector {
+    padding-top: 13px;
+}
 
-@media screen and (max-width: 10000px) {
+#claim_template_global {
+    display: none;
+}
+
+#processing {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    float: left;
+    z-index: 1;
+    background-color: rgba(216, 216, 216, 0.29);
+    text-align: center;
+    padding: 40% 0;
+    font-size: 3em;
+    display: none;
+}
+
+/*@media screen and (max-width: 10000px) {
     .leaflet-container {
         height: 700px;
     }
@@ -95,34 +104,20 @@ nav .navbar-brand {
     .leaflet-container {
         height: 300px;
     }
-}
-h5 {
-    padding: 1em;
-    margin: 1em;
-}
-
-#language_selector {
-    padding-top: 13px;
+}*/
+.map_popup {
+    background-color: black;
+    color: white;  
+  
+   
 }
 
-#claim_template_global {
-    display: none;
-}
-
-.incorrect {
-    border-color: red;
-}
-#processing {
-    width: 100%;
-    height: 100%;
-    position: absolute;
+#legend {
+    width: 300px;
+    margin-left: 70px;
+    padding: 7px;
     float: left;
-    z-index: 1;
-    background-color: rgba(216, 216, 216, 0.29);
-    text-align: center;
-    padding: 40% 0;
-    font-size: 3em;
-    display: none;
+
 }
 
 @media screen and (max-width: 10000px) {
@@ -137,16 +132,19 @@ h5 {
     #float_block {
         border-radius: 3px;
         margin: 10px;
-        position: fixed;
+        
         right: 5px;
-        top: 40px;
-        z-index: -1;
+        /*top: 50px;        */
         padding-top: 10px;
         max-height: calc(100% - 52px);
-        overflow: scroll;
-        border-color: #e7e7e7;
+        z-index: -1;
+        /*position: fixed;   */
+        overflow: scroll;     
+        
+        /*border-color: #e7e7e7;*/
         overflow-x:hidden;
         border-bottom-left-radius: 6px;
+        float: right;
     }
 }
 
@@ -173,23 +171,6 @@ h5 {
         background-color: initial;
         border-color: initial;
     }
-}
-
-.autocomplete-suggestion {
-    cursor: pointer;
-}
-
-#github_link {
-    padding-right: 50px;
-    background: rgba(255, 255, 255, 0.7);
-    font-size: 11px;
-    padding: 0 5px;
-    position: fixed;
-    bottom: 0;
-    margin-bottom: 0;
-    right: 43px;
-    height: 16px;
-    padding-top: 1px;
 }
 
 .hide_show_more_buttons {

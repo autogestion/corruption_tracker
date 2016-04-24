@@ -27,7 +27,7 @@
         var places = {{places}};    
         var claim_types = {{claim_types}}   
         var add_org_url = "{% url 'add_org' %}"    
-        var layer_id = '{{layer_id}}'
+        var layer_id = '{{ layer_id }}'
         var api_url = "{% url 'api-root' %}" 
     </script>
     <script src="{% static "js/map_init.js" %}"></script>
@@ -58,7 +58,8 @@
         </div>
         <ul class="nav navbar-nav">
              <li {% if page == 'single' %} class="active"{% endif %}><a href="{% url 'single' %}">{% trans "Map" %}</a> </li>
-            <li><a href="api/docs" target="_blank">{% trans "API Docs" %}</a> </li>                   
+            <li><a href="api/docs" target="_blank">{% trans "API Docs" %}</a> </li>  
+                          
         </ul>
 
          <ul class="nav navbar-nav" style="float:right">
@@ -77,6 +78,7 @@
                     </select>
                 </form>
             </li>
+
             {% if request.user.is_authenticated %}
                 <li><a href="">{{ request.user }}</a></li>
                 <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
@@ -94,7 +96,8 @@
                     {% endif %}
                     <button type='submit' class='btn btn-default'>{% trans "Login" %}</button>
                 </form> </li>               
-                <li><a href="">{% trans "Register" %}</a></li>
+                <li><a href="{% url 'api-root' %}docs/#!/sign_up/Sign_Up_create" target="_blank">
+                {% trans "Register" %}</a></li>
             {% endif %}
         </ul>
 
@@ -102,7 +105,10 @@
 
 
 
-<div id='legend' class='map_popup'>    
+
+
+<div id='legend' class='map_popup'>   
+    {{ test_alarm|safe }} 
     <div class="input-group">
         <input type='search' id='organization_name' placeholder='{% trans "Organization name" %}' class="form-control">
         <span class="input-group-btn">
@@ -238,19 +244,17 @@
 </div>
 
 <div id="show_all_button_template" class="hide_show_more_buttons">
-    <a class="btn btn-primary" href="/claims/%org_id%" target="_blank">{% trans "Show all claims as tiles" %}</a>
-</div>
-<div id="show_all_button_template_grid" class="hide_show_more_buttons" style="padding: 20px 0px">
+    <a class="btn btn-primary" href="/claims/%org_id%" target="_blank">
+    {% trans "Show all claims as tiles" %}</a>
     <button class="btn" onclick="w2ui_popup()">{% trans "Show all claims as table" %}</button>
 </div>
-
 
 <div class="navbar-fixed-bottom row-fluid">
 <!--       <div class="navbar-inner">
           <div class="container"><a href="https://github.com/autogestion/corruption_tracker" target="_blank">Powered by Corruption tracker</a>
         </div>
     </div> -->
-    <div class="github-fork-ribbon-wrapper left-bottom hidden-xs">
+    <div class="github-fork-ribbon-wrapper right-bottom hidden-xs">
         <div class="github-fork-ribbon">
             <a href="https://github.com/autogestion/corruption_tracker" target="_blank">Fork me on GitHub</a>
         </div>

@@ -31,22 +31,24 @@ def get_test_app_client():
 
 class SignUp(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
-    def __init__(self):
-        self.__doc__ = """
-            To authorize user make next steps:
+    # def __init__(self):
+        # self.__doc__ = 
+    """
+        To authorize user make next steps:
 
-            1) To create user, make POST .../sign_up/ call with username and password
+        1) To create user, make POST .../sign_up/ call with username and password
 
-            2) To get token, make POST .../token/ call with username, password, grant_type(='password') and client_id 
+        2) To get token, make POST .../token/ call with username, password, grant_type(='password') and client_id 
 
-            Request must be x-www-form-urlencoded. Client_id for test requests: %s
+        Request must be x-www-form-urlencoded. Client_id for test requests: 
 
-            Client_id for real client must be created in admin, and set client type to "public" and grant type to "resource owner password based"
+        Client_id for real client must be created in admin, and set client type to "public" and grant type to "resource owner password based"
 
-            3) To make an authenticated request, just pass the Authorization header in your requests. It's value will be "Bearer YOUR_ACCESS_TOKEN".
+        3) To make an authenticated request, just pass the Authorization header in your requests. It's value will be "Bearer YOUR_ACCESS_TOKEN".
 
-            .
-            """ % get_test_app_client()
+        .
+    """ 
+            # %s% get_test_app_client()
 
 
     queryset = User.objects.all()

@@ -6,19 +6,7 @@ function main_map_init (map, options) {
   var reselect_selected = false;
 
   map.on('moveend', function() { 
-      // console.log(reselect_selected)
-      // if (reselect_selected){
-      //   reselect_selected=false;
-      // }
       updateMapLayer();
-      // if (reselect_selected){
-      //   $_selectedPolygon.setStyle({ 
-      //       weight: 6,
-      //       color: 'green',
-      //       opacity: 1,
-      //       fillOpacity: 0.8
-      //   });
-      // };
   });
   
   var dataBounds, zoom, dataUrl, dataType;
@@ -41,15 +29,12 @@ function main_map_init (map, options) {
           dataType = 4; // building = 4   >=13
       };
 
-      dataUrl = api_url + 'polygon/fit_bounds/' + dataType + '/' + dataBounds + '/';
-      
+      dataUrl = api_url + 'polygon/fit_bounds/' + dataType + '/' + dataBounds + '/';      
       map.removeLayer(districtLayer);
-      // districtLayer = get_new_L();z
       districtLayer.clearLayers()
       
       
       $.getJSON(dataUrl, function (data) {
-        // districtLayer.addData(data);
         var polygons = data;
         districtLayer.clearLayers();        
              
@@ -134,8 +119,6 @@ function main_map_init (map, options) {
                               fillOpacity: 0.3
                         });
                       };
-
-                      // reselect_selected = true;
                       // map.setView(this.centroid);
 
                       this.setStyle({
@@ -201,7 +184,6 @@ function main_map_init (map, options) {
   
   // reset selected polygon highlight to default
   map.on('click', function() {
-      // if ($_selectedPolygon) {
         $_selectedPolygon.setStyle({
           weight: 2,
           color: 'blue',
@@ -209,10 +191,7 @@ function main_map_init (map, options) {
           fillOpacity: 0.3
         });
         $("#claims_list").empty()
-        // reselect_selected = false;
-      // };
   }); 
-
   
   // set map view in search polygon feature
   $('#organization_name').autocomplete({
@@ -257,8 +236,6 @@ function main_map_init (map, options) {
     timeout: 10000
     }
   }).addTo(map);
-
-
   
 }
 

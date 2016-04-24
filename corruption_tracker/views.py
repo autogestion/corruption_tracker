@@ -56,6 +56,13 @@ def single(request):
         settings.RECAPTCHA_PUBLIC = ''
     resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
     # pprint(resp_dict['polygons'])
+
+    test_alarm = None
+    if settings.TEST_SERVER:
+        test_alarm = '<p style="color:red; padding-top: 5px; padding-left:15px;">УВАГА! Ресурс працює в тестовому режимі. Усі П.І.Б. посадовців уявні, співпадіння випадкові.</p>'
+    resp_dict['test_alarm'] = test_alarm        
+ 
+
     return render(request, 'single.html', resp_dict)
 
 
