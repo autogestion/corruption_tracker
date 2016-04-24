@@ -67,7 +67,7 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer.save(complainer=user)
 
 
-class OrganizationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     """
     API endpoint for listing and creating Organizations.
 

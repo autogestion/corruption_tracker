@@ -26,9 +26,11 @@
         var claim_types = {{claim_types}} 
         var add_claim_url = "{% url 'add_claim' %}"   
         var add_org_url = "{% url 'add_org' %}"    
-        var layer_id = '{{layer_id}}'    
+        var layer_id = '{{layer_id}}'
+        var api_url = "{% url 'api-root' %}" 
     </script>
     <script src="{% static "js/map_init.js" %}"></script>
+    <!-- <script src="{% static "js/old_map_init.js" %}"></script> -->
 
     <script src="{% static "js/claims.js" %}"></script>
     <link href="{% static "css/w2ui-1.4.3.min.css" %}" rel="stylesheet" type="text/css" />  

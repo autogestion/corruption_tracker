@@ -49,12 +49,12 @@ function w2ui_popup() {
 
 
 function update_dropdown (org_type_id){
-    console.log(org_type_id)
+    // console.log(org_type_id)
     var $dropdown = $("#claim_type");
     $dropdown.empty();
 
     if (claim_types[org_type_id]){
-        console.log(claim_types[org_type_id])
+        // console.log(claim_types[org_type_id])
     $.each(claim_types[org_type_id], function(key, value) {
       $dropdown.append($("<option></option>")
          .attr("value", value.id).text(value.value));
@@ -93,7 +93,7 @@ function select_building (org_id) {
                 template_button = document.getElementById('show_all_button_template').innerHTML;
                 template_button_grid = document.getElementById('show_all_button_template_grid').innerHTML;
                 template_button_add = document.getElementById('show_all_button_template_add').innerHTML.replace('id=""', 'id="open_claim"');
-                console.log(template_button_add)
+                // console.log(template_button_add)
 
                 var records = [];
                 var record;

@@ -72,18 +72,31 @@ class PolygonSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         if instance.shape:
             geometry = json.loads(instance.shape.json)
+            [x.reverse() for x in geometry["coordinates"][0]]  
         else:
             geometry = None
+
+        centroid = list(instance.centroid.coords)
+        centroid.reverse()   
+              
+        max_claims_value = max([x.total_claims for x in instance.layer.polygon_set.all()])
+
+
+        color = instance.color_spot(
+            instance.total_claims, max_claims_value)\
+            if instance.total_claims else 'grey'              
 
         responce = {
             "type": "Feature",
             "properties": {
                 "ID": instance.polygon_id,
-                "centroid": list(instance.centroid.coords),
+                "centroid": centroid,
                 'address': instance.address,
                 'parent_id': instance.layer.polygon_id if instance.layer else None,
                 'level': instance.level,
-                "polygon_claims": instance.total_claims
+                "polygon_claims": instance.total_claims,
+                'zoom' : instance.zoom,
+                'color': color
             },
             "geometry": geometry
         }
