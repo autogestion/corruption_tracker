@@ -76,8 +76,11 @@ def single(request):
     resp_dict['test_alarm'] = test_alarm
 
     g = GeoIP2()
-    # resp_dict['zoom_to'] = [49.995729, 36.230062]
-    resp_dict['zoom_to'] = g.lat_lon(get_client_ip(request))
+    try:
+        test_coordinates = getattr(settings, 'TEST_COORDINATES')
+        resp_dict['zoom_to'] = test_coordinates
+    except AttributeError:
+        resp_dict['zoom_to'] = list(g.lat_lon(get_client_ip(request)))
     # pprint(resp_dict)
 
     return render(request, 'single.html', resp_dict)
