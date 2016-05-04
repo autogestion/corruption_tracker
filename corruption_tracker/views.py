@@ -1,13 +1,16 @@
 from pprint import pprint
+import json
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.gis.geoip2 import GeoIP2
+from django.utils.safestring import mark_safe
 # from django.utils.translation import ugettext as _
 
-# from geoinfo.views import LayerGenerator
+from utils.common import get_client_ip
 from geoinfo.models import Polygon
 from claim.models import OrganizationType
 
@@ -46,11 +49,22 @@ def about(request):
 
 
 def single(request):
-    resp_dict = Polygon.objects.get(is_default=True).generate_layer(add=True)
+    resp_dict = {}
+    # resp_dict = Polygon.objects.get(is_default=True).generate_layer(add=True)
     resp_dict['page'] = 'single'
 
     resp_dict['org_types'] = OrganizationType.objects.all()
-    print(resp_dict['org_types'], "resp_dict['org_types']")
+
+    claim_type_sets = {}
+    for org_type in resp_dict['org_types']:
+        claim_type_set = []
+        for claim_type in org_type.claimtype_set.all():
+            claim_type_set.append({'id': claim_type.id,
+                                  'value': claim_type.name})
+        claim_type_sets[org_type.type_id] = claim_type_set
+
+    resp_dict['claim_types'] = mark_safe(json.dumps(claim_type_sets))
+
 
     if settings.RECAPTCHA_ENABLED is False:
         settings.RECAPTCHA_PUBLIC = ''
@@ -60,8 +74,13 @@ def single(request):
     test_alarm = None
     if settings.TEST_SERVER:
         test_alarm = '<p style="color:red; padding-top: 5px; padding-left:15px;">УВАГА! Ресурс працює в тестовому режимі. Усі П.І.Б. посадовців уявні, співпадіння випадкові.</p>'
-    resp_dict['test_alarm'] = test_alarm        
- 
+    resp_dict['test_alarm'] = test_alarm  
+
+
+    g = GeoIP2()    
+    resp_dict['zoom_to'] = [49.995729, 36.230062]  
+    # resp_dict['zoom_to'] = g.lat_lon(get_client_ip(request))
+    # pprint(resp_dict)
 
     return render(request, 'single.html', resp_dict)
 

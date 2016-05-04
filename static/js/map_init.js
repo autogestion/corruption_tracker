@@ -3,7 +3,8 @@ function main_map_init (map, options) {
     $('.layout_chooser').removeClass("leaflet-right");
     $('.layout_chooser').addClass("leaflet-left");
 
-  var reselect_selected = false;
+  // var reselect_selected = false;
+  map.setView(zoom_to, 12); 
 
   map.on('moveend', function() { 
       updateMapLayer();
@@ -17,16 +18,12 @@ function main_map_init (map, options) {
       map.getBounds().getEast().toFixed(5) + ',' + 
       map.getBounds().getNorth().toFixed(5);
       
-      zoom = map.getZoom();  
+      zoom = map.getZoom();
 
-      if( zoom <=8 ) {
-          dataType = 1; // region = 1     <=8
-      } else if ( zoom <= 10 ) {
-          dataType = 2; // area = 2       <=10
-      } else if ( zoom <= 12 ) {
-          dataType = 3; // district = 3   <=12
-      } else { // 
-          dataType = 4; // building = 4   >=13
+             if ( zoom <=8 )   { dataType = 1; // region = 1     <=8
+      } else if ( zoom <= 10 ) { dataType = 2; // area = 2       <=10
+      } else if ( zoom <= 12 ) { dataType = 3; // district = 3   <=12
+      } else                   { dataType = 4; // building = 4   >=13
       };
 
       dataUrl = api_url + 'polygon/fit_bounds/' + dataType + '/' + dataBounds + '/';      
@@ -43,14 +40,14 @@ function main_map_init (map, options) {
         // console.log(polygons)
 
         if (polygons) {
+          places= []
         // Add building markers with popups to polygons.
           for (var i = polygons.length - 1; i >= 0; i--) {
-
-
               orgs_set = polygons[i]['properties']["organizations"]
+              
               if (orgs_set){
-                org_rows = []
-                for (var ii = orgs_set.length - 1; ii >= 0; ii--) {
+                org_rows = [];                
+                for (var ii = orgs_set.length - 1; ii >= 0; ii--) {                    
                     org_row = document.createElement('a');
                     org_row.href = '#' + polygons[i]['properties']["ID"];
                     org_row.id = orgs_set[ii]['id'];            
@@ -61,8 +58,13 @@ function main_map_init (map, options) {
                         event.preventDefault();
                     };
                     org_rows.push(org_row);
+                    places.push({data: orgs_set[ii]['id'],
+                               value: orgs_set[ii]['name'],
+                               centroid: polygons[i]['properties']["centroid"],
+                               org_type_id: orgs_set[ii]['org_type']});
                 };
 
+                
                 org_list = document.createElement("ul");
                 $.each(org_rows, function(i){
                     var li = $('<li/>')
@@ -165,12 +167,23 @@ function main_map_init (map, options) {
                           select_building(this.organization);
                       }
                       else {
-                          $('#target').empty();            
+                          $('#claims_list').empty();            
                       };
                   });                        
               };
             
           }; 
+          // console.log(places)
+          $('#organization_name').autocomplete({
+              lookup: places,
+              onSelect: function (suggestion) {
+                  $('#organization').val(suggestion.data);
+                  update_dropdown(suggestion.org_type_id);
+                  var org_id = $('#organization').val();
+                  select_building(org_id);
+                  // AddPage.validate();
+              }
+          });          
         };
       });
       
@@ -178,7 +191,8 @@ function main_map_init (map, options) {
   };    
 
   var districtLayer = L.geoJson(null,{});
-  map.setView(polygons['config']['center'], polygons['config']['zoom']); 
+  // map.setView(polygons['config']['center'], polygons['config']['zoom']); 
+  updateMapLayer();
 
   $_selectedPolygon = null;
   
@@ -191,19 +205,9 @@ function main_map_init (map, options) {
           fillOpacity: 0.3
         });
         $("#claims_list").empty()
+        $('#organization_name').val("");
   }); 
   
-  // set map view in search polygon feature
-  $('#organization_name').autocomplete({
-    lookup: places,
-    onSelect: function (suggestion) {
-    $('#organization').val(suggestion.data);
-      update_dropdown(suggestion.org_type_id);
-      AddPage.validate();
-      
-      map.setView([ suggestion.centroid[0], suggestion.centroid[1] ], 16);
-    }
-  });
 
   /* GPS enabled geolocation control set to follow the user's location */
   var locateControl = L.control.locate({

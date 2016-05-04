@@ -125,14 +125,14 @@ LEAFLET_CONFIG = {
         'auto-include': True
     }  
 	},	
-    'TILES': [(_('Hydda'), 'http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png',
+    'TILES': [('Hydda', 'http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png',
                             {'attribution':
                             'Tiles courtesy of <a href="http://openstreetmap.se/" '
                             'target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; '
                             '<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                             }),
 
-              (_('Streets'), 'http://server.arcgisonline.com/ArcGIS/rest/'
+              ('Streets', 'http://server.arcgisonline.com/ArcGIS/rest/'
                              'services/World_Street_Map/MapServer/tile/'
                              '{z}/{y}/{x}',
                              {'attribution':
@@ -141,7 +141,7 @@ LEAFLET_CONFIG = {
                               'NRCAN, Esri Japan, METI, Esri China (Hong Kong)'
                               ', Esri (Thailand), TomTom, 2012'}),
 
-              (_('Satellite'), 'http://server.arcgisonline.com/ArcGIS/rest/'
+              ('Satellite', 'http://server.arcgisonline.com/ArcGIS/rest/'
                                'services/World_Imagery/MapServer/tile/'
                                '{z}/{y}/{x}',
                                {'attribution':
@@ -151,6 +151,9 @@ LEAFLET_CONFIG = {
                                 ' User Community'})]
 
 }
+
+GEOIP_PATH = os.path.join(BASE_DIR, 'geoinfo', 'geolite')
+
 
 
 MEMCACHED_HOST = ('127.0.0.1', 11211)

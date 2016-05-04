@@ -79,9 +79,7 @@ function select_building (org_id) {
             url: "/get_claims/"  + org_id + "/",
             success: function(data){
                 var messages = "";
-                var template,
-                    message,
-                    template_button;
+                var template, message, template_button;
 
                 template = document.getElementById('claim_template_global').innerHTML;
                 template_button = document.getElementById('show_all_button_template').innerHTML;
@@ -147,21 +145,10 @@ $(document).ready(function () {
         }
     });
 
-
-    $("#get_claims").click(function() {
-        var org_id = $('#organization').val();
-        select_building(org_id);
-    });
-
-
-    $('#organization_name').autocomplete({
-        lookup: places,
-        onSelect: function (suggestion) {
-            $('#organization').val(suggestion.data);
-            update_dropdown(suggestion.org_type_id);
-            AddPage.validate();
-        }
-    });
+    // $("#get_claims").click(function() {
+    //     var org_id = $('#organization').val();
+    //     select_building(org_id);
+    // });
 
 
     $("#claim_form").submit(function(event){

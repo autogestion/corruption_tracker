@@ -11,7 +11,6 @@
 
     <link href= "{% static "css/bootstrap.min.css" %}"  rel="stylesheet">
 
-
     <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
     <script src="http://demos.inspirationalpixels.com/Tabs-with-HTML-CSS-&-jQuery/tabs.js"></script>
     <script src="{% static "js/jquery.cookie.js" %}"></script>
@@ -22,18 +21,17 @@
     {% leaflet_js %}  
     {% leaflet_css %}
     <script type="text/javascript">
-        /* To prevent multiple inserts of this var lets keep it in global NS */
-        var polygons = {{ polygons|default:"[]" }};
-        var places = {{places}};    
+        /* To prevent multiple inserts of this var lets keep it in global NS */   
         var claim_types = {{claim_types}}   
         var add_org_url = "{% url 'add_org' %}"    
-        var layer_id = '{{ layer_id }}'
+        // var layer_id = '{{ layer_id }}'
         var api_url = "{% url 'api-root' %}" 
+        var zoom_to = {{ zoom_to }}
+        var places= []
     </script>
     <script src="{% static "js/map_init.js" %}"></script>
-    <!-- <script src="{% static "js/old_map_init.js" %}"></script> -->
-
     <script src="{% static "js/claims.js" %}"></script>
+
     <link href="{% static "css/w2ui-1.4.3.min.css" %}" rel="stylesheet" type="text/css" />  
     <script src="{% static "js/w2ui-1.4.3.min.js" %}" type="text/javascript"></script>
 
@@ -104,17 +102,15 @@
 </nav>
 
 
-
-
-
 <div id='legend' class='map_popup'>   
-    {{ test_alarm|safe }} 
-    <div class="input-group">
-        <input type='search' id='organization_name' placeholder='{% trans "Organization name" %}' class="form-control">
-        <span class="input-group-btn">
+    {% if test_alarm %}{{ test_alarm|safe }} {% endif %}
+    <!-- <div class="input-group"> -->
+        <input type='search' id='organization_name' 
+        placeholder='{% trans "Type organization name and select" %}' class="form-control">
+       <!--  <span class="input-group-btn">
             <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >{% trans "Search" %}</button>
-        </span>
-    </div>
+        </span> -->
+    <!-- </div> -->
 
     <div id="claims_list"></div>
 
@@ -123,8 +119,7 @@
 
 {% leaflet_map "main" callback="main_map_init" %}
 
-<div class="col-md-3 map_popup" id="float_block">
-   
+<div class="col-md-3 map_popup" id="float_block">   
 
         <div class="tabs standard">
 
@@ -201,7 +196,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="centroid">{% trans "Centoid" %}:</label>
+                            <label for="centroid">{% trans "Centroid" %}:</label>
                             <input type="text" class="form-control" id="centroid" name="centroid" placeholder='36.2543045,50.0075170' required>
                         </div>
                         <div class="form-group">
