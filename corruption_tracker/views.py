@@ -65,7 +65,6 @@ def single(request):
 
     resp_dict['claim_types'] = mark_safe(json.dumps(claim_type_sets))
 
-
     if settings.RECAPTCHA_ENABLED is False:
         settings.RECAPTCHA_PUBLIC = ''
     resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
@@ -74,12 +73,11 @@ def single(request):
     test_alarm = None
     if settings.TEST_SERVER:
         test_alarm = '<p style="color:red; padding-top: 5px; padding-left:15px;">УВАГА! Ресурс працює в тестовому режимі. Усі П.І.Б. посадовців уявні, співпадіння випадкові.</p>'
-    resp_dict['test_alarm'] = test_alarm  
+    resp_dict['test_alarm'] = test_alarm
 
-
-    g = GeoIP2()    
-    resp_dict['zoom_to'] = [49.995729, 36.230062]  
-    # resp_dict['zoom_to'] = g.lat_lon(get_client_ip(request))
+    g = GeoIP2()
+    # resp_dict['zoom_to'] = [49.995729, 36.230062]
+    resp_dict['zoom_to'] = g.lat_lon(get_client_ip(request))
     # pprint(resp_dict)
 
     return render(request, 'single.html', resp_dict)
@@ -100,7 +98,6 @@ def login_user(request):
                               context_instance=RequestContext(request))
 
 
-
-def logout_view(request):
+def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/')

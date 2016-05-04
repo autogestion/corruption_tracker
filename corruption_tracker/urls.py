@@ -3,14 +3,12 @@
 from django.conf.urls import include, url, static
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.auth.views import logout
+# from django.contrib.auth.views import logout
 from django.views.static import serve
 
 from claim import views as claim_views
 from geoinfo import views as geo_views
 from . import views as main_vies
-
-
 
 
 urlpatterns = [
@@ -27,8 +25,8 @@ urlpatterns = [
 
     url(r'^login/$', main_vies.login_user,
         name='login'),
-    url(r'^logout/$', main_vies.logout_view,
-        name='logout'),    
+    url(r'^logout/$', main_vies.logout_user,
+        name='logout'),
     # url(r'^accounts/logout/$', logout,
     #     {'next_page': '/'}),
     # url(r'^accounts/', include('allauth.urls')),
