@@ -4,11 +4,6 @@ function main_map_init (map, options) {
     $('.layout_chooser').addClass("leaflet-left");
 
   // var reselect_selected = false;
-  map.setView(zoom_to, 12); 
-
-  map.on('moveend', function() { 
-      updateMapLayer();
-  });
   
   var dataBounds, zoom, dataUrl, dataType;
   function updateMapLayer() {
@@ -36,43 +31,44 @@ function main_map_init (map, options) {
         districtLayer.clearLayers();        
              
         // Add GeoJSON layer
-        var marker, org_row, orgs_set, org_rows;
+        var marker, polygon_data, org_row, orgs_set, org_rows;
         // console.log(polygons)
 
         if (polygons) {
-          places= []
+          places = []
         // Add building markers with popups to polygons.
           for (var i = polygons.length - 1; i >= 0; i--) {
               orgs_set = polygons[i]['properties']["organizations"]
+              polygon_data = polygons[i]
               
               if (orgs_set){
-                org_rows = [];                
-                for (var ii = orgs_set.length - 1; ii >= 0; ii--) {                    
-                    org_row = document.createElement('a');
-                    org_row.href = '#' + polygons[i]['properties']["ID"];
-                    org_row.id = orgs_set[ii]['id'];            
-                    org_row.innerHTML = orgs_set[ii]['name'] + ': <div class="counts">' + orgs_set[ii]['claims'] + '<div>';
+                  org_rows = [];                
+                  for (var ii = orgs_set.length - 1; ii >= 0; ii--) {                    
+                      org_row = document.createElement('a');
+                      org_row.href = '#' + polygons[i]['properties']["ID"];
+                      org_row.id = orgs_set[ii]['id'];            
+                      org_row.innerHTML = orgs_set[ii]['name'] + ': <div class="counts">' + orgs_set[ii]['claims'] + '<div>';
 
-                    org_row.onclick = function(event) {
-                        select_building($(this).attr('id'));
-                        event.preventDefault();
-                    };
-                    org_rows.push(org_row);
-                    places.push({data: orgs_set[ii]['id'],
-                               value: orgs_set[ii]['name'],
-                               centroid: polygons[i]['properties']["centroid"],
-                               org_type_id: orgs_set[ii]['org_type']});
-                };
-
+                      org_row.onclick = function(event) {
+                          select_building($(this).attr('id'));
+                          event.preventDefault();
+                      };
+                      org_rows.push(org_row);
+                      places.push({data: orgs_set[ii]['id'],
+                                 value: orgs_set[ii]['name'],
+                                 centroid: polygons[i]['properties']["centroid"],
+                                 org_type_id: orgs_set[ii]['org_type']});
+                  };
                 
-                org_list = document.createElement("ul");
-                $.each(org_rows, function(i){
-                    var li = $('<li/>')
-                        .addClass('ui-menu-item')
-                        .attr('role', 'menuitem')
-                        .appendTo(org_list);        
-                    li.html(org_rows[i]);  
-                });  
+                  org_list = document.createElement("ul");
+                  $.each(org_rows, function(i){
+                      var li = $('<li/>')
+                          .addClass('ui-menu-item')
+                          .attr('role', 'menuitem')
+                          .appendTo(org_list);        
+                      li.html(org_rows[i]);  
+                  }); 
+
               } else {
                 org_list = polygons[i]['properties']['address']
               };      
@@ -112,7 +108,7 @@ function main_map_init (map, options) {
                   polygon.addTo(districtLayer).bindPopup(org_list);
                  
 
-                  polygon.on('click',function()  {
+                  polygon.on('click',function() {                      
                       if ($_selectedPolygon) {
                           $_selectedPolygon.setStyle({
                               weight: 2,
@@ -131,7 +127,7 @@ function main_map_init (map, options) {
                       });
                       $_selectedPolygon = this;
                       if (this.organization) {
-                          select_building(this.organization);
+                          select_building(this.organization, polygon_data['properties']["centroid"]);
                       }
                       else {
                           $('#target').empty();            
@@ -164,7 +160,7 @@ function main_map_init (map, options) {
                       }; 
                   
                       if (this.organization) {
-                          select_building(this.organization);
+                          select_building(this.organization, polygon_data['properties']["centroid"]);
                       }
                       else {
                           $('#claims_list').empty();            
@@ -172,30 +168,49 @@ function main_map_init (map, options) {
                   });                        
               };
             
-          }; 
+          }; // end of cicle over polygons
           // console.log(places)
-          $('#organization_name').autocomplete({
-              lookup: places,
-              onSelect: function (suggestion) {
-                  $('#organization').val(suggestion.data);
-                  update_dropdown(suggestion.org_type_id);
-                  var org_id = $('#organization').val();
-                  select_building(org_id);
-                  // AddPage.validate();
-              }
-          });          
-        };
-      });
+              $('#organization_name').autocomplete({
+                  lookup: places,
+                  onSelect: function (suggestion) {
+                      $('#organization').val(suggestion.data);
+                      update_dropdown(suggestion.org_type_id);
+                      var org_id = $('#organization').val();
+                      select_building(org_id);
+                      // AddPage.validate();
+                  }
+              });          
+         }; // if polygons 
+
+      }); // get json
       
       districtLayer.addTo(map);
-  };    
+  }; // end of updateMapLayer
 
+
+  //  Page onload logic
   var districtLayer = L.geoJson(null,{});
-  // map.setView(polygons['config']['center'], polygons['config']['zoom']); 
-  updateMapLayer();
-
   $_selectedPolygon = null;
+
   
+  if (window.location.hash) {
+    var hash_data = window.location.hash.replace("#", "").split("&");
+    var hashed_org_id = hash_data[0].split('=')[1];
+    var hashed_coordinates = hash_data[1].split('=')[1].split(',');
+    map.setView(hashed_coordinates, 16);
+    updateMapLayer();
+    console.log(places)
+    select_building(hashed_org_id, hashed_coordinates);   
+  } else {
+    map.setView(zoom_to, 12);
+    updateMapLayer();    
+  }
+
+  
+  map.on('moveend', function() { 
+      updateMapLayer();
+  });
+
   // reset selected polygon highlight to default
   map.on('click', function() {
         $_selectedPolygon.setStyle({
@@ -204,41 +219,23 @@ function main_map_init (map, options) {
           opacity: 0.3,
           fillOpacity: 0.3
         });
-        $("#claims_list").empty()
-        $('#organization_name').val("");
+        $("#claims_list").empty();
+        clear_organization_form();
   }); 
   
 
   /* GPS enabled geolocation control set to follow the user's location */
   var locateControl = L.control.locate({
-    position: "topleft",
-    drawCircle: true,
-    follow: true,
-    setView: true,
-    keepCurrentZoomLevel: true,
-    markerStyle: {
-    weight: 1,
-    opacity: 0.8,
-    fillOpacity: 0.8
-    },
-    circleStyle: {
-    weight: 1,
-    clickable: false
-    },
+    position: "topleft", drawCircle: true, follow: true,
+    setView: true, keepCurrentZoomLevel: true,
+    markerStyle: { weight: 1, opacity: 0.8, fillOpacity: 0.8 },
+    circleStyle: { weight: 1, clickable: false },
     icon: "fa fa-location-arrow",
     metric: false,
-    strings: {
-    title: "My location",
-    popup: "You are within {distance} {unit} from this point",
-    outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
-    },
-    locateOptions: {
-    maxZoom: 18,
-    watch: true,
-    enableHighAccuracy: true,
-    maximumAge: 10000,
-    timeout: 10000
-    }
+    strings: { title: "My location", popup: "You are within {distance} {unit} from this point",
+        outsideMapBoundsMsg: "You seem located outside the boundaries of the map"},
+    locateOptions: { maxZoom: 18, watch: true, enableHighAccuracy: true,
+        maximumAge: 10000, timeout: 10000 }
   }).addTo(map);
   
 }

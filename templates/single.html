@@ -102,25 +102,13 @@
 </nav>
 
 
-<div id='legend' class='map_popup'>   
-    {% if test_alarm %}{{ test_alarm|safe }} {% endif %}
-    <!-- <div class="input-group"> -->
-        <input type='search' id='organization_name' 
-        placeholder='{% trans "Type organization name and select" %}' class="form-control">
-       <!--  <span class="input-group-btn">
-            <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >{% trans "Search" %}</button>
-        </span> -->
-    <!-- </div> -->
-
-    <div id="claims_list"></div>
-
-</div>
+<div id='claims_list' class='map_popup'></div>
 
 
 {% leaflet_map "main" callback="main_map_init" %}
 
 <div class="col-md-3 map_popup" id="float_block">   
-
+        {% if test_alarm %}{{ test_alarm|safe }} {% endif %}
         <div class="tabs standard">
 
             <ul class="tab-links">
@@ -134,7 +122,11 @@
                     <div id="processing">Processing...</div>
                     <form role="form" id='claim_form'>
                         {% csrf_token %}
-                    
+
+                        <div class="form-group">
+                            <input type='search' id='organization_name' 
+                            placeholder='{% trans "Type organization name and select" %}' class="form-control">                        
+                        </div>
                         <div class="form-group" style="display:none">                      
                             <div id='organization_error'></div>
                             <input type="text" class="form-control" id="organization" name="organization" readonly>
@@ -169,12 +161,6 @@
                             </div>
                         {% endif %}
 
-                        {% if not user.is_authenticated %}
-                            <div class="form-group">
-                                <div class="g-recaptcha" data-sitekey="{{ recaptcha_public }}"></div>
-                            </div>
-                        {% endif %}
-
                         <div class="form-group">
                             <div id='message'></div>
                             <button type="submit" class="button_red">{% trans "Send claim" %}</button>
@@ -198,12 +184,7 @@
                         <div class="form-group">
                             <label for="centroid">{% trans "Centroid" %}:</label>
                             <input type="text" class="form-control" id="centroid" name="centroid" placeholder='36.2543045,50.0075170' required>
-                        </div>
-                        <div class="form-group">
-                            <label for="shape">{% trans "Building shape" %}:</label>
-                            <div id='shape_error'></div>
-                            <textarea type="text" class="form-control" id="shape" name="shape" placeholder='{ "type": "Polygon", "coordinates": [ [ [ 36.236753463843954, 50.006170131432199 ], [ 36.236990304344928, 50.006113443092367 ], [ 36.236866409713009, 50.005899627208827 ], [ 36.236629569212049, 50.00595631580083 ], [ 36.236753463843954, 50.006170131432199 ] ] ] }'  style="height: 200px" ;></textarea>
-                        </div>
+                        </div>                
                         <div class="form-group">
                             <label for="address">{% trans "Address" %}:</label>
                             <input type="text" class="form-control" id="address" name="address" placeholder='{% trans "Address" %}' required>
@@ -211,7 +192,7 @@
                         <div class="form-group">
                             <label for="org_name">{% trans "Organization name" %}:</label>
                             <input type="text" class="form-control" id="org_name" name="org_name" placeholder='{% trans "Organization name" %}' required>
-                        </div>             
+                        </div>                      
 
                         <div class="form-group">
                             <div id='message'></div>
@@ -220,6 +201,11 @@
                     </form>
                 </div>
             </div>
+                        {% if not user.is_authenticated %}
+                            <div class="form-group">
+                                <div class="g-recaptcha" data-sitekey="{{ recaptcha_public }}"></div>
+                            </div>
+                        {% endif %}            
         </div>
    
 </div>

@@ -72,7 +72,9 @@ def single(request):
 
     test_alarm = None
     if settings.TEST_SERVER:
-        test_alarm = '<p style="color:red; padding-top: 5px; padding-left:15px;">УВАГА! Ресурс працює в тестовому режимі. Усі П.І.Б. посадовців уявні, співпадіння випадкові.</p>'
+        test_alarm = """<p style="color:red; padding-top: 5px; padding-left:15px;
+        ">УВАГА! Ресурс працює в тестовому режимі. Усі П.І.Б. посадовців уявні,
+         співпадіння випадкові.</p>"""
     resp_dict['test_alarm'] = test_alarm
 
     g = GeoIP2()
@@ -80,7 +82,13 @@ def single(request):
         test_coordinates = getattr(settings, 'TEST_COORDINATES')
         resp_dict['zoom_to'] = test_coordinates
     except AttributeError:
-        resp_dict['zoom_to'] = list(g.lat_lon(get_client_ip(request)))
+        ip = get_client_ip(request)
+        if g.country(ip)['country_code'] == settings.COUNTRY_CODE:
+            # print(g.country('194.44.30.18')['country_code'])
+            resp_dict['zoom_to'] = list(g.lat_lon(ip))
+        else:
+            resp_dict['zoom_to'] = settings.DEFAULT_ZOOM
+
     # pprint(resp_dict)
 
     return render(request, 'single.html', resp_dict)

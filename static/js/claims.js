@@ -58,21 +58,45 @@ function update_dropdown (org_type_id){
 }
 
 
-function get_name_by_id (org_id) {
+function fill_organization_form(org_id){
+    $('#organization').val(org_id);
     for (var i = places.length - 1; i >= 0; i--) {
         if (places[i].data === parseInt(org_id)){
-            update_dropdown (places[i].org_type_id)
-            return places[i].value;
+            update_dropdown(places[i].org_type_id)
+            $('#organization_name').val(places[i].value);
+            break
         }
-    }
-    return "Name not found"
+    }  
+}    
+
+
+function clear_organization_form(){
+    var $dropdown = $("#claim_type");
+    $dropdown.empty();
+    $('#organization').val(null);
+    $('#organization_name').val(null);    
 }
 
 
-function select_building (org_id) {
-    $('#organization').val(org_id);
-    $('#organization_name').val(get_name_by_id(org_id));    
-    window.location.hash = "organization=" + org_id; 
+
+
+// function get_name_by_id (org_id) {
+//     for (var i = places.length - 1; i >= 0; i--) {
+//         if (places[i].data === parseInt(org_id)){
+//             update_dropdown(places[i].org_type_id)
+//             return places[i].value;
+//         }
+//     }
+//     return "Name not found"
+// }
+
+
+function select_building (org_id, coordinates) {
+    // $('#organization').val(org_id);
+    // $('#organization_name').val(get_name_by_id(org_id));
+    console.log(places) ;   
+    fill_organization_form(org_id);
+    window.location.hash = "organization=" + org_id + "&zoom_to=" + coordinates; 
 
         $.ajax({
             type: "GET",
@@ -118,7 +142,7 @@ function select_building (org_id) {
                     template_button_grid = ''} else {
                     messages = '<h3>Claims</h3>' + messages
                     };            
-                $("#claims_list").html(messages + template_button);
+                $("#claims_list").html('<div class="claims_list_styles">'+messages + template_button+'</div>');
 
             },
             error: function(data){
@@ -225,16 +249,7 @@ $(document).ready(function () {
       // console.log('claim_form_block togle');
     });    
 
-    var pair;
-    var hash_data = window.location.hash.replace("#", "").split("&");
-    for (var i = hash_data.length - 1; i >= 0; i--) {
-        pair = hash_data[i].split('=');
-        if (pair[0] === 'organization') {
-            select_building(pair[1]);
-            $('#organization_name').val(get_name_by_id(pair[1]));
-            break;
-        }
-    }
+
 });
 
 

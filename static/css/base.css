@@ -108,16 +108,19 @@ nav .navbar-brand {
 .map_popup {
     background-color: black;
     color: white;  
-  
-   
 }
 
-#legend {
-    width: 300px;
-    margin-left: 70px;
-    padding: 7px;
+#claims_list {
+    padding-bottom: 12px;
     float: left;
+    margin-left: 70px;
+}
 
+.claims_list_styles {
+    /*width: 300px;*/
+    max-width: 400px;
+    
+    padding: 17px;
 }
 
 @media screen and (max-width: 10000px) {
@@ -197,7 +200,4 @@ nav .navbar-brand {
 }
 .claim_page_claim_text {
     padding:10px;
-}
-#claims_list {
-    padding-bottom: 12px;
 }
