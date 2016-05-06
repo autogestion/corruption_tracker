@@ -43,6 +43,7 @@ function w2ui_popup() {
     });
 }
 
+
 function update_dropdown (org_type_id){
     // console.log(org_type_id)
     var $dropdown = $("#claim_type");
@@ -58,7 +59,7 @@ function update_dropdown (org_type_id){
 }
 
 
-function fill_organization_form(org_id){
+function fill_claim_form(org_id){
     $('#organization').val(org_id);
     for (var i = places.length - 1; i >= 0; i--) {
         if (places[i].data === parseInt(org_id)){
@@ -70,7 +71,7 @@ function fill_organization_form(org_id){
 }    
 
 
-function clear_organization_form(){
+function clear_claim_form(){
     var $dropdown = $("#claim_type");
     $dropdown.empty();
     $('#organization').val(null);
@@ -78,29 +79,14 @@ function clear_organization_form(){
 }
 
 
-
-
-// function get_name_by_id (org_id) {
-//     for (var i = places.length - 1; i >= 0; i--) {
-//         if (places[i].data === parseInt(org_id)){
-//             update_dropdown(places[i].org_type_id)
-//             return places[i].value;
-//         }
-//     }
-//     return "Name not found"
-// }
-
-
 function select_building (org_id, coordinates) {
-    // $('#organization').val(org_id);
-    // $('#organization_name').val(get_name_by_id(org_id));
-    console.log(places) ;   
-    fill_organization_form(org_id);
+    fill_claim_form(org_id);
     window.location.hash = "organization=" + org_id + "&zoom_to=" + coordinates; 
 
         $.ajax({
             type: "GET",
-            url: "/get_claims/"  + org_id + "/",
+            url: api_url + 'claim/' + org_id + "/",
+            // url: "/get_claims/"  + org_id + "/",
             success: function(data){
                 var messages = "";
                 var template, message, template_button;
@@ -111,18 +97,24 @@ function select_building (org_id, coordinates) {
                 var records = [];
                 var record;
                 var count = 0
+                data = data['results']
                 for (var i = data.length - 1; i >= 0; i--) {
 
                     if (count < 3) {
-                        message = template.replace('%complainer%', data[i]['complainer']);
+                        if (data[i]['bribe']) { message = template.replace('%bribe%', data[i]['bribe']);}
+                        else { message = template.replace('%bribe%', '0');} ;
+
+                        if (data[i]['complainer']) { message = message.replace('%complainer%', data[i]['complainer']);}
+                        else { message = message.replace('%complainer%', 'Anon');}
+                        
                         message = message.replace('%servant%', data[i]['servant']);
                         message = message.replace('%claim_type%', data[i]['claim_type']);
                         message = message.replace('%text%', data[i]['text']);
-                        message = message.replace('%created%', data[i]['created']);
-                        message = message.replace('%bribe%', data[i]['bribe']);
+                        message = message.replace('%created%', data[i]['created']);                       
 
                         if (data[i]['claim_icon']) {
-                            message = message.replace('<div style="float: right"></div>',  '<div style ="float: right"><img src="' + data[i]['claim_icon'] + '" height="50em" width="50em"></div>');
+                            message = message.replace('<div style="float: right"></div>',  
+                                '<div style ="float: right"><img src="' + data[i]['claim_icon'] + '" height="50em" width="50em"></div>');
                             // console.log (message);
                         }
                         messages += message;
@@ -168,11 +160,6 @@ $(document).ready(function () {
             }
         }
     });
-
-    // $("#get_claims").click(function() {
-    //     var org_id = $('#organization').val();
-    //     select_building(org_id);
-    // });
 
 
     $("#claim_form").submit(function(event){
@@ -237,17 +224,22 @@ $(document).ready(function () {
         return false;
     });
 
-    $( "#open_org" ).click(function() {
-      $( "#org_form_block" ).slideToggle( "slow", function() {  
-      });
-    });
 
-    $( "#open_claim" ).click(function() {
-      // console.log('claim_form_block togle 0');
-      $( "#claim_form_block" ).slideToggle( "slow", function() {  
-      });
-      // console.log('claim_form_block togle');
-    });    
+    $("#about").on('click', function() { 
+        $("#claims_list").html(' <div id="legend"><h3>Подолати корупцію в один клік.</h3>' +
+        '<p>Кожен громадянин України має важелі впливу на корупційну діяльність. Це - особиста відповідальність та публічність.</p>' +
+        '<p>Відповідальність спонукає зробити вибір підтримувати чи не підтримувати корупцію. А публічність нівелює прояви корупції, якщо вибір було зроблено на користь її подолання.</p>' +
+        '<p>Питання стоїть лише за інструментом, який поєднає особисте прагнення здолати корупцію в Україні з максимальним розголосом актів корупційної діяльності.</p>' +
+        '<p>Система є таким інструментом. Основний акцент у ній зроблено на можливості зафіксувати корупційну діяльність на місці її вчинення. Далі акцент зміщується у публічну сферу. Розголос набуває форми структурованої мапи корупції.</p>' +
+        '<p>Так, Система є найпростішим способом вести облік корупційної активності. А універсальність її даних відкриває можливість боротьби з корупцією на всіх рівнях: від рівня особистого невдоволення до рівня громадянського суспільства чи законодавчих ініціатив.</p>' +
+        '<p>А потрібно лише зробити один клік "Повідомити".</p>' +       
+        '<h3>Проекту потрібні</h3><ul><li>Javascript UI Developer</li><li>Mobile Developer (iOS, Android)</li><li>Та інші.</li></ul>' +
+        '<h3>Долучится до розробки можна</h3><ul>' +
+            '<li>на GitHup => <a href="https://github.com/autogestion/corruption_tracker" target="_blank">Corruption tracker</a></li>' +
+            '<li>у Facebook спільноті => <a href="https://www.facebook.com/activecorruptiontracking/" target="_blank">Система учёта коррупционной активности</a></li>' +
+           '</ul></div>')
+
+    });
 
 
 });

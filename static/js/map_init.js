@@ -213,14 +213,16 @@ function main_map_init (map, options) {
 
   // reset selected polygon highlight to default
   map.on('click', function() {
-        $_selectedPolygon.setStyle({
-          weight: 2,
-          color: 'blue',
-          opacity: 0.3,
-          fillOpacity: 0.3
-        });
         $("#claims_list").empty();
-        clear_organization_form();
+        clear_claim_form();
+        if ($_selectedPolygon) {
+          $_selectedPolygon.setStyle({
+            weight: 2,
+            color: 'blue',
+            opacity: 0.3,
+            fillOpacity: 0.3
+          });
+      };
   }); 
   
 

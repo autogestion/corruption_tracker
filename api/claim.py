@@ -22,7 +22,7 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     Example:  .../claim/13/
 
     .
-    
+
     - to add claim use POST request with next parameters:
         'text', 'live', 'organization', 'servant', 'claim_type',
 
@@ -48,26 +48,24 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     ordering_fields = ('created',)
     ordering = ('created',)
 
-
-    def retrieve(self, request, org_id=None):
-
+    def retrieve(self, request, org_id=None):      
         queryset = Claim.objects.filter(organization__id=org_id)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
+            serializer = self.get_serializer(page, many=True)            
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
 
     def perform_create(self, serializer):
         user = None if self.request.user.is_anonymous() else self.request.user
         serializer.save(complainer=user)
 
 
-class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
+                          viewsets.GenericViewSet):
     """
     API endpoint for listing and creating Organizations.
 
@@ -76,21 +74,24 @@ class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewse
     Example:  .../organization/21citzhovt0002/
 
     .
-    
+
     - to search organizations by name, use .../organization/?search=_value_
 
     Example:  .../organization/?search=прок
 
     .
-    
+
     - to get list of organization types, use /organization/orgtypes/
 
     .
-    
+
     - to add organization use POST with next parameters:
 
     Example:
-        'shape': '{'type': 'Polygon', 'coordinates': [ [ [ 36.296753463843954, 50.006170131432199 ], [ 36.296990304344928, 50.006113443092367 ], [ 36.296866409713009, 50.005899627208827 ], [ 36.296629569212049, 50.00595631580083 ], [ 36.296753463843954, 50.006170131432199 ] ] ]}', 
+        'shape': '{'type': 'Polygon', 'coordinates': [ [ [ 36.296753463843954,
+            50.006170131432199 ], [ 36.296990304344928, 50.006113443092367 ],
+            [ 36.296866409713009, 50.005899627208827 ], [ 36.296629569212049,
+            50.00595631580083 ], [ 36.296753463843954, 50.006170131432199 ] ] ]}',
         'org_type': 'prosecutors',
         'layer_id': '21citzhovt',
         'address': 'Shevshenko street, 3',
@@ -134,7 +135,8 @@ class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewse
 
         polygon = Polygon(
             polygon_id=request.data['centroid'],
-            centroid=geos.fromstr("POINT(%s %s)" % tuple(request.data['centroid'].split(','))),
+            centroid=geos.fromstr("POINT(%s %s)" % tuple(
+                request.data['centroid'].split(','))),
             shape=request.data['shape'],
             address=request.data['address'],
             layer=layer,

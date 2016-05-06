@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-04 17:00+0000\n"
+"POT-Creation-Date: 2016-05-06 21:28+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,10 +55,6 @@ msgstr "Україньска"
 msgid "English"
 msgstr "Англійська"
 
-#: corruption_tracker/settings.py:84
-msgid "Russian"
-msgstr "Московитська"
-
 #: geoinfo/models.py:49
 msgid "Root polygon"
 msgstr ""
@@ -80,7 +76,7 @@ msgid "Houses"
 msgstr ""
 
 #: templates/add_page.html:39 templates/general.html.py:35
-#: templates/single.html:127
+#: templates/single.html:115
 msgid "Add claim"
 msgstr "Викрити зраду"
 
@@ -99,27 +95,28 @@ msgid "Organization"
 msgstr "Заклад"
 
 #: templates/add_page.html:49 templates/general.html.py:41
-#: templates/map.html:37 templates/single.html.py:212 templates/single.html:213
+#: templates/map.html:37 templates/single.html.py:197
+#: templates/single.html:198
 msgid "Organization name"
 msgstr "Назва закладу"
 
-#: templates/add_page.html:56 templates/single.html.py:143
+#: templates/add_page.html:56 templates/single.html.py:134
 msgid "Choose Violation type"
 msgstr "Оберіть тип порушення"
 
-#: templates/add_page.html:62 templates/single.html.py:149
+#: templates/add_page.html:62 templates/single.html.py:140
 msgid "Servant name"
 msgstr "ПІБ службовця"
 
-#: templates/add_page.html:66 templates/single.html.py:153
+#: templates/add_page.html:66 templates/single.html.py:144
 msgid "Claim message"
 msgstr "Текст скарги"
 
-#: templates/add_page.html:75 templates/single.html.py:166
+#: templates/add_page.html:75 templates/single.html.py:157
 msgid "Keep me anonymously"
 msgstr "Зробити анонімно"
 
-#: templates/add_page.html:89 templates/single.html.py:180
+#: templates/add_page.html:89 templates/single.html.py:171
 msgid "Send claim"
 msgstr "Відправити скаргу"
 
@@ -128,17 +125,17 @@ msgid "Export layer as json"
 msgstr ""
 
 #: templates/auth/login.html:11 templates/auth/login.html.py:36
-#: templates/general.html:82 templates/single.html.py:95
+#: templates/general.html:82 templates/single.html.py:96
 msgid "Login"
 msgstr "Увійти"
 
 #: templates/auth/login.html:17 templates/auth/login.html.py:19
-#: templates/general.html:74 templates/single.html.py:87
+#: templates/general.html:74 templates/single.html.py:88
 msgid "Username"
 msgstr "Юзернейм"
 
 #: templates/auth/login.html:24 templates/auth/login.html.py:25
-#: templates/general.html:77 templates/single.html.py:90
+#: templates/general.html:77 templates/single.html.py:91
 msgid "Password"
 msgstr "Пароль"
 
@@ -158,19 +155,23 @@ msgstr "Список скарг для"
 msgid "Export to CSV"
 msgstr "Експортувати як CSV"
 
-#: templates/claims.html:111 templates/map.html.py:53 templates/single.html:232
+#: templates/claims.html:111 templates/map.html.py:53
+#: templates/single.html:214
 msgid "Servant"
 msgstr "ПІБ службовця"
 
-#: templates/claims.html:112 templates/map.html.py:52 templates/single.html:231
+#: templates/claims.html:112 templates/map.html.py:52
+#: templates/single.html:213
 msgid "Complainer"
 msgstr "Позивач"
 
-#: templates/claims.html:113 templates/map.html.py:54 templates/single.html:233
+#: templates/claims.html:113 templates/map.html.py:54
+#: templates/single.html:215
 msgid "Claim type"
 msgstr "Тип скарги"
 
-#: templates/claims.html:114 templates/map.html.py:56 templates/single.html:236
+#: templates/claims.html:114 templates/map.html.py:56
+#: templates/single.html:218
 msgid "Created"
 msgstr "Створено"
 
@@ -187,15 +188,14 @@ msgid "Single page"
 msgstr ""
 
 #: templates/general.html:43 templates/map.html.py:31 templates/map.html:39
-#: templates/single.html.py:111
 msgid "Search"
 msgstr "Пошук"
 
-#: templates/general.html:69 templates/single.html.py:82
+#: templates/general.html:69 templates/single.html.py:83
 msgid "Logout"
 msgstr "Вийти"
 
-#: templates/general.html:84 templates/single.html.py:98
+#: templates/general.html:84 templates/single.html.py:99
 msgid "Register"
 msgstr "Зареєструватися"
 
@@ -207,61 +207,60 @@ msgstr ""
 "Щоб побачии скарги зробіть клік на будівлі на мапі, або введіть назву "
 "закладу в поле пошуку"
 
-#: templates/map.html:55 templates/single.html.py:235
+#: templates/map.html:55 templates/single.html.py:217
 msgid "Claim text"
 msgstr "Текст скарги"
 
-#: templates/map.html:61 templates/single.html.py:243
+#: templates/map.html:61 templates/single.html.py:225
 msgid "Show all claims as tiles"
 msgstr "Показати всі скарги як тайли"
 
-#: templates/map.html:64 templates/single.html.py:244
+#: templates/map.html:64 templates/single.html.py:226
 msgid "Show all claims as table"
 msgstr "Показати всі скарги як таблицю"
 
 #: templates/single.html:58
 msgid "Map"
-msgstr ""
+msgstr "Мапа"
 
 #: templates/single.html:59
+msgid "About"
+msgstr ""
+
+#: templates/single.html:60
 msgid "API Docs"
 msgstr ""
 
-#: templates/single.html:109
-msgid "Type organization name and select"
-msgstr "Назва установи"
-
-#: templates/single.html:128
-#, fuzzy
-#| msgid "Organization"
+#: templates/single.html:116
 msgid "Add organization"
 msgstr "Додати установу"
 
-#: templates/single.html:158 templates/single.html.py:234
+#: templates/single.html:127
+msgid "Type organization name and select"
+msgstr "Назва установи"
+
+#: templates/single.html:149 templates/single.html.py:216
 msgid "Bribe amount"
 msgstr "Розмір хабаря"
 
-#: templates/single.html:191
-#, fuzzy
-#| msgid "Choose Violation type"
+#: templates/single.html:181
 msgid "Choose Organization type"
-msgstr "Оберіть тип порушення"
+msgstr "Оберіть тип установи"
 
-#: templates/single.html:199
+#: templates/single.html:189
 msgid "Centroid"
 msgstr "Центроїд"
 
-#: templates/single.html:203
-msgid "Building shape"
-msgstr ""
-
-#: templates/single.html:208 templates/single.html.py:209
+#: templates/single.html:193 templates/single.html.py:194
 msgid "Address"
 msgstr "Адреса"
 
-#: templates/single.html:218
+#: templates/single.html:203
 msgid "Send organization"
-msgstr "Заклад"
+msgstr "Додати установу"
+
+#~ msgid "Russian"
+#~ msgstr "Московитська"
 
 #~ msgid "District"
 #~ msgstr "Район"
