@@ -205,15 +205,17 @@ $(document).ready(function () {
     $("#org_form").submit(function(event){
         $('#processing').show();
         event.preventDefault();
-        post_data = $('#org_form').serialize() + '&layer_id=' + layer_id;
-        // console.log(post_data)
+        post_data = $('#org_form').serialize();
+
         $.ajax({
             type: "POST",
-            url: add_org_url,
+            url: api_url + 'organization/',
             data: post_data,
 
             success: function(data){                 
-                $('#processing').hide();           
+                $('#processing').hide();
+                var splitted_cntr = $('#centroid').val().split(',')
+                window.location.hash = "organization=" + data.id + "&zoom_to=" + splitted_cntr[1]+','+splitted_cntr[0];                        
                 window.location.reload();
 
             },

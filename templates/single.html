@@ -22,10 +22,9 @@
     {% leaflet_js %}  
     {% leaflet_css %}
     <script type="text/javascript">
-        /* To prevent multiple inserts of this var lets keep it in global NS */   
-        var claim_types = {{claim_types}}
-        var add_org_url = "{% url 'add_org' %}"
-        var api_url = "{% url 'api-root' %}" 
+        /* To prevent multiple inserts of this var lets keep it in global NS */
+        var api_url = "{% url 'api-root' %}"    
+        var claim_types = {{claim_types}}        
         var zoom_to = {{ zoom_to }}
         var places= []
     </script>
@@ -52,11 +51,11 @@
 <body>    
     <nav class="navbar">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#"><img src="{% static "img/logo.png" %}" height="42" width="42"></a>
+            <a class="navbar-brand" href="#"><img src="{% static "img/logo.jpg" %}" height="42" width="42"></a>
         </div>
         <ul class="nav navbar-nav">
              <li {% if page == 'single' %} class="active"{% endif %}><a href="{% url 'single' %}">{% trans "Map" %}</a> </li>
-             <li><a href="#" id='about'>{% trans "About" %}</a> </li>  
+             <li><a href="#" id='about'>{% trans "Who is here?" %}</a> </li>  
              <li><a href="api/docs" target="_blank">{% trans "API Docs" %}</a> </li>  
                           
         </ul>
@@ -115,10 +114,9 @@
             <li class="active"><a data-toggle="tab" href="#addclaim">{% trans "Add claim" %}</a></li>
             <li><a data-toggle="tab" href="#addorg">{% trans "Add organization" %}</a></li>         
         </ul>
-
+        <div id="processing">Processing...</div>
         <div class="tab-content">
-            <div id="addclaim" class="tab-pane fade in active">
-                 <div id="processing">Processing...</div>
+            <div id="addclaim" class="tab-pane fade in active">                
                 <form role="form" id='claim_form' class="forms_padding">
                     {% csrf_token %}
 
@@ -194,8 +192,8 @@
                         <input type="text" class="form-control" id="address" name="address" placeholder='{% trans "Address" %}' required>
                     </div>
                     <div class="form-group">
-                        <label for="org_name">{% trans "Organization name" %}:</label>
-                        <input type="text" class="form-control" id="org_name" name="org_name" placeholder='{% trans "Organization name" %}' required>
+                        <label for="name">{% trans "Organization name" %}:</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder='{% trans "Organization name" %}' required>
                     </div>                      
 
                     <div class="form-group">

@@ -116,7 +116,7 @@ class FitBoundsPolygons(viewsets.ViewSet):
     Example:  .../polygon/fit_bounds/4/2.81,18.15,86.04,60.89/
 
     .
-    
+
     - to search polygon by addres in polygons that fit bounds,
     use .../polygon/fit_bounds/_layer_/_coordinates_/?search=_value_
 
@@ -138,7 +138,7 @@ class FitBoundsPolygons(viewsets.ViewSet):
         area = geos.GEOSGeometry('POLYGON ((%s))' % area_coord_str)
 
         queryset = Polygon.objects.filter(
-            shape__within=area, level=int(layer))
+            centroid__within=area, level=int(layer))
 
         search = self.request.query_params.get('search', None)
         if search:

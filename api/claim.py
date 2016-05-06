@@ -1,7 +1,7 @@
-
+from django.contrib.gis import geos
 
 from rest_framework.response import Response
-from rest_framework import viewsets, mixins, filters
+from rest_framework import viewsets, mixins, filters, status
 from rest_framework.decorators import list_route
 
 from claim.models import Claim, Organization,\
@@ -33,7 +33,6 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         'live': 'true',
         'organization': '13',
         'bribe': '50'
-
     .
     """
 
@@ -48,12 +47,12 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     ordering_fields = ('created',)
     ordering = ('created',)
 
-    def retrieve(self, request, org_id=None):      
+    def retrieve(self, request, org_id=None):
         queryset = Claim.objects.filter(organization__id=org_id)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = self.get_serializer(page, many=True)            
+            serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
@@ -87,19 +86,20 @@ class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 
     - to add organization use POST with next parameters:
 
-    Example:
-        'shape': '{'type': 'Polygon', 'coordinates': [ [ [ 36.296753463843954,
-            50.006170131432199 ], [ 36.296990304344928, 50.006113443092367 ],
-            [ 36.296866409713009, 50.005899627208827 ], [ 36.296629569212049,
-            50.00595631580083 ], [ 36.296753463843954, 50.006170131432199 ] ] ]}',
-        'org_type': 'prosecutors',
-        'layer_id': '21citzhovt',
-        'address': 'Shevshenko street, 3',
-        'org_name': 'Ministry of defence',
-        'centroid': '36.2968099,50.0060348'
 
     .
     """
+
+    # Example:
+    #     'shape': '{'type': 'Polygon', 'coordinates': [ [ [ 36.296753463843954,
+    #         50.006170131432199 ], [ 36.296990304344928, 50.006113443092367 ],
+    #         [ 36.296866409713009, 50.005899627208827 ], [ 36.296629569212049,
+    #         50.00595631580083 ], [ 36.296753463843954, 50.006170131432199 ] ] ]}',
+    #     'org_type': 'prosecutors',
+    #     'layer_id': '21citzhovt',
+    #     'address': 'Shevshenko street, 3',
+    #     'org_name': 'Ministry of defence',
+    #     'centroid': '36.2968099,50.0060348'
 
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
@@ -130,27 +130,47 @@ class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
         return Response(serializer.data)
 
     def create(self, request):
-        layer = Polygon.objects.get(
-            polygon_id=request.data['layer_id'])
+
+        parent_polygon_id = request.data.get('parent_polygon_id', None)
+        polygon_id = request.data.get('polygon_id', None)
+        level = request.data.get('level', None)
+        centroid = request.data['centroid']
+        centroid_pnt = geos.fromstr("POINT(%s %s)" % tuple(centroid.split(',')))
+
+        layer = None
+        if parent_polygon_id:
+            layer = Polygon.objects.get(polygon_id=parent_polygon_id)
+        else:
+            districts = Polygon.objects.filter(shape__contains=centroid_pnt,
+                                               level=Polygon.district)
+            if districts:
+                layer = districts[0]
+
+        if not polygon_id:
+            polygon_id = centroid
+
+        if not level:
+            level = Polygon.building
 
         polygon = Polygon(
-            polygon_id=request.data['centroid'],
-            centroid=geos.fromstr("POINT(%s %s)" % tuple(
-                request.data['centroid'].split(','))),
-            shape=request.data['shape'],
+            polygon_id=polygon_id,
+            centroid=centroid_pnt,
+            shape=request.data.get('shape', None),
             address=request.data['address'],
             layer=layer,
-            level=Polygon.building,
-            zoom=17,
-            is_verified=True)
+            level=level,
+            is_verified=False)
         polygon.save()
 
         org_type = OrganizationType.objects.get(
             type_id=request.data['org_type'])
 
         organization = Organization(
-            name=request.data['org_name'],
+            name=request.data['name'],
             org_type=org_type)
         organization.save()
 
         polygon.organizations.add(organization)
+
+        serializer = self.get_serializer(organization)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -36,16 +36,19 @@ class ClaimTypeSerializer(serializers.ModelSerializer):
 class ClaimSerializer(serializers.ModelSerializer):
 
     complainer = serializers.ReadOnlyField(source='complainer.username')
-    claim_icon = serializers.ReadOnlyField(source='claim_type.icon.url')
     created = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",
                                         read_only=True)
+    claim_icon = serializers.SerializerMethodField()
+
+    def get_claim_icon(self, instance):
+        if instance.claim_type and instance.claim_type.icon:
+            return instance.claim_type.icon.url
 
     class Meta:
         model = Claim
         fields = ('text', 'created', 'live', 'organization',
                   'servant', 'complainer', 'claim_type', 'bribe',
                   'claim_icon')
-        # read_only_fields = ('created',)
         extra_kwargs = {'claim_type': {'required': True}}
 
     def to_representation(self, instance):
@@ -64,12 +67,24 @@ class OrganizationTypeSerializer(serializers.ModelSerializer):
 
 class OrganizationSerializer(serializers.ModelSerializer):
 
+    centroid = serializers.CharField(write_only=True)
+    address = serializers.CharField()
+
+    parent_polygon_id = serializers.CharField(write_only=True, required=False)
+    polygon_id = serializers.CharField(write_only=True, required=False)
+    shape = serializers.CharField(write_only=True, required=False)
+    level = serializers.IntegerField(write_only=True, required=False)
+
     class Meta:
         model = Organization
         fields = ('id', 'name', 'org_type',
+                  'centroid', 'address',
+                  'parent_polygon_id', 'polygon_id',
+                  'shape', 'level',
                   'claims',
                   'polygons'
                   )
+        extra_kwargs = {'org_type': {'required': True}}
 
 
 class PolygonSerializer(serializers.ModelSerializer):

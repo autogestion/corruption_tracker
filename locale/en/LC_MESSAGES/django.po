@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-06 21:28+0300\n"
+"POT-Creation-Date: 2016-05-06 21:35+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -174,7 +174,7 @@ msgstr ""
 msgid "Corruption map"
 msgstr ""
 
-#: templates/general.html:37
+#: templates/general.html:37 templates/single.html.py:59
 msgid "Who is here?"
 msgstr ""
 
@@ -214,10 +214,6 @@ msgstr ""
 
 #: templates/single.html:58
 msgid "Map"
-msgstr ""
-
-#: templates/single.html:59
-msgid "About"
 msgstr ""
 
 #: templates/single.html:60

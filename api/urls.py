@@ -19,14 +19,6 @@ class CustomRouter(DefaultRouter):
 
 router = CustomRouter()
 
-
-urlpatterns = [
-    url(r'^docs/', include('rest_framework_swagger.urls')),
-    url(r'', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    ]
-
-
-# ----    v1.2 api
 router.register(r'sign_up', views.SignUp,
                 base_name='sign_up')
 router.register(r'claim', claim.ClaimViewSet,
@@ -46,5 +38,7 @@ router.register(r'polygon/get_tree', geoinfo.GetPolygonsTree,
 router.register(r'update', views.GetUpdatedViewSet,
                 base_name='updated')
 
-
-urlpatterns += router.urls
+urlpatterns = [
+    url(r'^docs/', include('rest_framework_swagger.urls')),
+    url(r'', include('oauth2_provider.urls', namespace='oauth2_provider')),
+] + router.urls

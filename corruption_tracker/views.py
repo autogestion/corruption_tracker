@@ -11,46 +11,12 @@ from django.utils.safestring import mark_safe
 # from django.utils.translation import ugettext as _
 
 from utils.common import get_client_ip
-from geoinfo.models import Polygon
+# from geoinfo.models import Polygon
 from claim.models import OrganizationType
-
-
-def add_page(request):
-    resp_dict = Polygon.objects.get(is_default=True).generate_layer(add=True)
-    resp_dict['page'] = 'add_page'
-
-    if settings.RECAPTCHA_ENABLED is False:
-        settings.RECAPTCHA_PUBLIC = ''
-    resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
-
-    test_alarm = None
-    if settings.TEST_SERVER:
-        test_alarm = '<p style="color:red">%s</p>' %'УВАГА! Ресурс працює в тестовому режимі. *'
-    resp_dict['test_alarm'] = test_alarm
-
-    # pprint(resp_dict['polygons'])
-    return render(request, 'add_page.html', resp_dict)
-
-
-def map(request):
-    resp_dict = Polygon.objects.get(is_default=True).generate_layer()
-    resp_dict['page'] = 'map'
-
-    test_alarm = None
-    if settings.TEST_SERVER:
-        test_alarm = '<p style="color:red">%s</p>' %"*  Усі П.І.Б. посадовців та назви організацій уявні, співпадіння випадкові."
-    resp_dict['test_alarm'] = test_alarm
-
-    return render(request, 'map.html', resp_dict)
-
-
-def about(request):
-    return render(request, 'about.html', {'page': 'about'})
 
 
 def single(request):
     resp_dict = {}
-    # resp_dict = Polygon.objects.get(is_default=True).generate_layer(add=True)
     resp_dict['page'] = 'single'
 
     resp_dict['org_types'] = OrganizationType.objects.all()
@@ -84,11 +50,9 @@ def single(request):
     except AttributeError:
         ip = get_client_ip(request)
         if g.country(ip)['country_code'] == settings.COUNTRY_CODE:
-            # print(g.country('194.44.30.18')['country_code'])
             resp_dict['zoom_to'] = list(g.lat_lon(ip))
         else:
             resp_dict['zoom_to'] = settings.DEFAULT_ZOOM
-
     # pprint(resp_dict)
 
     return render(request, 'single.html', resp_dict)
@@ -112,3 +76,35 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+# def add_page(request):
+#     resp_dict = Polygon.objects.get(is_default=True).generate_layer(add=True)
+#     resp_dict['page'] = 'add_page'
+
+#     if settings.RECAPTCHA_ENABLED is False:
+#         settings.RECAPTCHA_PUBLIC = ''
+#     resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
+
+#     test_alarm = None
+#     if settings.TEST_SERVER:
+#         test_alarm = '<p style="color:red">%s</p>' %'УВАГА! Ресурс працює в тестовому режимі. *'
+#     resp_dict['test_alarm'] = test_alarm
+
+#     # pprint(resp_dict['polygons'])
+#     return render(request, 'add_page.html', resp_dict)
+
+
+# def map(request):
+#     resp_dict = Polygon.objects.get(is_default=True).generate_layer()
+#     resp_dict['page'] = 'map'
+
+#     test_alarm = None
+#     if settings.TEST_SERVER:
+#         test_alarm = '<p style="color:red">%s</p>' %"*  Усі П.І.Б. посадовців та назви організацій уявні, співпадіння випадкові."
+#     resp_dict['test_alarm'] = test_alarm
+
+#     return render(request, 'map.html', resp_dict)
+
+
+# def about(request):
+#     return render(request, 'about.html', {'page': 'about'})
