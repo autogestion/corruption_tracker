@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import datetime
-import json
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -54,7 +53,6 @@ class OrganizationType(models.Model):
     type_id = models.CharField(primary_key=True, max_length=155)
     name = models.CharField(max_length=255)
 
-
     def claim_types(self):
         claim_types = self.claimtype_set.all()
         claim_types_list = []
@@ -62,13 +60,11 @@ class OrganizationType(models.Model):
         for claim_type in claim_types:
             claim_types_list.append({
                 'id': claim_type.id,
-                'name':claim_type.name,               
+                'name': claim_type.name,
                 'icon': claim_type.icon.url if\
-                    claim_type.icon else False
-                })
+                claim_type.icon else False
+            })
         return claim_types_list
-
-
 
     def __str__(self):
         return self.type_id
@@ -113,39 +109,40 @@ class Organization(models.Model):
     def polygons(self):
         return self.polygon_set.all().values_list('polygon_id', flat=True)
 
-
+    def address(self):
+        return self.polygon_set.all()[0].address
 
     @property
     def claims(self):
         return self.moderation_filter().count()
 
-    def json_claims(self, limit=999):
-        claims = self.moderation_filter()
+    # def json_claims(self, limit=999):
+    #     claims = self.moderation_filter()
 
-        claims_list = []
+    #     claims_list = []
 
-        if claims:
-            for claim in claims:
-                claim_type = claim.claim_type.name if\
-                    claim.claim_type else _('Others')
-                claim_icon = claim.claim_type.icon.url if\
-                    claim.claim_type.icon else False
-                username = claim.complainer.username if\
-                    claim.complainer else _("Anon")
-                bribe = claim.bribe if claim.bribe else 0
-                claims_list.append({
-                    'organization_id': self.id,
-                    'organization_name': self.name,
-                    'text': claim.text,
-                    'servant': claim.servant,
-                    'complainer': username,
-                    'claim_type': claim_type,
-                    'created': claim.created.strftime('%Y-%m-%d %H:%M:%S'),
-                    'claim_icon': claim_icon,
-                    'bribe': bribe
-                })
+    #     if claims:
+    #         for claim in claims:
+    #             claim_type = claim.claim_type.name if\
+    #                 claim.claim_type else _('Others')
+    #             claim_icon = claim.claim_type.icon.url if\
+    #                 claim.claim_type.icon else False
+    #             username = claim.complainer.username if\
+    #                 claim.complainer else _("Anon")
+    #             bribe = claim.bribe if claim.bribe else 0
+    #             claims_list.append({
+    #                 'organization_id': self.id,
+    #                 'organization_name': self.name,
+    #                 'text': claim.text,
+    #                 'servant': claim.servant,
+    #                 'complainer': username,
+    #                 'claim_type': claim_type,
+    #                 'created': claim.created.strftime('%Y-%m-%d %H:%M:%S'),
+    #                 'claim_icon': claim_icon,
+    #                 'bribe': bribe
+    #             })
 
-        return claims_list[:limit]
+    #     return claims_list[:limit]
 
     def __str__(self):
         return self.name
@@ -176,10 +173,8 @@ class Claim(models.Model):
                                   default='not_moderated')
     bribe = models.IntegerField(blank=True, null=True)
 
-
-
     def save(self, *args, **kwargs):
         super(Claim, self).save(*args, **kwargs)
-        key = 'color_for::%s' %self.organization.first_polygon().polygon_id
-        if cache.has_key(key):   
+        key = 'color_for::%s' % self.organization.first_polygon().polygon_id
+        if cache.has_key(key):
             cache.delete(key)

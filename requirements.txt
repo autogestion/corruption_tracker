@@ -10,3 +10,4 @@ python-memcached==1.57
 -e git://github.com/autogestion/django-multiselectfield.git#egg=django-multiselectfield
 psycopg2==2.6.1
 #django-filter==0.12.0
+geoip2==2.3.0

@@ -11,11 +11,11 @@
 
     <link href= "{% static "css/bootstrap.min.css" %}"  rel="stylesheet">
 
-
-    <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
-    <script src="http://demos.inspirationalpixels.com/Tabs-with-HTML-CSS-&-jQuery/tabs.js"></script>
+    <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>   
     <script src="{% static "js/jquery.cookie.js" %}"></script>
     <script src="{% static "js/jquery.autocomplete.min.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>  
+
     <link href= "{% static "css/gh-fork-ribbon.min.css" %}"  rel="stylesheet">
 
     <title>Corruption map</title>
@@ -23,17 +23,14 @@
     {% leaflet_css %}
     <script type="text/javascript">
         /* To prevent multiple inserts of this var lets keep it in global NS */
-        var polygons = {{ polygons|default:"[]" }};
-        var places = {{places}};    
-        var claim_types = {{claim_types}}   
-        var add_org_url = "{% url 'add_org' %}"    
-        var layer_id = '{{ layer_id }}'
-        var api_url = "{% url 'api-root' %}" 
+        var api_url = "{% url 'api-root' %}"    
+        var claim_types = {{claim_types}}        
+        var zoom_to = {{ zoom_to }}
+        var places= []
     </script>
     <script src="{% static "js/map_init.js" %}"></script>
-    <!-- <script src="{% static "js/old_map_init.js" %}"></script> -->
-
     <script src="{% static "js/claims.js" %}"></script>
+
     <link href="{% static "css/w2ui-1.4.3.min.css" %}" rel="stylesheet" type="text/css" />  
     <script src="{% static "js/w2ui-1.4.3.min.js" %}" type="text/javascript"></script>
 
@@ -52,13 +49,14 @@
 
 
 <body>    
-<nav class="navbar">
+    <nav class="navbar">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#"><img src="{% static "img/logo.png" %}" height="42" width="42"></a>
+            <a class="navbar-brand" href="#"><img src="{% static "img/logo.jpg" %}" height="42" width="42"></a>
         </div>
         <ul class="nav navbar-nav">
              <li {% if page == 'single' %} class="active"{% endif %}><a href="{% url 'single' %}">{% trans "Map" %}</a> </li>
-            <li><a href="api/docs" target="_blank">{% trans "API Docs" %}</a> </li>  
+             <li><a href="#" id='about'>{% trans "Who is here?" %}</a> </li>  
+             <li><a href="api/docs" target="_blank">{% trans "API Docs" %}</a> </li>  
                           
         </ul>
 
@@ -101,163 +99,136 @@
             {% endif %}
         </ul>
 
-</nav>
+    </nav>
 
 
+    <div id='claims_list' class='map_popup'></div>
 
 
+    {% leaflet_map "main" callback="main_map_init" %}
 
-<div id='legend' class='map_popup'>   
-    {{ test_alarm|safe }} 
-    <div class="input-group">
-        <input type='search' id='organization_name' placeholder='{% trans "Organization name" %}' class="form-control">
-        <span class="input-group-btn">
-            <button type="button" class="btn btn-primary" id="get_claims" href="javascript:" >{% trans "Search" %}</button>
-        </span>
-    </div>
+    <div class="col-md-3 map_popup" id="float_block">   
+        {% if test_alarm %}{{ test_alarm|safe }} {% endif %}
+      
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#addclaim">{% trans "Add claim" %}</a></li>
+            <li><a data-toggle="tab" href="#addorg">{% trans "Add organization" %}</a></li>         
+        </ul>
+        <div id="processing">Processing...</div>
+        <div class="tab-content">
+            <div id="addclaim" class="tab-pane fade in active">                
+                <form role="form" id='claim_form' class="forms_padding">
+                    {% csrf_token %}
 
-    <div id="claims_list"></div>
+                    <div class="form-group">
+                        <input type='search' id='organization_name' 
+                        placeholder='{% trans "Type organization name and select" %}' class="form-control">                        
+                    </div>
+                    <div class="form-group" style="display:none">                      
+                        <div id='organization_error'></div>
+                        <input type="text" class="form-control" id="organization" name="organization" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="claim_type">{% trans "Choose Violation type" %}:</label>
+                        <select id="claim_type" name="claim_type">
+                          <option selected></option>                    
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="servant">{% trans "Servant name" %}:</label>
+                        <input type="text" class="form-control" id="servant" name="servant" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="text">{% trans "Claim message" %}:</label>
+                        <div id='text_error'></div>
+                        <textarea type="text" class="form-control" id="text" name="text" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="bribe">{% trans "Bribe amount" %}:</label>
+                        <input type="text" class="form-control" id="bribe" name="bribe">
+                    </div>
 
-</div>
-
-
-{% leaflet_map "main" callback="main_map_init" %}
-
-<div class="col-md-3 map_popup" id="float_block">
-   
-
-        <div class="tabs standard">
-
-            <ul class="tab-links">
-                <li class="active"><a href="#tab1">{% trans "Add claim" %}</a></li>
-                <li class=""><a href="#tab2">{% trans "Add organization" %}</a></li>           
-            </ul>
-
-            <div class="tab-content">
-                <div id="tab1" class="tab active" style="display: block;">
-                
-                    <div id="processing">Processing...</div>
-                    <form role="form" id='claim_form'>
-                        {% csrf_token %}
-                    
-                        <div class="form-group" style="display:none">                      
-                            <div id='organization_error'></div>
-                            <input type="text" class="form-control" id="organization" name="organization" readonly>
-                        </div>
+                    {% if user.is_authenticated %}
                         <div class="form-group">
-                            <label for="claim_type">{% trans "Choose Violation type" %}:</label>
-                            <select id="claim_type" name="claim_type">
-                              <option selected></option>                    
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="servant">{% trans "Servant name" %}:</label>
-                            <input type="text" class="form-control" id="servant" name="servant" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="text">{% trans "Claim message" %}:</label>
-                            <div id='text_error'></div>
-                            <textarea type="text" class="form-control" id="text" name="text" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="bribe">{% trans "Bribe amount" %}:</label>
-                            <input type="text" class="form-control" id="bribe" name="bribe">
-                        </div>
-
-                        {% if user.is_authenticated %}
-                            <div class="form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="anonymously"> {% trans "Keep me anonymously" %}
-                                    </label>
-                                </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="anonymously"> {% trans "Keep me anonymously" %}
+                                </label>
                             </div>
-                        {% endif %}
+                        </div>
+                    {% endif %}
 
-                        {% if not user.is_authenticated %}
-                            <div class="form-group">
-                                <div class="g-recaptcha" data-sitekey="{{ recaptcha_public }}"></div>
-                            </div>
-                        {% endif %}
+                    {% if not user.is_authenticated %}
+                        <div class="form-group">
+                            <div class="g-recaptcha" data-sitekey="{{ recaptcha_public }}"></div>
+                        </div>
+                    {% endif %}                       
 
-                        <div class="form-group">
-                            <div id='message'></div>
-                            <button type="submit" class="button_red">{% trans "Send claim" %}</button>
-                        </div>
-                    </form>
-              
-                </div>
-
-                <div id="tab2" class="tab" style="display: none;">
-                    <form role="form" id='org_form'>
-                        {% csrf_token %}
-                  
-                        <div class="form-group">
-                            <label for="org_type">{% trans "Choose Organization type" %}:</label>
-                            <select id="org_type" name="org_type">
-                                {% for org_type in org_types %}
-                                  <option value='{{org_type.type_id}}'>{{org_type.name}}</option>                    
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="centroid">{% trans "Centoid" %}:</label>
-                            <input type="text" class="form-control" id="centroid" name="centroid" placeholder='36.2543045,50.0075170' required>
-                        </div>
-                        <div class="form-group">
-                            <label for="shape">{% trans "Building shape" %}:</label>
-                            <div id='shape_error'></div>
-                            <textarea type="text" class="form-control" id="shape" name="shape" placeholder='{ "type": "Polygon", "coordinates": [ [ [ 36.236753463843954, 50.006170131432199 ], [ 36.236990304344928, 50.006113443092367 ], [ 36.236866409713009, 50.005899627208827 ], [ 36.236629569212049, 50.00595631580083 ], [ 36.236753463843954, 50.006170131432199 ] ] ] }'  style="height: 200px" ;></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="address">{% trans "Address" %}:</label>
-                            <input type="text" class="form-control" id="address" name="address" placeholder='{% trans "Address" %}' required>
-                        </div>
-                        <div class="form-group">
-                            <label for="org_name">{% trans "Organization name" %}:</label>
-                            <input type="text" class="form-control" id="org_name" name="org_name" placeholder='{% trans "Organization name" %}' required>
-                        </div>             
-
-                        <div class="form-group">
-                            <div id='message'></div>
-                            <button type="submit" class="btn btn-primary">{% trans "Send organization" %}</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="form-group">
+                        <div id='message'></div>
+                        <button type="submit" class="button_red">{% trans "Send claim" %}</button>
+                    </div>
+                </form>
             </div>
-        </div>
-   
-</div>
- 
 
-<div id="claim_template_global">
-    <div style ="float: right"></div>
-    <div class="claim_tempalte">
-        <div class="complainer"><b>{% trans "Complainer" %}:</b> <span>%complainer%</span></div>
-        <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
-        <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
-        <div class="bribe"><b>{% trans "Bribe amount" %}:</b> <span>%bribe%</span></div>
-        <div class="claim"><b>{% trans "Claim text" %}:</b> <span>%text%</span></div>
-        <div class="created"><b>{% trans "Created" %}:</b> <span>%created%</span></div>
-        <hr>
+            <div id="addorg" class="tab-pane fade">
+                <form role="form" id='org_form' class="forms_padding">
+                    {% csrf_token %}
+              
+                    <div class="form-group">
+                        <label for="org_type">{% trans "Choose Organization type" %}:</label>
+                        <select id="org_type" name="org_type">
+                            {% for org_type in org_types %}
+                              <option value='{{org_type.type_id}}'>{{org_type.name}}</option>                    
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="centroid">{% trans "Centroid" %}:</label>
+                        <input type="text" class="form-control" id="centroid" name="centroid" placeholder='36.2543045,50.0075170' required>
+                    </div>                
+                    <div class="form-group">
+                        <label for="address">{% trans "Address" %}:</label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder='{% trans "Address" %}' required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">{% trans "Organization name" %}:</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder='{% trans "Organization name" %}' required>
+                    </div>                      
+
+                    <div class="form-group">
+                        <div id='message'></div>
+                        <button type="submit" class="btn btn-primary">{% trans "Send organization" %}</button>
+                    </div>
+                </form>
+            </div>           
+        </div>
+    </div> 
+
+    <div id="claim_template_global">
+        <div style ="float: right"></div>
+        <div class="claim_tempalte">
+            <div class="complainer"><b>{% trans "Complainer" %}:</b> <span>%complainer%</span></div>
+            <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
+            <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
+            <div class="bribe"><b>{% trans "Bribe amount" %}:</b> <span>%bribe%</span></div>
+            <div class="claim"><b>{% trans "Claim text" %}:</b> <span>%text%</span></div>
+            <div class="created"><b>{% trans "Created" %}:</b> <span>%created%</span></div>
+            <hr>
+        </div>
     </div>
-</div>
 
-<div id="show_all_button_template" class="hide_show_more_buttons">
-    <a class="btn btn-primary" href="/claims/%org_id%" target="_blank">
-    {% trans "Show all claims as tiles" %}</a>
-    <button class="btn" onclick="w2ui_popup()">{% trans "Show all claims as table" %}</button>
-</div>
+    <div id="show_all_button_template" class="hide_show_more_buttons">
+        <!-- <a class="btn btn-primary" href="/claims/%org_id%" target="_blank">
+        {% trans "Show all claims as tiles" %}</a> -->
+        <button class="btn" onclick="w2ui_popup()">{% trans "Show all claims as table" %}</button>
+    </div>
 
-<div class="navbar-fixed-bottom row-fluid">
-<!--       <div class="navbar-inner">
-          <div class="container"><a href="https://github.com/autogestion/corruption_tracker" target="_blank">Powered by Corruption tracker</a>
-        </div>
-    </div> -->
-    <div class="github-fork-ribbon-wrapper right-bottom hidden-xs">
-        <div class="github-fork-ribbon">
-            <a href="https://github.com/autogestion/corruption_tracker" target="_blank">Fork me on GitHub</a>
-        </div>
+    <div class="navbar-fixed-bottom row-fluid">
+        <div class="github-fork-ribbon-wrapper right-bottom hidden-xs">
+            <div class="github-fork-ribbon">
+                <a href="https://github.com/autogestion/corruption_tracker" target="_blank">Fork me on GitHub</a>
+            </div>
+        </div>    
     </div>    
-</div>    
 </body>

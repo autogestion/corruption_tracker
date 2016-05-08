@@ -90,35 +90,37 @@ nav .navbar-brand {
     display: none;
 }
 
-/*@media screen and (max-width: 10000px) {
-    .leaflet-container {
-        height: 700px;
-    }
-}
-@media screen and (max-width: 1000px) {
-    .leaflet-container {
-        height: 500px;
-    }
-}
-@media screen and (max-width: 600px) {
-    .leaflet-container {
-        height: 300px;
-    }
-}*/
+
 .map_popup {
     background-color: black;
     color: white;  
-  
-   
 }
+
+#claims_list {
+    padding-bottom: 12px;
+    float: left;
+    margin-left: 70px;
+    
+    }
+
+.claims_list_styles {
+    /*width: 300px;*/
+    max-width: 400px;
+    padding: 17px;
+    }
 
 #legend {
-    width: 300px;
-    margin-left: 70px;
-    padding: 7px;
-    float: left;
+    max-width: 600px;
+    padding: 17px;
 
+
+}     
+
+.forms_padding {
+    padding-top: 20px;
 }
+    
+    
 
 @media screen and (max-width: 10000px) {
     #main {
@@ -197,7 +199,4 @@ nav .navbar-brand {
 }
 .claim_page_claim_text {
     padding:10px;
-}
-#claims_list {
-    padding-bottom: 12px;
 }

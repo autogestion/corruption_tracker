@@ -43,6 +43,7 @@ function w2ui_popup() {
     });
 }
 
+
 function update_dropdown (org_type_id){
     // console.log(org_type_id)
     var $dropdown = $("#claim_type");
@@ -58,30 +59,37 @@ function update_dropdown (org_type_id){
 }
 
 
-function get_name_by_id (org_id) {
+function fill_claim_form(org_id){
+    $('#organization').val(org_id);
     for (var i = places.length - 1; i >= 0; i--) {
         if (places[i].data === parseInt(org_id)){
-            update_dropdown (places[i].org_type_id)
-            return places[i].value;
+            update_dropdown(places[i].org_type_id)
+            $('#organization_name').val(places[i].value);
+            break
         }
-    }
-    return "Name not found"
+    }  
+}    
+
+
+function clear_claim_form(){
+    var $dropdown = $("#claim_type");
+    $dropdown.empty();
+    $('#organization').val(null);
+    $('#organization_name').val(null);    
 }
 
 
-function select_building (org_id) {
-    $('#organization').val(org_id);
-    $('#organization_name').val(get_name_by_id(org_id));    
-    window.location.hash = "organization=" + org_id; 
+function select_building (org_id, coordinates) {
+    fill_claim_form(org_id);
+    window.location.hash = "organization=" + org_id + "&zoom_to=" + coordinates; 
 
         $.ajax({
             type: "GET",
-            url: "/get_claims/"  + org_id + "/",
+            url: api_url + 'claim/' + org_id + "/",
+            // url: "/get_claims/"  + org_id + "/",
             success: function(data){
                 var messages = "";
-                var template,
-                    message,
-                    template_button;
+                var template, message, template_button;
 
                 template = document.getElementById('claim_template_global').innerHTML;
                 template_button = document.getElementById('show_all_button_template').innerHTML;
@@ -89,18 +97,24 @@ function select_building (org_id) {
                 var records = [];
                 var record;
                 var count = 0
+                data = data['results']
                 for (var i = data.length - 1; i >= 0; i--) {
 
                     if (count < 3) {
-                        message = template.replace('%complainer%', data[i]['complainer']);
+                        if (data[i]['bribe']) { message = template.replace('%bribe%', data[i]['bribe']);}
+                        else { message = template.replace('%bribe%', '0');} ;
+
+                        if (data[i]['complainer']) { message = message.replace('%complainer%', data[i]['complainer']);}
+                        else { message = message.replace('%complainer%', 'Anon');}
+                        
                         message = message.replace('%servant%', data[i]['servant']);
                         message = message.replace('%claim_type%', data[i]['claim_type']);
                         message = message.replace('%text%', data[i]['text']);
-                        message = message.replace('%created%', data[i]['created']);
-                        message = message.replace('%bribe%', data[i]['bribe']);
+                        message = message.replace('%created%', data[i]['created']);                       
 
                         if (data[i]['claim_icon']) {
-                            message = message.replace('<div style="float: right"></div>',  '<div style ="float: right"><img src="' + data[i]['claim_icon'] + '" height="50em" width="50em"></div>');
+                            message = message.replace('<div style="float: right"></div>',  
+                                '<div style ="float: right"><img src="' + data[i]['claim_icon'] + '" height="50em" width="50em"></div>');
                             // console.log (message);
                         }
                         messages += message;
@@ -120,7 +134,7 @@ function select_building (org_id) {
                     template_button_grid = ''} else {
                     messages = '<h3>Claims</h3>' + messages
                     };            
-                $("#claims_list").html(messages + template_button);
+                $("#claims_list").html('<div class="claims_list_styles">'+messages + template_button+'</div>');
 
             },
             error: function(data){
@@ -144,22 +158,6 @@ $(document).ready(function () {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
-        }
-    });
-
-
-    $("#get_claims").click(function() {
-        var org_id = $('#organization').val();
-        select_building(org_id);
-    });
-
-
-    $('#organization_name').autocomplete({
-        lookup: places,
-        onSelect: function (suggestion) {
-            $('#organization').val(suggestion.data);
-            update_dropdown(suggestion.org_type_id);
-            AddPage.validate();
         }
     });
 
@@ -207,15 +205,17 @@ $(document).ready(function () {
     $("#org_form").submit(function(event){
         $('#processing').show();
         event.preventDefault();
-        post_data = $('#org_form').serialize() + '&layer_id=' + layer_id;
-        // console.log(post_data)
+        post_data = $('#org_form').serialize();
+
         $.ajax({
             type: "POST",
-            url: add_org_url,
+            url: api_url + 'organization/',
             data: post_data,
 
             success: function(data){                 
-                $('#processing').hide();           
+                $('#processing').hide();
+                var splitted_cntr = $('#centroid').val().split(',')
+                window.location.hash = "organization=" + data.id + "&zoom_to=" + splitted_cntr[1]+','+splitted_cntr[0];                        
                 window.location.reload();
 
             },
@@ -226,28 +226,24 @@ $(document).ready(function () {
         return false;
     });
 
-    $( "#open_org" ).click(function() {
-      $( "#org_form_block" ).slideToggle( "slow", function() {  
-      });
+
+    $("#about").on('click', function() { 
+        $("#claims_list").html(' <div id="legend"><h3>Подолати корупцію в один клік.</h3>' +
+        '<p>Кожен громадянин України має важелі впливу на корупційну діяльність. Це - особиста відповідальність та публічність.</p>' +
+        '<p>Відповідальність спонукає зробити вибір підтримувати чи не підтримувати корупцію. А публічність нівелює прояви корупції, якщо вибір було зроблено на користь її подолання.</p>' +
+        '<p>Питання стоїть лише за інструментом, який поєднає особисте прагнення здолати корупцію в Україні з максимальним розголосом актів корупційної діяльності.</p>' +
+        '<p>Система є таким інструментом. Основний акцент у ній зроблено на можливості зафіксувати корупційну діяльність на місці її вчинення. Далі акцент зміщується у публічну сферу. Розголос набуває форми структурованої мапи корупції.</p>' +
+        '<p>Так, Система є найпростішим способом вести облік корупційної активності. А універсальність її даних відкриває можливість боротьби з корупцією на всіх рівнях: від рівня особистого невдоволення до рівня громадянського суспільства чи законодавчих ініціатив.</p>' +
+        '<p>А потрібно лише зробити один клік "Повідомити".</p>' +       
+        '<h3>Проекту потрібні</h3><ul><li>Javascript UI Developer</li><li>Mobile Developer (iOS, Android)</li><li>Та інші.</li></ul>' +
+        '<h3>Долучится до розробки можна</h3><ul>' +
+            '<li>на GitHup => <a href="https://github.com/autogestion/corruption_tracker" target="_blank">Corruption tracker</a></li>' +
+            '<li>у Facebook спільноті => <a href="https://www.facebook.com/activecorruptiontracking/" target="_blank">Система учёта коррупционной активности</a></li>' +
+           '</ul></div>')
+
     });
 
-    $( "#open_claim" ).click(function() {
-      // console.log('claim_form_block togle 0');
-      $( "#claim_form_block" ).slideToggle( "slow", function() {  
-      });
-      // console.log('claim_form_block togle');
-    });    
 
-    var pair;
-    var hash_data = window.location.hash.replace("#", "").split("&");
-    for (var i = hash_data.length - 1; i >= 0; i--) {
-        pair = hash_data[i].split('=');
-        if (pair[0] === 'organization') {
-            select_building(pair[1]);
-            $('#organization_name').val(get_name_by_id(pair[1]));
-            break;
-        }
-    }
 });
 
 
