@@ -28,8 +28,9 @@
         var zoom_to = {{ zoom_to }}
         var places= []
     </script>
-    <script src="{% static "js/map_init.js" %}"></script>
-    <script src="{% static "js/claims.js" %}"></script>
+    <script src="{% static "js/ctracker_map_init.js" %}"></script>
+    <script src="{% static "js/ctracker_claims.js" %}"></script>
+    <script src="{% static "js/ctracker_main.js" %}"></script>
 
     <link href="{% static "css/w2ui-1.4.3.min.css" %}" rel="stylesheet" type="text/css" />  
     <script src="{% static "js/w2ui-1.4.3.min.js" %}" type="text/javascript"></script>
@@ -51,7 +52,7 @@
 <body>    
     <nav class="navbar">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#"><img src="{% static "img/logo.jpg" %}" height="42" width="42"></a>
+            <a class="navbar-brand" href="/"><img src="{% static "img/logo.jpg" %}"></a>
         </div>
         <ul class="nav navbar-nav">
              <li {% if page == 'single' %} class="active"{% endif %}><a href="{% url 'single' %}">{% trans "Map" %}</a> </li>
@@ -116,7 +117,7 @@
         </ul>
         <div id="processing">Processing...</div>
         <div class="tab-content">
-            <div id="addclaim" class="tab-pane fade in active">                
+            <div id="addclaim" class="tab-pane in active">                
                 <form role="form" id='claim_form' class="forms_padding">
                     {% csrf_token %}
 
@@ -171,7 +172,7 @@
                 </form>
             </div>
 
-            <div id="addorg" class="tab-pane fade">
+            <div id="addorg" class="tab-pane">
                 <form role="form" id='org_form' class="forms_padding">
                     {% csrf_token %}
               
@@ -206,7 +207,7 @@
     </div> 
 
     <div id="claim_template_global">
-        <div style ="float: right"></div>
+        <div class='claim_icon'></div>
         <div class="claim_tempalte">
             <div class="complainer"><b>{% trans "Complainer" %}:</b> <span>%complainer%</span></div>
             <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
@@ -217,10 +218,7 @@
             <hr>
         </div>
     </div>
-
-    <div id="show_all_button_template" class="hide_show_more_buttons">
-        <!-- <a class="btn btn-primary" href="/claims/%org_id%" target="_blank">
-        {% trans "Show all claims as tiles" %}</a> -->
+    <div id="show_all_button_template" class="hide_show_more_buttons">       
         <button class="btn" onclick="w2ui_popup()">{% trans "Show all claims as table" %}</button>
     </div>
 

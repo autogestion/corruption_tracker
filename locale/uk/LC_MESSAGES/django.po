@@ -98,7 +98,7 @@ msgstr "Заклад"
 #: templates/map.html:37 templates/single.html.py:197
 #: templates/single.html:198
 msgid "Organization name"
-msgstr "Назва закладу"
+msgstr "Назва установи"
 
 #: templates/add_page.html:56 templates/single.html.py:134
 msgid "Choose Violation type"
