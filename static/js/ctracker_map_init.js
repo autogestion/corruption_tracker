@@ -170,13 +170,18 @@ function main_map_init (map, options) {
     $_selectedPolygon = null;
     
     if (window.location.hash) {
-        var hash_data = window.location.hash.replace("#", "").split("&");
-        var hashed_org_id = hash_data[0].split('=')[1];
-        var hashed_coordinates = hash_data[1].split('=')[1].split(',');
-        map.setView(hashed_coordinates, 16);
-        updateMapLayer();
-        // console.log(places)
-        select_building(hashed_org_id, hashed_coordinates);   
+        try {
+            var hash_data = window.location.hash.replace("#", "").split("&");
+            var hashed_org_id = hash_data[0].split('=')[1];
+            var hashed_coordinates = hash_data[1].split('=')[1].split(','); 
+            map.setView(hashed_coordinates, 16);
+            updateMapLayer();     
+            select_building(hashed_org_id, hashed_coordinates);  
+        } catch(err) {
+            console.log(err)
+            map.setView(zoom_to, 12);
+            updateMapLayer();    
+        };
     } else {
         map.setView(zoom_to, 12);
         updateMapLayer();    
