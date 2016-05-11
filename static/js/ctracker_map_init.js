@@ -17,6 +17,8 @@ function main_map_init (map, options) {
   
     var dataBounds, zoom, dataUrl, dataType;
     function updateMapLayer() {
+        console.time("updateMapLayer executed in");
+
         // W, S, E, N
         dataBounds = map.getBounds().getWest().toFixed(5) + ',' +
         map.getBounds().getSouth().toFixed(5) + ',' +
@@ -34,13 +36,18 @@ function main_map_init (map, options) {
         map.removeLayer(districtLayer);
         districtLayer.clearLayers()
 
-        $.getJSON(dataUrl, function (data) {
+        $.getJSON(dataUrl, function (data, textStatus, request) {
             var polygons = data;
-            districtLayer.clearLayers();        
+
+            console.log('django executed in: '+ request.getResponseHeader('executed'))
+            console.log('rendered ' + polygons.length + ' polygons of level ' + dataType)
+            
+            districtLayer.clearLayers();
 
             if (polygons) {
                 var marker, object_centroid, org_row, orgs_set, org_rows;
                 places = []
+                
                 // Create geo-objects from fetched data.
                 for (var i = polygons.length - 1; i >= 0; i--) {
                     orgs_set = polygons[i]['properties']["organizations"]
@@ -161,7 +168,10 @@ function main_map_init (map, options) {
 
         }); // get json
         
-        districtLayer.addTo(map);
+        console.time("leaflet add poly to map in");
+        districtLayer.addTo(map);  
+        console.timeEnd("leaflet add poly to map in");   
+        console.timeEnd("updateMapLayer executed in");
     }; // end of updateMapLayer
 
 

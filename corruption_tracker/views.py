@@ -13,6 +13,7 @@ from django.utils.safestring import mark_safe
 from utils.common import get_client_ip
 # from geoinfo.models import Polygon
 from claim.models import OrganizationType
+from corruption_tracker.middleware import SqlProfilingMiddleware
 
 
 def single(request):
@@ -77,9 +78,6 @@ def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/')
 
-
-
-from corruption_tracker.middleware import SqlProfilingMiddleware
 
 def profiling(request):
     return render_to_response("profiling.html", {"queries": SqlProfilingMiddleware.Queries})
