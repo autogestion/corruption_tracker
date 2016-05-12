@@ -41,6 +41,11 @@ nav .navbar-brand {
     display: inline;
 }
 
+.nav-tabs>li {
+    width: 50%;
+    text-align: center;
+}
+
 .icon_with_number {
     pointer-events: none;
     margin: 0;
@@ -102,18 +107,24 @@ nav .navbar-brand {
     margin-left: 70px;
     
     }
+.claim_icon {
+    float: right;
+}
+
+.claim_icon img {
+    height: 5em;
+    width: 5em;
+}
 
 .claims_list_styles {
     /*width: 300px;*/
     max-width: 400px;
-    padding: 17px;
-    }
+    padding: 0px 17px 17px 17px;
+}
 
 #legend {
     max-width: 600px;
-    padding: 17px;
-
-
+    padding: 0px 17px 17px 17px;
 }     
 
 .forms_padding {
@@ -121,6 +132,17 @@ nav .navbar-brand {
 }
     
     
+#close_claims_list {
+    float:right;
+    display:inline-block;
+    padding:2px 5px;
+    background:#ccc;
+}
+
+.hide_show_more_buttons {
+    display: none;
+}
+
 
 @media screen and (max-width: 10000px) {
     #main {
@@ -175,28 +197,5 @@ nav .navbar-brand {
     }
 }
 
-.hide_show_more_buttons {
-    display: none;
-}
 
-.claims_page_claim_block {
-    width: 350px;
-    min-height: 250px;
-    float: left;
-    border: 1px solid lightgray;
-    margin:10px;
-}
-.claims_page_line_name {
-    display: block;
-    float: left;
-    width: 130px;
-    padding-right: 10px;
-}
-.claims_page_claim_head {
-    padding: 5px 10px;
-    background-color: #ECECEC;
-    min-height: 100px;
-}
-.claim_page_claim_text {
-    padding:10px;
-}
+

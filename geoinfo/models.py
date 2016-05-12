@@ -85,6 +85,19 @@ class Polygon(models.Model):
 
         return claims
 
+    def color_spot(self, value, max_value):
+        if max_value:
+            percent = value * 100 / max_value
+        else:
+            percent = 0
+
+        if percent <= 20:
+            return 'green'
+        elif percent <= 70:
+            return 'yellow'
+        else:
+            return 'red'
+
     @property
     def get_color(self):
         cached = cache.get('color_for::%s' % self.polygon_id)
@@ -114,6 +127,9 @@ class Polygon(models.Model):
             return orgs[0]
         else:
             return None
+
+    def __str__(self):
+        return 'Polygon ' + str(self.polygon_id)
 
     def polygon_to_json(self, shape=True):
         # reverse coordinates for manualy adding polgygons
@@ -160,16 +176,6 @@ class Polygon(models.Model):
 
         # print(responce)
         return responce
-
-    def color_spot(self, value, max_value):
-        percent = value * 100 / max_value
-
-        if percent <= 20:
-            return 'green'
-        elif percent <= 70:
-            return 'yellow'
-        else:
-            return 'red'
 
     # def generate_childs(self, add=False):
     #     moderate = 'show_markers' in Moderator.objects.get(id=1).show_claims
@@ -261,6 +267,3 @@ class Polygon(models.Model):
 
     #     # pprint(layer)
     #     return layer
-
-    def __str__(self):
-        return 'Polygon ' + str(self.polygon_id)

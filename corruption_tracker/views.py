@@ -13,6 +13,7 @@ from django.utils.safestring import mark_safe
 from utils.common import get_client_ip
 # from geoinfo.models import Polygon
 from claim.models import OrganizationType
+from corruption_tracker.middleware import SqlProfilingMiddleware
 
 
 def single(request):
@@ -77,34 +78,9 @@ def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/')
 
-# def add_page(request):
-#     resp_dict = Polygon.objects.get(is_default=True).generate_layer(add=True)
-#     resp_dict['page'] = 'add_page'
 
-#     if settings.RECAPTCHA_ENABLED is False:
-#         settings.RECAPTCHA_PUBLIC = ''
-#     resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
-
-#     test_alarm = None
-#     if settings.TEST_SERVER:
-#         test_alarm = '<p style="color:red">%s</p>' %'УВАГА! Ресурс працює в тестовому режимі. *'
-#     resp_dict['test_alarm'] = test_alarm
-
-#     # pprint(resp_dict['polygons'])
-#     return render(request, 'add_page.html', resp_dict)
+def profiling(request):
+    return render_to_response("profiling.html", {"queries": SqlProfilingMiddleware.Queries})
 
 
-# def map(request):
-#     resp_dict = Polygon.objects.get(is_default=True).generate_layer()
-#     resp_dict['page'] = 'map'
 
-#     test_alarm = None
-#     if settings.TEST_SERVER:
-#         test_alarm = '<p style="color:red">%s</p>' %"*  Усі П.І.Б. посадовців та назви організацій уявні, співпадіння випадкові."
-#     resp_dict['test_alarm'] = test_alarm
-
-#     return render(request, 'map.html', resp_dict)
-
-
-# def about(request):
-#     return render(request, 'about.html', {'page': 'about'})

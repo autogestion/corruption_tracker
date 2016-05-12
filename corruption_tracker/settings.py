@@ -21,6 +21,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.gis',
 
+    # 'debug_toolbar',
+
     # 'allauth',
     # 'allauth.account',
     # 'allauth.socialaccount',
@@ -31,12 +33,14 @@ INSTALLED_APPS = (
     'rest_framework_swagger',
     'leaflet',
 
+    'corruption_tracker',
     'claim',
     'geoinfo',
     'api',
 )
 
 MIDDLEWARE_CLASSES = (
+    'corruption_tracker.middleware.SqlProfilingMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -47,6 +51,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    
 )
 
 AUTHENTICATION_BACKENDS = (
