@@ -1,16 +1,22 @@
 # Corruption tracker
 
-## About
-
 Corruption tracker lets you make cases of corruption and professionally unfit of civil servant public
 and as result track the level of it in public institutions
 
-![screenshot_2](https://cloud.githubusercontent.com/assets/1098257/10270323/4afbd0be-6af6-11e5-8443-a8cf265a74cc.png)
+![](http://i.imgur.com/zAMVod3.png)
 
+Mobile app that works with API https://github.com/konchunas/mobilepdrk
+
+Test instance available on http://test.acts.pp.ua:8000/
+
+Test api is available on http://test.acts.pp.ua:8000/api/docs/
+
+FB - https://www.facebook.com/activecorruptiontracking/
 
 Prerequisites
 
     Python 3.4
+    PostgreSQL + PostGIS
     Memcached
 
 ## Quickstart
@@ -22,6 +28,7 @@ Create a virtual environment
 
 Install dependencies and project
 
+    sudo apt-get install python3.4-dev libpq-dev postgresql postgresql-contrib postgis postgresql-9.5-postgis-2.2 memcached
     git clone git@github.com:autogestion/corruption_tracker.git
     cd YOUR_SOURCE_DIR
     pip install -r requirements.txt
@@ -32,7 +39,10 @@ Create a default local settings file
 
 Create the tables
 
-    python manage.py syncdb
+    PostgreSQL instructions in db_creation.txt
+
+    python manage.py migrate
+    python manage.py createsuperuser
     python manage.py initiate_db
 
 Start the server

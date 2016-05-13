@@ -1,49 +1,81 @@
-import json
 
-from django.utils.safestring import mark_safe
+# from django.http import HttpResponse
+# from django.contrib.gis.geos import fromstr
+# from django.db.models.signals import post_save, post_delete
+# from geoinfo.models import Polygon
+# from claim.models import Claim, Organization, OrganizationType
 
 
-class LayerGenerator:
+# def export_layer(request, layer_id):
 
-    def __init__(self, layer_obj):
-        self.layer = layer_obj
-        self.max_claims = layer_obj.max_claims
+#     layer = Layer.objects.get(id=layer_id)
+#     layer_json = layer.generate_json(add=False)['polygons']
+#     responce = HttpResponse(layer_json)
+#     responce['Content-Disposition'] = 'attachment; filename=%s.json' % layer.name
+#     return responce
 
-    def color_spot(self, value):
-        percent = value * 100 / self.max_claims
+# def add_org(request):
+#     print(request.POST)
 
-        if percent <= 20:
-            return 'green'
-        elif percent <= 70:
-            return 'yellow'
-        else:
-            return 'red'
+#     layer = Polygon.objects.get(
+#         polygon_id=request.POST['layer_id'])
 
-    def generate(self):
-        polygons = self.layer.polygon_set.all()
+#     polygon = Polygon(
+#         polygon_id=request.POST['centroid'],
+#         centroid=fromstr("POINT(%s %s)" % tuple(request.POST['centroid'].split(','))),
+#         shape=request.POST['shape'],
+#         address=request.POST['address'],
+#         layer=layer,
+#         level=Polygon.building,
+#         zoom=17,
+#         is_verified=True)
+#     polygon.save()
 
-        organizations = []
-        for polygon in polygons:
-            organizations.extend(polygon.organizations.all())
+#     org_type = OrganizationType.objects.get(
+#         type_id=request.POST['org_type'])
 
-        places = [{'data': org.id, 'value': org.name}
-                  for org in organizations]
+#     organization = Organization(
+#         name=request.POST['org_name'],
+#         org_type=org_type)
+#     organization.save()
 
-        data = []
-        for polygon in polygons:
-            polygon_json = polygon.generate_map_polygon()
-            polygon_claims = polygon_json["properties"]['polygon_claims']
-            polygon_json["properties"]['color'] = self.color_spot(polygon_claims)\
-                if polygon_claims else 'grey'
-            data.append(polygon_json)
+#     polygon.organizations.add(organization)
 
-        geo_json = {
-            'type': "FeatureCollection",
-            'config': {
-                'center': json.loads(self.layer.center),
-                'zoom': self.layer.zoom},
-        }
-        geo_json['features'] = data
+#     return HttpResponse(status=201)
 
-        return {'buildings': mark_safe(json.dumps(geo_json)),
-                'places': mark_safe(json.dumps(places))}
+
+def increment_claims(sender, instance, created, **kwargs):
+    if created:
+        houses = instance.organization.polygon_set.all()
+        for house in houses:
+            house.claims += 1
+            house.save()
+            # add to district
+            house.layer.claims += 1
+            house.layer.save()
+            # add to city
+            house.layer.layer.claims += 1
+            house.layer.layer.save()
+            # add to region
+            house.layer.layer.layer.claims += 1
+            house.layer.layer.layer.save()
+
+# post_save.connect(increment_claims, sender=Claim)
+
+
+def decrement_claims(sender, instance, **kwargs):
+    houses = instance.organization.polygon_set.all()
+    for house in houses:
+        house.claims -= 1
+        house.save()
+        # sub from district
+        house.layer.claims -= 1
+        house.layer.save()
+        # sub from city
+        house.layer.layer.claims -= 1
+        house.layer.layer.save()
+        # sub from region
+        house.layer.layer.layer.claims -= 1
+        house.layer.layer.layer.save()
+
+# post_delete.connect(decrement_claims, sender=Claim)

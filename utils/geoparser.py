@@ -1,62 +1,102 @@
 import json
+import os, re
+from django.core.files import File
+from django.conf import settings
+from django.contrib.gis.geos import fromstr
 
-from geoinfo.models import Layer, Polygon
-from claim.models import OrganizationType, Organization
+from geoinfo.models import Polygon
+from claim.models import OrganizationType, Organization, ClaimType
 
 
 class GeoJSONParser():
 
     @staticmethod
-    def geojson_to_db(geo_json):
-        layer_info = geo_json['ctracker_config']
-        print('Processing %s geojson...' % layer_info['layer_name'])
+    def get_geojson_file(file_path):
+        # print(file_path)
         try:
-            layer = Layer.objects.get(name=layer_info['layer_name'])
-        except Layer.DoesNotExist:
-            layer = Layer(
-                layer_type=getattr(Layer, layer_info['layer_type']),
-                name=layer_info['layer_name'],
-                is_default=bool(layer_info['set_default']),
-                zoom=layer_info['zoom'],
-                center=json.dumps(layer_info['center']))
-            layer.save()
+            # python 3+
+            json_s = open(file_path, encoding='utf8').read()
+        except TypeError:
+            # python 2
+            json_s = open(file_path).read()
+            json_s = json_s.decode('utf8')
 
+        return json.loads(json_s)
+
+    @staticmethod
+    def geojson_to_db(geo_json, return_instance=False):
+        centroidPattern = re.compile("(-?\d+(?:\.\d+)?)\D+(-?\d+(?:\.\d+)?)")
+
+        if geo_json['ctracker_config']['AL'] == 4:
+            try:
+                default_claim_type = ClaimType.objects.get(name='---')
+            except ClaimType.DoesNotExist:
+                default_claim_type = ClaimType(name='---')
+                default_claim_type.save()
+
+            try:
+                xabar = ClaimType.objects.get(name='Xabar')
+            except ClaimType.DoesNotExist:
+                with open(os.path.join(settings.INIT_GEOJSON_FOLDER,
+                          'habar.jpg'), 'rb') as x_logo:
+                    xabar_file = File(x_logo)
+
+                    xabar = ClaimType(name='Xabar', icon=xabar_file)
+                    xabar.save()
+
+        # Create polygons
         for feature in geo_json['features']:
-            # Create polygon
             try:
                 polygon = Polygon.objects.get(
                     polygon_id=feature['properties']['ID'])
-            except Polygon.DoesNotExist:
-                # Hack to avoid organizations without names
-                if not feature['properties']['NAME']:
-                    continue
 
+            except Polygon.DoesNotExist:
                 polygon = Polygon(
                     polygon_id=feature['properties']['ID'],
                     shape=json.dumps(feature['geometry']),
-                    centroid=json.dumps([
-                        feature['properties']["CEN_LAT"],
-                        feature['properties']["CEN_LONG"]]),
-                    layer=layer)
+                    # centroid=GEOSGeometry('POINT(%s %s)') % (
+                    #     feature['properties']['CENTROID'].split(',')),
+                    centroid=fromstr("POINT(%s %s)" % centroidPattern.search(
+                        feature['properties']['CENTROID']).groups(),
+                        srid=4326),
+                    address=feature['properties']['ADDRESS'],
+                    level=geo_json['ctracker_config']['AL'],
+                    zoom=geo_json['ctracker_config']['ZOOM'])
+
+                if feature['properties']['PARENT']:
+                    parent = Polygon.objects.get(
+                        polygon_id=feature['properties']['PARENT'])
+                    polygon.layer = parent
+
                 polygon.save()
 
-            # Create organization
-            # Temporary, fix unknown organization type
-            org_type = OrganizationType.objects.get(org_type="0")
+            if geo_json['ctracker_config']['AL'] == 4:
+                org_names = feature['properties']['ORG_NAMES'].split('|')
+                org_types = feature['properties']['ORG_TYPES'].split('|')
+                for index, org_name in enumerate(org_names):
+                    try:
+                        org_obj = Organization.objects.get(
+                            name=org_name)
+                    except Organization.DoesNotExist:
 
-            polygon_orgs = feature['properties']['NAME'].split('|')
-            for org_name in polygon_orgs:
-                try:
-                    org_obj = Organization.objects.get(
-                        name=org_name)
-                except Organization.DoesNotExist:
-                    org_obj = Organization(
-                        name=org_name,
-                        org_type=org_type
-                    )
-                    org_obj.save()
-                except Organization.MultipleObjectsReturned:
-                    pass
+                        try:
+                            org_type = OrganizationType.objects.get(
+                                type_id=org_types[index])
+                        except OrganizationType.DoesNotExist:
+                            org_type = OrganizationType(
+                                type_id=org_types[index],
+                                name=geo_json['ctracker_config']["ORG_TYPES"][org_types[index]])
+                            org_type.save()
+                            org_type.claimtype_set.add(
+                                default_claim_type, xabar)
 
-                # Link them
-                polygon.organizations.add(org_obj)
+                        org_obj = Organization(
+                            name=org_name,
+                            org_type=org_type
+                        )
+                        org_obj.save()
+                    except Organization.MultipleObjectsReturned:
+                        pass
+
+                    # Link them
+                    polygon.organizations.add(org_obj)

@@ -1,75 +1,148 @@
 # -*- coding: utf-8 -*-
 import datetime
-import json
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
+from django.core.cache import cache
+
+from multiselectfield import MultiSelectField
+
+
+STATUSES = (('not_moderated', _('Not moderated')),
+            ('suspicious', _('Suspicious')),
+            ('anonymous', _('From anonymous')),
+            ('valid', _('Moderated')),
+            ('markers', _('Non-verified markers'))
+            )
+
+
+class Moderator(models.Model):
+    """
+    Singleton model, where admin can choose
+    claims with wich state of moderation to show
+
+    """
+
+    show_claims = MultiSelectField(choices=STATUSES, max_length=200,
+        default='not_moderated,suspicious,anonymous,valid')
+
+    # memcached settings
+    use_memcached = models.BooleanField(default=False)
+    memcached_timeout = models.IntegerField(default=3600)
+    claims_per_hour = models.IntegerField(default=3)
+
+    class Meta:
+        verbose_name_plural = "Moderator"
+
+    def save(self, *args, **kwargs):
+        self.id = 1
+        super(Moderator, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+    @classmethod
+    def get_moderator(cls):
+        print('cls.objects.get(id=1).values_list()')
+        print(cls.objects.filter(id=1).values_list())
+        return cls.objects.get(id=1)
 
 
 class OrganizationType(models.Model):
-    # TODO(vegasq) should we use AMENITY as keys here?
-    ORG_TYPES = (
-        ("0", _("Unknown")),
-        ("1", _("Міністерство фінансів України")),
-        ("2", _("Міністерство соціальної політики України")),
-        ("3", _("Міністерство регіонального розвитку, "
-                "будівництва та житлово-комунального господарства України")),
-        ("4", _("Міністерство охорони здоров'я України ")),
-        ("5", _("Міністерство освіти і науки України")),
-        ("6", _("Міністерство оборони України")),
-        ("7", _("Міністерство молоді та спорту України")),
-        ("8", _("Міністерство культури України")),
-        ("9", _("Міністерство інфраструктури України")),
-        ("10", _("Міністерство інформаційної політики України")),
-        ("11", _("Міністерство закордонних справ України")),
-        ("12", _("Міністерство енергетики та вугільної промисловості "
-                 "України")),
-        ("13", _("Міністерство економічного розвитку і торгівлі України")),
-        ("14", _("Міністерство екології та природних ресурсів України")),
-        ("15", _("Міністерство внутрішніх справ України")),
-        ("16", _("Міністерство аграрної політики та продовольства України")),
-        ("17", _("Міністерство юстиції України")),
-    )
+    type_id = models.CharField(primary_key=True, max_length=155)
+    name = models.CharField(max_length=255)
 
-    org_type = models.CharField(choices=ORG_TYPES,
-                                max_length=10,
-                                default=ORG_TYPES[0][0],
-                                unique=True)
+    def claim_types(self):
+        claim_types = self.claimtype_set.all()
+        claim_types_list = []
+
+        for claim_type in claim_types:
+            claim_types_list.append({
+                'id': claim_type.id,
+                'name': claim_type.name,
+                'icon': claim_type.icon.url if\
+                claim_type.icon else False
+            })
+        return claim_types_list
 
     def __str__(self):
-        for org_type in self.ORG_TYPES:
-            if org_type[0] == str(self.org_type):
-                return org_type[1]
+        return self.type_id
+
+
+class ClaimType(models.Model):
+    """
+    Binding the set of ClaimType objects to OrganizationType
+    allow to show to user dropdown with common violations
+    in organizations of certain type
+
+    """
+    name = models.CharField(max_length=555)
+    org_type = models.ManyToManyField(OrganizationType)
+    icon = models.FileField(upload_to='icons/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def linked_org_types(self):
+        return ','.join([x.type_id for x in self.org_type.all()])
 
 
 class Organization(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(null=True, blank=True)
-    org_type = models.ForeignKey(OrganizationType, null=True)
+    org_type = models.ForeignKey(OrganizationType, null=True, blank=True)
+
+    updated = models.DateTimeField(auto_now=True)
+
+    def moderation_filter(self):
+        allowed_statuses = Moderator.objects.get(id=1).show_claims
+        return self.claim_set.filter(
+            moderation__in=allowed_statuses).order_by('created')
+
+    def first_polygon(self):
+        try:
+            return self.polygon_set.all()[0]
+        except IndexError:
+            return None
+
+    def polygons(self):
+        return self.polygon_set.all().values_list('polygon_id', flat=True)
+
+    def address(self):
+        return self.polygon_set.all()[0].address
 
     @property
-    def total_claims(self):
-        return self.claim_set.all().count()
+    def claims(self):
+        return self.moderation_filter().count()
 
-    def json_claims(self):
-        claims = self.claim_set.all()
+    # def json_claims(self, limit=999):
+    #     claims = self.moderation_filter()
 
-        claims_list = []
+    #     claims_list = []
 
-        if claims:
-            for claim in claims:
-                username = claim.complainer.username if\
-                    claim.complainer else _("Anon")
-                claims_list.append({
-                    'organization_id': self.id,
-                    'organization_name': self.name,
-                    'text': claim.text,
-                    'servant': claim.servant,
-                    'complainer': username
-                })
+    #     if claims:
+    #         for claim in claims:
+    #             claim_type = claim.claim_type.name if\
+    #                 claim.claim_type else _('Others')
+    #             claim_icon = claim.claim_type.icon.url if\
+    #                 claim.claim_type.icon else False
+    #             username = claim.complainer.username if\
+    #                 claim.complainer else _("Anon")
+    #             bribe = claim.bribe if claim.bribe else 0
+    #             claims_list.append({
+    #                 'organization_id': self.id,
+    #                 'organization_name': self.name,
+    #                 'text': claim.text,
+    #                 'servant': claim.servant,
+    #                 'complainer': username,
+    #                 'claim_type': claim_type,
+    #                 'created': claim.created.strftime('%Y-%m-%d %H:%M:%S'),
+    #                 'claim_icon': claim_icon,
+    #                 'bribe': bribe
+    #             })
 
-        return json.dumps(claims_list)
+    #     return claims_list[:limit]
 
     def __str__(self):
         return self.name
@@ -91,6 +164,17 @@ class Claim(models.Model):
     created = models.DateTimeField(default=datetime.datetime.now)
     live = models.BooleanField(default=False)
     organization = models.ForeignKey(Organization)
-    # polygon_id = models.CharField(max_length=250)
     servant = models.CharField(max_length=550)
     complainer = models.ForeignKey(User, null=True, blank=True, default=None)
+    claim_type = models.ForeignKey(ClaimType, null=True, blank=True,
+                                   default=None)
+    # moderation = models.ForeignKey(ModerationStatus, default='not_moderated')
+    moderation = models.CharField(choices=STATUSES, max_length=50,
+                                  default='not_moderated')
+    bribe = models.IntegerField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        super(Claim, self).save(*args, **kwargs)
+        key = 'color_for::%s' % self.organization.first_polygon().polygon_id
+        if cache.has_key(key):
+            cache.delete(key)

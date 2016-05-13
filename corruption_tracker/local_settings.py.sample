@@ -1,7 +1,20 @@
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = []
+
+ADMINS = (
+    ('username', 'user@mail.com'),
+)
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -12,15 +25,27 @@ RECAPTCHA_ENABLED = False
 RECAPTCHA_SECRET = ""
 RECAPTCHA_PUBLIC = ""
 
-
-USE_CACHING = False
+# Uncomment this line at production server and point to place
+# where static would be collected
+#STATIC_ROOT = '/var/www/static'
+MEDIA_ROOT = 'media'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'ctracker',
+        'USER': 'destructor',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
+
+TEST_SERVER = False
+
+# TEST_COORDINATES = [49.989457, 36.252512]
+COUNTRY_CODE = 'UA'
+DEFAULT_ZOOM = [49.989457, 36.252512]
