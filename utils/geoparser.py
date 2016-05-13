@@ -61,7 +61,8 @@ class GeoJSONParser():
                         srid=4326),
                     address=feature['properties']['ADDRESS'],
                     level=geo_json['ctracker_config']['AL'],
-                    zoom=geo_json['ctracker_config']['ZOOM'])
+                    zoom=geo_json['ctracker_config']['ZOOM']
+                    )
 
                 if feature['properties']['PARENT']:
                     parent = Polygon.objects.get(

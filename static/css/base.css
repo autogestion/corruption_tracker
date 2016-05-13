@@ -26,6 +26,9 @@ a {
     color: red;
 }
 
+.right-nav{
+    float:right;
+}
 
 nav .navbar-brand {
     padding: 0;
@@ -78,10 +81,6 @@ nav .navbar-brand {
     padding-top: 13px;
 }
 
-#claim_template_global {
-    display: none;
-}
-
 #processing {
     width: 100%;
     height: 100%;
@@ -116,6 +115,11 @@ nav .navbar-brand {
     width: 5em;
 }
 
+
+.left_popup_padding {
+    padding: 0px 17px 0px 17px;
+}
+
 .claims_list_styles {
     /*width: 300px;*/
     max-width: 400px;
@@ -125,7 +129,7 @@ nav .navbar-brand {
 #legend {
     max-width: 600px;
     padding: 0px 17px 17px 17px;
-}     
+}
 
 .forms_padding {
     padding-top: 20px;
@@ -139,7 +143,7 @@ nav .navbar-brand {
     background:#ccc;
 }
 
-.hide_show_more_buttons {
+.popup_template {
     display: none;
 }
 

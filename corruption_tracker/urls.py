@@ -5,12 +5,8 @@ from django.conf import settings
 from django.contrib import admin
 from django.views.static import serve
 
-# from claim import views as claim_views
-# from geoinfo import views as geo_views
-# from . import views as main_vies
-
 from corruption_tracker import views
-# from api import views as api_views
+
 
 urlpatterns = [
     # Rest API
@@ -19,10 +15,10 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
 
-    url(r'^$', views.single, name="single"),
-
-    url(r'^login/$', views.login_user,
+    url(r'^$', views.MapPageView.as_view(), name="single"),
+    url(r'^login/$', views.LoginView.as_view(),
         name='login'),
+
     url(r'^logout/$', views.logout_user,
         name='logout'),
 
@@ -38,8 +34,6 @@ urlpatterns = [
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
-    # import debug_toolbar
-    # urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]
     urlpatterns += [url(r'^profiling/$', views.profiling)]
     
     
