@@ -45,7 +45,7 @@
             var grecaptcha_reset = true
         {% else %}
             var grecaptcha_reset = false
-        {% endif %}        
+        {% endif %}
     </script>   
 </head>
 
@@ -77,12 +77,11 @@
         </ul>
         <ul class="nav navbar-nav right-nav">
             {% if request.user.is_authenticated %}
-                <li><a href="">{{ request.user }}</a></li>
+                <li><a>Hello {{ user.get_full_name|default:user.username }}!</a></li>
                 <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
             {% else %}
                 <li><a id='login_popup' href="#">{% trans "Login" %}</a></li>
                 <li><a id='signup_popup' href="#">{% trans "Register" %}</a></li>
-                <!-- <li><a href="{% url 'api-root' %}docs/#!/sign_up/Sign_Up_create" target="_blank">{% trans "Register" %}</a></li>           -->
             {% endif %}
         </ul>
     </nav>
@@ -221,7 +220,11 @@
 
     <div id='login_popup_form' class="popup_template">
         <div class="left_popup_padding">
+
             <h3>{% trans "Login form" %}</h3>
+            <br>
+            <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a>
+            <br><br>or
             <form method='POST' action='{% url 'login' %}'>
                 {% csrf_token %}
                 <div class='form-group'>

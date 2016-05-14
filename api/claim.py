@@ -2,7 +2,7 @@ from django.contrib.gis import geos
 
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins, filters, status
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 
 from claim.models import Claim, Organization,\
     OrganizationType
@@ -36,19 +36,21 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     .
     """
 
-    queryset = Claim.objects.all()
+    queryset = Claim.objects.all().order_by('-created')
     serializer_class = ClaimSerializer
 
     permission_classes = (CanPost,)
     throttle_classes = (PostThrottle,)
-    lookup_field = 'org_id'
+    lookup_field = 'id'
 
-    filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ('created',)
-    ordering = ('created',)
+    @detail_route()
+    def user(self, request, id=None):
+        queryset = self.queryset.filter(complainer__id=id)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
-    def retrieve(self, request, org_id=None):
-        queryset = Claim.objects.filter(organization__id=org_id)
+    def retrieve(self, request, id=None):
+        queryset = self.queryset.filter(organization__id=id)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -59,6 +61,8 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         return Response(serializer.data)
 
     def perform_create(self, serializer):
+        print(self.request.user)
+        print(self.request.auth)
         user = None if self.request.user.is_anonymous() else self.request.user
         serializer.save(complainer=user)
 

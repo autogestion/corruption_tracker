@@ -21,15 +21,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.gis',
 
-    # 'debug_toolbar',
-
-    # 'allauth',
-    # 'allauth.account',
-    # 'allauth.socialaccount',
-    # 'allauth.socialaccount.providers.facebook',
+    'social.apps.django_app.default',
     'oauth2_provider',
     'rest_framework',
-    # 'rest_framework.authtoken',
     'rest_framework_swagger',
     'leaflet',
 
@@ -51,15 +45,25 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    
 )
 
 AUTHENTICATION_BACKENDS = (
-    # 'oauth2_provider.backends.OAuth2Backend',
+    'social.backends.facebook.FacebookOAuth2',
+    'oauth2_provider.backends.OAuth2Backend',
     'django.contrib.auth.backends.ModelBackend',
-    # 'allauth.account.auth_backends.AuthenticationBackend'
 )
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+   'PAGE_SIZE': 50,
+   # 'URL_FORMAT_OVERRIDE': None,
+}
 
 ROOT_URLCONF = 'corruption_tracker.urls'
 
@@ -70,6 +74,8 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -117,7 +123,7 @@ LOGIN_REDIRECT_URL = '/'
 # Could be switched to another folder with geojsons
 INIT_GEOJSON_FOLDER = os.path.join(BASE_DIR, 'init_geo_data')
 
-LEAFLET_CONFIG = { 
+LEAFLET_CONFIG = {
     'RESET_VIEW': False,
 	'PLUGINS': {
 	'fontawesome': {
@@ -164,17 +170,9 @@ GEOIP_PATH = os.path.join(BASE_DIR, 'geoinfo', 'geolite')
 MEMCACHED_HOST = ('127.0.0.1', 11211)
 
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
-    ),
-   'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
-    ),
-   'PAGE_SIZE': 50,
-   # 'URL_FORMAT_OVERRIDE': None,
-}
 
+
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
 try:
     from .local_settings import *

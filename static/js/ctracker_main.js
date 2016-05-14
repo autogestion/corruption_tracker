@@ -11,9 +11,7 @@ function signup(event){
         success: function(data){
             $("#claims_list").html($("#login_popup_form").html());
             $("#claims_list form").attr('id', 'login_form');
-            console.log(username);
             $('#login_form #id_login').val(username);
-            console.log($('#login_form #id_login').val());
             $( "<p>You can login with</p>" ).insertBefore( "#claims_list form" );
         },
         error: function(data){
@@ -69,16 +67,11 @@ $(document).ready(function () {
         $("#claims_list").html($("#signup_popup_form").html());
         $("#claims_list form").attr('id', 'signup_form');
     });
-    $("#signup_form").submit(function(event){
-        signup(event);
-    });
 
 
     $('#close_claims_list').on('click', function() { 
         $("#claims_list").html('')
     });
-
-
 
 
 });

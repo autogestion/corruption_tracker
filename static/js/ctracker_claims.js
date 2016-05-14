@@ -101,13 +101,13 @@ function select_building (org_id, coordinates) {
                         if (data[i]['bribe']) { message = template.replace('%bribe%', data[i]['bribe']);}
                         else { message = template.replace('%bribe%', '0');};
 
-                        if (data[i]['complainer']) { message = message.replace('%complainer%', data[i]['complainer']);}
+                        if (data[i]['complainer']) { message = message.replace('%complainer%', '<a id="%complainer_id%" href="#"" class="claims_of_user">' + data[i]['complainer_name'] + '</a>');}
                         else { message = message.replace('%complainer%', 'Anon');};
 
                         message = message.replace('%servant%', data[i]['servant']);
                         message = message.replace('%claim_type%', data[i]['claim_type']);
                         message = message.replace('%text%', data[i]['text']);
-                        message = message.replace('%created%', data[i]['created']);                       
+                        message = message.replace('%created%', data[i]['created']);
 
                         if (data[i]['claim_icon']) {
                             message = message.replace('<div class="claim_icon"></div>',  

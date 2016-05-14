@@ -2,7 +2,8 @@
 
 from django.conf.urls import include, url, static
 from django.conf import settings
-from django.contrib import admin
+# from django.contrib import admin
+from django.contrib.gis import admin
 from django.views.static import serve
 
 from corruption_tracker import views
@@ -11,11 +12,12 @@ from corruption_tracker import views
 urlpatterns = [
     # Rest API
     url(r'^api/', include('api.urls')),
-    # url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
 
     url(r'^$', views.MapPageView.as_view(), name="single"),
+
+    url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^login/$', views.LoginView.as_view(),
         name='login'),
 
@@ -35,5 +37,3 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += [url(r'^profiling/$', views.profiling)]
-    
-    
