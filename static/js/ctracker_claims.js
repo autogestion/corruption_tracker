@@ -77,6 +77,26 @@ function clear_claim_form(){
 }
 
 
+function process_claim_template(template, data) {
+    var message;
+    if (data['bribe']) { message = template.replace('%bribe%', data['bribe']);}
+    else { message = template.replace('%bribe%', '0');};
+
+    message = message.replace('%servant%', data['servant']);
+    message = message.replace('%claim_type%', data['claim_type']);
+    message = message.replace('%text%', data['text']);
+    message = message.replace('%created%', data['created']);
+
+    if (data['claim_icon']) {
+        message = message.replace('<div class="claim_icon"></div>',  
+            '<div class="claim_icon"><img src="' + data['claim_icon'] + '"></div>');
+    }
+
+    return message;
+
+}
+
+
 function select_building (org_id, coordinates) {
     fill_claim_form(org_id);
     window.location.hash = "organization=" + org_id + "&zoom_to=" + coordinates; 
@@ -88,7 +108,7 @@ function select_building (org_id, coordinates) {
                 var messages = "";
                 var template, message, template_button;
 
-                template = document.getElementById('claim_template_global').innerHTML;
+                template = document.getElementById('claim_template_for_org').innerHTML;
                 template_button = document.getElementById('show_all_button_template').innerHTML;
 
                 var records = [];
@@ -98,25 +118,15 @@ function select_building (org_id, coordinates) {
                 for (var i = data.length - 1; i >= 0; i--) {
 
                     if (count < 3) {
-                        if (data[i]['bribe']) { message = template.replace('%bribe%', data[i]['bribe']);}
-                        else { message = template.replace('%bribe%', '0');};
+                        message = process_claim_template(template, data[i])
 
-                        if (data[i]['complainer']) { message = message.replace('%complainer%', '<a id="%complainer_id%" href="#"" class="claims_of_user">' + data[i]['complainer_name'] + '</a>');}
+                        if (data[i]['complainer']) { message = message.replace('%complainer%', 
+                            '<a id="' + data[i]['complainer'] + '" href="#" class="claims_of_user" onclick="get_claims_for_user('+data[i]['complainer']+','+ "'"+data[i]['complainer_name']+ "'"+')">' + data[i]['complainer_name'] + '</a>');}
                         else { message = message.replace('%complainer%', 'Anon');};
-
-                        message = message.replace('%servant%', data[i]['servant']);
-                        message = message.replace('%claim_type%', data[i]['claim_type']);
-                        message = message.replace('%text%', data[i]['text']);
-                        message = message.replace('%created%', data[i]['created']);
-
-                        if (data[i]['claim_icon']) {
-                            message = message.replace('<div class="claim_icon"></div>',  
-                                '<div class="claim_icon"><img src="' + data[i]['claim_icon'] + '"></div>');
-                        }
                         messages += message;
                         count += 1
                     } 
-                    record = {recid: i+1, complainer: data[i]['complainer'], servant: data[i]['servant'], claim_type: data[i]['claim_type'],
+                    record = {recid: i+1, complainer: data[i]['complainer_name'], servant: data[i]['servant'], claim_type: data[i]['claim_type'],
                                 text: data[i]['text'], bribe: data[i]['bribe'], created: data[i]['created']};
                     records.push(record);
                 }
@@ -137,6 +147,40 @@ function select_building (org_id, coordinates) {
             }                
         });
 }
+
+
+function get_claims_for_user(user_id, username){
+    $.ajax({
+            type: "GET",
+            url: api_url + 'claim/' + user_id + "/user/",
+            success: function(data){
+                console.log(data);
+                var messages = "";
+                var template, message;
+
+                template = document.getElementById('claim_template_for_user').innerHTML;          
+            
+                var count = 0               
+                for (var i = data.length - 1; i >= 0; i--) {
+
+                    if (count < 5) {
+                        message = process_claim_template(template, data[i]);
+                        message = message.replace('%organization%',  data[i]['organization_name']);
+                       
+                        messages += message;
+                        count += 1
+                    }                
+                }                            
+                messages = '<h3>Claims for '+username+'</h3>' + messages
+                            
+                $('<div class="claims_list_styles" style="float:right">' + messages + '</div>').insertAfter(".claims_list_styles" );                
+            }, 
+            error: function(data){
+                console.log(data.responseText)
+            }                
+        });    
+}
+
 
 
 function add_claim(event){

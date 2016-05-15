@@ -46,6 +46,10 @@ $(document).ready(function () {
         add_organization(event)
     });
 
+    // $(".claims_of_user").on('click', function() { 
+    //     get_claims_for_user();
+    // });
+
 
     $("#about").on('click', function() { 
         $("#claims_list").html($("#who_is_there").html())

@@ -201,10 +201,10 @@
 
 
     <!-- ======            ======  Popup templates  ====                ===== -->
-    <div id="claim_template_global" class="popup_template">
+    <div id="claim_template_for_org" class="popup_template">
         <div class='claim_icon'></div>
         <div class="claim_tempalte">
-            <div class="complainer"><b>{% trans "Complainer" %}:</b> <span>%complainer%</span></div>
+            <div class="complainer"><b>{% trans "Complainer" %}:</b> %complainer%</div>
             <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
             <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
             <div class="bribe"><b>{% trans "Bribe amount" %}:</b> <span>%bribe%</span></div>
@@ -213,6 +213,20 @@
             <hr>
         </div>
     </div>
+
+    <div id="claim_template_for_user" class="popup_template">
+        <div class='claim_icon'></div>
+        <div class="claim_tempalte">
+            <div class="organization"><b>{% trans "Organization" %}:</b> <span>%organization%</span></div>
+            <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
+            <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
+            <div class="bribe"><b>{% trans "Bribe amount" %}:</b> <span>%bribe%</span></div>
+            <div class="claim"><b>{% trans "Claim text" %}:</b> <span>%text%</span></div>
+            <div class="created"><b>{% trans "Created" %}:</b> <span>%created%</span></div>
+            <hr>
+        </div>
+    </div>
+
     <div id="show_all_button_template" class="popup_template">       
         <button class="btn" onclick="w2ui_popup()">{% trans "Show all claims as table" %}</button>
     </div>

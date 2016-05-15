@@ -121,9 +121,9 @@ nav .navbar-brand {
 }
 
 .claims_list_styles {
-    /*width: 300px;*/
     max-width: 400px;
     padding: 0px 17px 17px 17px;
+    display: inline-block;
 }
 
 #legend {
