@@ -168,9 +168,9 @@ function main_map_init (map, options) {
 
         }); // get json
         
-        console.time("leaflet add poly to map in");
-        districtLayer.addTo(map);  
-        console.timeEnd("leaflet add poly to map in");   
+        console.time("districtLayer.addTo(map) executed in");
+        districtLayer.addTo(map);
+        console.timeEnd("districtLayer.addTo(map) executed in");   
         console.timeEnd("updateMapLayer executed in");
     }; // end of updateMapLayer
 

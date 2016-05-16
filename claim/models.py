@@ -116,34 +116,6 @@ class Organization(models.Model):
     def claims(self):
         return self.moderation_filter().count()
 
-    # def json_claims(self, limit=999):
-    #     claims = self.moderation_filter()
-
-    #     claims_list = []
-
-    #     if claims:
-    #         for claim in claims:
-    #             claim_type = claim.claim_type.name if\
-    #                 claim.claim_type else _('Others')
-    #             claim_icon = claim.claim_type.icon.url if\
-    #                 claim.claim_type.icon else False
-    #             username = claim.complainer.username if\
-    #                 claim.complainer else _("Anon")
-    #             bribe = claim.bribe if claim.bribe else 0
-    #             claims_list.append({
-    #                 'organization_id': self.id,
-    #                 'organization_name': self.name,
-    #                 'text': claim.text,
-    #                 'servant': claim.servant,
-    #                 'complainer': username,
-    #                 'claim_type': claim_type,
-    #                 'created': claim.created.strftime('%Y-%m-%d %H:%M:%S'),
-    #                 'claim_icon': claim_icon,
-    #                 'bribe': bribe
-    #             })
-
-    #     return claims_list[:limit]
-
     def __str__(self):
         return self.name
 
@@ -167,8 +139,7 @@ class Claim(models.Model):
     servant = models.CharField(max_length=550)
     complainer = models.ForeignKey(User, null=True, blank=True, default=None)
     claim_type = models.ForeignKey(ClaimType, null=True, blank=True,
-                                   default=None)
-    # moderation = models.ForeignKey(ModerationStatus, default='not_moderated')
+                                   default=None)    
     moderation = models.CharField(choices=STATUSES, max_length=50,
                                   default='not_moderated')
     bribe = models.IntegerField(blank=True, null=True)

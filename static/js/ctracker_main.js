@@ -1,4 +1,27 @@
 
+function signup(event){
+    post_data = $('#signup_form').serialize();
+    var username =  $('#signup_form #username').val();
+
+    $.ajax({
+        type: "POST",
+        url: api_url + 'sign_up/',
+        data: post_data,
+
+        success: function(data){
+            $("#claims_list").html($("#login_popup_form").html());
+            $("#claims_list form").attr('id', 'login_form');
+            $('#login_form #id_login').val(username);
+            $( "<p>You can login with</p>" ).insertBefore( "#claims_list form" );
+        },
+        error: function(data){
+            console.log(data.responseText)
+            $( "<p>Register error</p>" ).insertBefore( "#claims_list form" );
+        }                
+    });
+    return false;
+}
+
 
 $(document).ready(function () {
 
@@ -15,29 +38,40 @@ $(document).ready(function () {
         }
     });
 
+
     $("#claim_form").submit(function(event){
         add_claim(event);
     });
-
     $("#org_form").submit(function(event){
         add_organization(event)
     });
 
+    // $(".claims_of_user").on('click', function() { 
+    //     get_claims_for_user();
+    // });
+
 
     $("#about").on('click', function() { 
-        $("#claims_list").html(' <span id="close_claims_list">x</span><div id="legend"><h3>Подолати корупцію в один клік.</h3>' +
-        '<p>Кожен громадянин України має важелі впливу на корупційну діяльність. Це - особиста відповідальність та публічність.</p>' +
-        '<p>Відповідальність спонукає зробити вибір підтримувати чи не підтримувати корупцію. А публічність нівелює прояви корупції, якщо вибір було зроблено на користь її подолання.</p>' +
-        '<p>Питання стоїть лише за інструментом, який поєднає особисте прагнення здолати корупцію в Україні з максимальним розголосом актів корупційної діяльності.</p>' +
-        '<p>Система є таким інструментом. Основний акцент у ній зроблено на можливості зафіксувати корупційну діяльність на місці її вчинення. Далі акцент зміщується у публічну сферу. Розголос набуває форми структурованої мапи корупції.</p>' +
-        '<p>Так, Система є найпростішим способом вести облік корупційної активності. А універсальність її даних відкриває можливість боротьби з корупцією на всіх рівнях: від рівня особистого невдоволення до рівня громадянського суспільства чи законодавчих ініціатив.</p>' +
-        '<p>А потрібно лише зробити один клік "Повідомити".</p>' +       
-        '<h3>Проекту потрібні</h3><ul><li>Javascript UI Developer</li><li>Mobile Developer (iOS, Android)</li><li>Та інші.</li></ul>' +
-        '<h3>Долучится до розробки можна</h3><ul>' +
-            '<li>на GitHup => <a href="https://github.com/autogestion/corruption_tracker" target="_blank">Corruption tracker</a></li>' +
-            '<li>у Facebook спільноті => <a href="https://www.facebook.com/activecorruptiontracking/" target="_blank">Система учёта коррупционной активности</a></li>' +
-           '</ul></div>')
+        $("#claims_list").html($("#who_is_there").html())
     });
+
+
+    $("#login_popup").on('click', function() {
+        $("#claims_list").html($("#login_popup_form").html());
+        $("#claims_list form").attr('id', 'login_form');
+    });
+    if (login_error) {        
+        $("#claims_list").html($("#login_popup_form").html());
+        $("#claims_list form").attr('id', 'login_form');
+        $( "<p>Login error</p>" ).insertBefore( "#claims_list form" );
+    }
+
+
+    $("#signup_popup").on('click', function() {
+        $("#claims_list").html($("#signup_popup_form").html());
+        $("#claims_list form").attr('id', 'signup_form');
+    });
+
 
     $('#close_claims_list').on('click', function() { 
         $("#claims_list").html('')
