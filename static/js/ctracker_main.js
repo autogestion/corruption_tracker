@@ -51,9 +51,31 @@ $(document).ready(function () {
     // });
 
 
-    $("#about").on('click', function() { 
-        $("#claims_list").html($("#who_is_there").html())
+    // $("#about").on('click', function() { 
+    //     $("#claims_list").html($("#who_is_there").html())
+    // });
+
+    $("#about-btn").click(function() {
+      $("#aboutModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
+    });    
+
+
+    $("#login-btn").click(function() {
+      $("#loginModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
     });
+
+    $("#register-btn").click(function() {
+      $("#registerModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
+    });    
+
+
+
 
 
     $("#login_popup").on('click', function() {

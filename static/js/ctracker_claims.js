@@ -83,7 +83,7 @@ function process_claim_template(template, data) {
     else { message = template.replace('%bribe%', '0');};
 
     message = message.replace('%servant%', data['servant']);
-    message = message.replace('%claim_type%', data['claim_type']);
+    message = message.replace('%claim_type%', data['claim_type_name']);
     message = message.replace('%text%', data['text']);
     message = message.replace('%created%', data['created']);
 

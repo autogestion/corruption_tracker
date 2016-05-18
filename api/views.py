@@ -56,7 +56,7 @@ class SignUp(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = (IsAuthenticatedOrCreate,)
 
 
-class GetUpdatedViewSet(viewsets.ViewSet):
+class GetUpdatedViewSet(viewsets.GenericViewSet):
     """
     API endpoint for getting new added organizations and poligons.
 
@@ -74,6 +74,8 @@ class GetUpdatedViewSet(viewsets.ViewSet):
 
     .
     """
+    queryset = Polygon.objects.all()
+    serializer_class = PolygonNoShapeSerializer
 
     permission_classes = (IsSafe,)
     lookup_value_regex = '\d{4}-\d{2}-\d{2}'
@@ -81,14 +83,29 @@ class GetUpdatedViewSet(viewsets.ViewSet):
 
     @detail_route()
     def polygon(self, request, date=None):
+
         start_date = datetime.datetime.strptime(date, '%Y-%m-%d')
         queryset = Polygon.objects.filter(updated__gte=start_date)
-        serializer = PolygonNoShapeSerializer(queryset, many=True)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer =self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
 
     @detail_route()
     def organization(self, request, date=None):
         start_date = datetime.datetime.strptime(date, '%Y-%m-%d')
         queryset = Organization.objects.filter(updated__gte=start_date)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = OrganizationSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = OrganizationSerializer(queryset, many=True)
         return Response(serializer.data)
