@@ -1,18 +1,17 @@
 
 function signup(event){
-    post_data = $('#signup_form').serialize();
-    var username =  $('#signup_form #username').val();
-
     $.ajax({
         type: "POST",
         url: api_url + 'sign_up/',
-        data: post_data,
+        data: $('#signup_form').serialize(),
 
         success: function(data){
-            $("#claims_list").html($("#login_popup_form").html());
-            $("#claims_list form").attr('id', 'login_form');
-            $('#login_form #id_login').val(username);
-            $( "<p>You can login with</p>" ).insertBefore( "#claims_list form" );
+            console.log(data.username);
+            $('#login_form #id_login').val(data.username);
+            $( "<p>You can login with</p>" ).insertBefore( "#login_form" );
+            $("#registerModal").modal("hide");
+            $("#loginModal").modal("show");
+            $(".navbar-collapse.in").collapse("hide");
         },
         error: function(data){
             console.log(data.responseText)
@@ -21,6 +20,7 @@ function signup(event){
     });
     return false;
 }
+
 
 
 $(document).ready(function () {
@@ -38,6 +38,13 @@ $(document).ready(function () {
         }
     });
 
+    $("#back_button").click(function() {
+      $("#userclaimsModal").modal("hide");
+      $("#claimsModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
+    });   
+
 
     $("#claim_form").submit(function(event){
         add_claim(event);
@@ -46,36 +53,30 @@ $(document).ready(function () {
         add_organization(event)
     });
 
-    // $(".claims_of_user").on('click', function() { 
-    //     get_claims_for_user();
-    // });
+
+    $("#about-btn").click(function() {
+      $("#aboutModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
+    });    
 
 
-    $("#about").on('click', function() { 
-        $("#claims_list").html($("#who_is_there").html())
+    $("#login-btn").click(function() {
+      $("#loginModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
     });
-
-
-    $("#login_popup").on('click', function() {
-        $("#claims_list").html($("#login_popup_form").html());
-        $("#claims_list form").attr('id', 'login_form');
-    });
-    if (login_error) {        
-        $("#claims_list").html($("#login_popup_form").html());
-        $("#claims_list form").attr('id', 'login_form');
-        $( "<p>Login error</p>" ).insertBefore( "#claims_list form" );
+    if (login_error) {
+        $("#login-error").html(login_error);
+        $("#loginModal").modal("show");
+        $(".navbar-collapse.in").collapse("hide"); 
     }
 
 
-    $("#signup_popup").on('click', function() {
-        $("#claims_list").html($("#signup_popup_form").html());
-        $("#claims_list form").attr('id', 'signup_form');
+    $("#register-btn").click(function() {
+      $("#registerModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
     });
-
-
-    $('#close_claims_list').on('click', function() { 
-        $("#claims_list").html('')
-    });
-
 
 });

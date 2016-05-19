@@ -1,12 +1,14 @@
 
 body {
     background-color: black;
+    padding-top: 50px;
 }
 
 a {
     color: white; 
 }
  
+
 .button_red{
     background-color: red;
     color: white;
@@ -41,7 +43,8 @@ nav .navbar-brand {
 }
 
 .navbar-brand > img {
-    display: inline;
+    top: -15px;
+    position: relative;
 }
 
 .nav-tabs>li {
@@ -62,10 +65,9 @@ nav .navbar-brand {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGO6UAQAAhsBRcwUOXgAAAAASUVORK5CYII=');
 }
 
-/* Copypaste from github, just to keep it nicer */
 .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
 .autocomplete-suggestion { padding: 2px 5px; 
-    /*white-space: nowrap; */
+
     overflow: hidden;
     cursor: pointer; }
 .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
@@ -95,10 +97,16 @@ nav .navbar-brand {
 }
 
 
-.map_popup {
+.map_popup {    
     background-color: black;
     color: white;  
 }
+
+. modal-content {
+    margin-top: 60px;
+}
+
+
 
 #claims_list {
     padding-bottom: 12px;
@@ -200,6 +208,5 @@ nav .navbar-brand {
         border-color: initial;
     }
 }
-
 
 

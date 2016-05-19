@@ -83,7 +83,7 @@ function process_claim_template(template, data) {
     else { message = template.replace('%bribe%', '0');};
 
     message = message.replace('%servant%', data['servant']);
-    message = message.replace('%claim_type%', data['claim_type']);
+    message = message.replace('%claim_type%', data['claim_type_name']);
     message = message.replace('%text%', data['text']);
     message = message.replace('%created%', data['created']);
 
@@ -121,7 +121,7 @@ function select_building (org_id, coordinates) {
                         message = process_claim_template(template, data[i])
 
                         if (data[i]['complainer']) { message = message.replace('%complainer%', 
-                            '<a id="' + data[i]['complainer'] + '" href="#" class="claims_of_user" onclick="get_claims_for_user('+data[i]['complainer']+','+ "'"+data[i]['complainer_name']+ "'"+')">' + data[i]['complainer_name'] + '</a>');}
+                            '<a style="color:red;" id="' + data[i]['complainer'] + '" href="#" class="claims_of_user" onclick="get_claims_for_user('+data[i]['complainer']+','+ "'"+data[i]['complainer_name']+ "'"+')">' + data[i]['complainer_name'] + ' <--> Click to see claims for user' +'</a>');}
                         else { message = message.replace('%complainer%', 'Anon');};
                         messages += message;
                         count += 1
@@ -135,12 +135,14 @@ function select_building (org_id, coordinates) {
 
                 // template_button = template_button.replace('%org_id%', org_id);
                 if (messages == "") {
-                    messages = '<h3>Claims</h3>No claims for this polygon';
-                    template_button= '';} else {
-                    messages = '<h3>Claims</h3>' + messages
-                    };            
-                $("#claims_list").html('<div class="claims_list_styles">'+messages + template_button+'</div>');
+                    messages = 'No claims for this polygon';
+                    template_button= '';} 
 
+                $("#claimsModal .modal-body").html(messages+template_button);
+                $("#claimsModal .modal-title").html('Claims');          
+
+                $("#claimsModal").modal("show");
+                $(".navbar-collapse.in").collapse("hide");
             },
             error: function(data){
                 console.log(data.responseText)
@@ -163,17 +165,22 @@ function get_claims_for_user(user_id, username){
                 var count = 0               
                 for (var i = data.length - 1; i >= 0; i--) {
 
-                    if (count < 5) {
+                    if (count < 4) {
                         message = process_claim_template(template, data[i]);
                         message = message.replace('%organization%',  data[i]['organization_name']);
                        
                         messages += message;
                         count += 1
                     }                
-                }                            
-                messages = '<h3>Claims for '+username+'</h3>' + messages
-                            
-                $('<div class="claims_list_styles" style="float:right">' + messages + '</div>').insertAfter(".claims_list_styles" );                
+                }
+              
+                $("#userclaimsModal .modal-body").html(messages);
+                $("#userclaimsModal .modal-title").html('Claims for '+ username);                              
+
+                $("#claimsModal").modal("hide");
+                $("#userclaimsModal").modal("show");
+                $(".navbar-collapse.in").collapse("hide");                            
+                        
             }, 
             error: function(data){
                 console.log(data.responseText)

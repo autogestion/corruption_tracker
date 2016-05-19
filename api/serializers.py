@@ -35,10 +35,11 @@ class ClaimTypeSerializer(serializers.ModelSerializer):
 
 class ClaimSerializer(serializers.ModelSerializer):
     organization_name = serializers.ReadOnlyField(source='organization.name')
+    claim_type_name = serializers.ReadOnlyField(source='claim_type.name')
     created = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",
                                         read_only=True)
 
-    complainer_name = serializers.SerializerMethodField()
+    complainer_name = serializers.SerializerMethodField()    
     claim_icon = serializers.SerializerMethodField()
 
     def get_complainer_name(self, instance):
@@ -55,17 +56,17 @@ class ClaimSerializer(serializers.ModelSerializer):
     class Meta:
         model = Claim
         fields = ('text', 'created', 'live', 'organization',
-                  'organization_name',
+                  'organization_name', 'claim_type_name',
                   'servant', 'complainer', 'complainer_name',
                   'claim_type', 'bribe', 'claim_icon')
         extra_kwargs = {'claim_type': {'required': True},
                         'complainer': {'read_only': True}}
 
-    def to_representation(self, instance):
-        ret = super(ClaimSerializer, self).to_representation(instance)
-        if instance.claim_type:
-            ret['claim_type'] = instance.claim_type.name
-        return ret
+    # def to_representation(self, instance):
+    #     ret = super(ClaimSerializer, self).to_representation(instance)
+    #     if instance.claim_type:
+    #         ret['claim_type'] = instance.claim_type.name
+    #     return ret
 
 
 class OrganizationTypeSerializer(serializers.ModelSerializer):
