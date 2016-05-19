@@ -17,11 +17,18 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
     API endpoint for listing and creating Claims.
 
-    - to get claims for organization, use .../claim/_org_id_
+    - to get claims for organization, use .../claim/_id_
 
     Example:  .../claim/13/
 
     .
+
+    - to get claims for user, use .../claim/_id_/user/
+
+    Example:  .../claim/2/user/
+
+    .
+
 
     - to add claim use POST request with next parameters:
         'text', 'live', 'organization', 'servant', 'claim_type',

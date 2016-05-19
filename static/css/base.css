@@ -8,36 +8,6 @@ a {
     color: white; 
 }
  
-/*html, body, #container {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-}
-
-
-#sidebar {
-    display: block;
-    width: 450px;
-    height: 100%;
-    max-width: 80%;
-    float: right;
-
-}
-
-.sidebar-wrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background-color: black;
-    color: white;
-}
-
-#main {
-    width: auto;
-    height: 100%;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}*/
-
 
 .button_red{
     background-color: red;
