@@ -11,11 +11,9 @@ from claim.models import Organization
 from api.permissions import IsSafe, IsAuthenticatedOrCreate
 
 from api.serializers import OrganizationSerializer, \
-    PolygonNoShapeSerializer, SignUpSerializer
+    PolygonUpdateSerializer, SignUpSerializer
 
 from django.contrib.auth.models import User
-from django.db.utils import ProgrammingError
-from rest_framework import generics
 
 from oauth2_provider.models import Application
 
@@ -28,28 +26,30 @@ def get_test_app_client():
         return 'Application with name "test_app" have to be created'
 
 
-
 class SignUp(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     # def __init__(self):
-        # self.__doc__ = 
+        # self.__doc__ =
     """
         To authorize user make next steps:
 
         1) To create user, make POST .../sign_up/ call with username and password
 
-        2) To get token, make POST .../token/ call with username, password, grant_type(='password') and client_id 
+        2) To get token, make POST .../token/ call with username, password,
+        grant_type(='password') and client_id
 
-        Request must be x-www-form-urlencoded. Client_id for test requests: 
+        Request must be x-www-form-urlencoded. Client_id for test requests:
 
-        Client_id for real client must be created in admin, and set client type to "public" and grant type to "resource owner password based"
+        Client_id for real client must be created in admin,
+        and set client type to "public" and
+        grant type to "resource owner password based"
 
-        3) To make an authenticated request, just pass the Authorization header in your requests. It's value will be "Bearer YOUR_ACCESS_TOKEN".
+        3) To make an authenticated request, just pass the Authorization
+        header in your requests. It's value will be "Bearer YOUR_ACCESS_TOKEN".
 
         .
     """ 
             # %s% get_test_app_client()
-
 
     queryset = User.objects.all()
     serializer_class = SignUpSerializer
@@ -75,7 +75,7 @@ class GetUpdatedViewSet(viewsets.GenericViewSet):
     .
     """
     queryset = Polygon.objects.all()
-    serializer_class = PolygonNoShapeSerializer
+    serializer_class = PolygonUpdateSerializer
 
     permission_classes = (IsSafe,)
     lookup_value_regex = '\d{4}-\d{2}-\d{2}'
@@ -92,10 +92,8 @@ class GetUpdatedViewSet(viewsets.GenericViewSet):
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer =self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
 
     @detail_route()
     def organization(self, request, date=None):

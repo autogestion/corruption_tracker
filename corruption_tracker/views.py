@@ -4,7 +4,7 @@ import json
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response
-from django.template import RequestContext
+# from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.gis.geoip2 import GeoIP2
@@ -12,6 +12,8 @@ from django.utils.safestring import mark_safe
 from django.views.generic import View
 from django.core.urlresolvers import reverse
 # from django.utils.translation import ugettext as _
+
+from geoip2.errors import AddressNotFoundError
 
 from utils.common import get_client_ip
 from claim.models import OrganizationType
@@ -41,9 +43,7 @@ class MapPageView(View):
         if settings.RECAPTCHA_ENABLED is False:
             settings.RECAPTCHA_PUBLIC = ''
         resp_dict['recaptcha_public'] = settings.RECAPTCHA_PUBLIC
-        # pprint(resp_dict['polygons'])
 
-        test_alarm = False
         if settings.TEST_SERVER:
             resp_dict['test_alarm'] = True
 
@@ -52,12 +52,15 @@ class MapPageView(View):
         else:
             g = GeoIP2()
             ip = get_client_ip(request)
-            if g.country(ip)['country_code'] == settings.COUNTRY_CODE:
-                resp_dict['zoom_to'] = list(g.lat_lon(ip))
-            else:
+            try:
+                if g.country(ip)['country_code'] == settings.COUNTRY_CODE:
+                    resp_dict['zoom_to'] = list(g.lat_lon(ip))
+                else:
+                    resp_dict['zoom_to'] = settings.DEFAULT_ZOOM
+            except AddressNotFoundError:
                 resp_dict['zoom_to'] = settings.DEFAULT_ZOOM
 
-        return render(request, self.template_name , resp_dict)
+        return render(request, self.template_name, resp_dict)
 
 
 class LoginView(View):
@@ -65,18 +68,18 @@ class LoginView(View):
     def get(self, request):
         return HttpResponseRedirect('/')
 
-    def post(self, request):                                                                                                                                                                                                          
-    #     login_form = AuthenticationForm(request, request.POST)
-    #     response_data = {}                                                                              
-    #     if login_form.is_valid():                                                                                                           
-    #         response_data['result'] = 'Success!'
-    #         response_data['message'] = 'You"re logged in' 
-    #     else:
-    #         response_data['result'] = 'failed'
-    #         response_data['message'] = 'You messed up'   
+    def post(self, request):
+        # login_form = AuthenticationForm(request, request.POST)
+        # response_data = {}
+        # if login_form.is_valid():
+        #     response_data['result'] = 'Success!'
+        #     response_data['message'] = 'You"re logged in'
+        # else:
+        #     response_data['result'] = 'failed'
+        #     response_data['message'] = 'You messed up'
 
-    #     return HttpResponse(json.dumps(response_data), content_type="application/json") 
-  
+        # return HttpResponse(json.dumps(response_data), content_type="application/json")
+
         logout(request)
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
@@ -87,7 +90,7 @@ class LoginView(View):
             login(request, user)
             return HttpResponseRedirect('/')
         else:
-            url = reverse('single') +'?login_error=1'
+            url = reverse('single') + '?login_error=1'
             return HttpResponseRedirect(url)
 
 
@@ -97,7 +100,5 @@ def logout_user(request):
 
 
 def profiling(request):
-    return render_to_response("profiling.html", {"queries": SqlProfilingMiddleware.Queries})
-
-
-
+    return render_to_response(
+        "profiling.html", {"queries": SqlProfilingMiddleware.Queries})

@@ -88,6 +88,10 @@ class ClaimType(models.Model):
         return ','.join([x.type_id for x in self.org_type.all()])
 
 
+class AddressException(Exception):
+    pass
+
+
 class Organization(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(null=True, blank=True)
@@ -110,7 +114,10 @@ class Organization(models.Model):
         return self.polygon_set.all().values_list('polygon_id', flat=True)
 
     def address(self):
-        return self.polygon_set.all()[0].address
+        try:
+            return self.polygon_set.all()[0].address
+        except IndexError:
+            raise AddressException
 
     @property
     def claims(self):

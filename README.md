@@ -48,3 +48,14 @@ Create the tables
 Start the server
 
     python manage.py runserver 0.0.0.0:8000
+
+
+
+## Submit a bug
+
+We would like to hear about any bugs or odd behavior that you uncover. Use the [issue tracker](../../issues/) to open a new item. When describing the issue, we recommend that you discuss the following items:
+
+  * Describe the bug
+  * Describe the steps you did to discover the bug
+  * What was the expected outcome of the above steps?
+  * Please provide screenshots, if applicable     
