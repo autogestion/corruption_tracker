@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from claim.models import Claim, Organization, ClaimType,\
-    OrganizationType
+    OrganizationType, AddressException
 from geoinfo.models import Polygon
 
 
@@ -39,7 +39,7 @@ class ClaimSerializer(serializers.ModelSerializer):
     created = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",
                                         read_only=True)
 
-    complainer_name = serializers.SerializerMethodField()    
+    complainer_name = serializers.SerializerMethodField()
     claim_icon = serializers.SerializerMethodField()
 
     def get_complainer_name(self, instance):
@@ -62,18 +62,19 @@ class ClaimSerializer(serializers.ModelSerializer):
         extra_kwargs = {'claim_type': {'required': True},
                         'complainer': {'read_only': True}}
 
-    # def to_representation(self, instance):
-    #     ret = super(ClaimSerializer, self).to_representation(instance)
-    #     if instance.claim_type:
-    #         ret['claim_type'] = instance.claim_type.name
-    #     return ret
-
 
 class OrganizationTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrganizationType
         fields = ('type_id', 'name', 'claim_types')
+
+
+class SkipEmptyListSerializer(serializers.ListSerializer):
+    @property
+    def data(self):
+        ret = super(SkipEmptyListSerializer, self).data
+        return [x for x in ret if x]
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -97,14 +98,26 @@ class OrganizationSerializer(serializers.ModelSerializer):
                   )
         extra_kwargs = {'org_type': {'required': True}}
 
+    def to_representation(self, instance):
+        try:
+            return super(OrganizationSerializer,
+                         self).to_representation(instance)
+        except AddressException:
+            pass
+
+    @classmethod
+    def many_init(cls, *args, **kwargs):
+        kwargs['child'] = cls()
+        return SkipEmptyListSerializer(*args, **kwargs)
+
 
 class PolygonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Polygon
 
-    def to_representation(self, instance):
-        if instance.shape:
+    def to_representation(self, instance, with_shape=True, dynamic=True):
+        if with_shape and instance.shape:
             geometry = json.loads(instance.shape.json)
             [x.reverse() for x in geometry["coordinates"][0]]
         else:
@@ -121,12 +134,16 @@ class PolygonSerializer(serializers.ModelSerializer):
                 'address': instance.address,
                 'parent_id': instance.layer.polygon_id if instance.layer else None,
                 'level': instance.level,
-                "polygon_claims": instance.total_claims,
-                'zoom': instance.zoom,
-                'color': instance.get_color
+                # 'zoom': instance.zoom,
             },
-            "geometry": geometry
         }
+
+        if dynamic:
+            responce["properties"]["polygon_claims"] = instance.total_claims
+            responce["properties"]['color'] = instance.get_color
+
+        if with_shape:
+            responce["geometry"] = geometry
 
         if instance.level == instance.building:
             queryset = instance.organizations.all()
@@ -136,13 +153,24 @@ class PolygonSerializer(serializers.ModelSerializer):
         return responce
 
 
-class PolygonNoShapeSerializer(serializers.ModelSerializer):
+class PolygonUpdateSerializer(PolygonSerializer):
 
     class Meta:
         model = Polygon
 
     def to_representation(self, instance):
-        return instance.polygon_to_json(shape=False)
+        return super(PolygonUpdateSerializer,
+                     self).to_representation(instance, with_shape=False,
+                                             dynamic=False)
+
+
+# class PolygonNoShapeSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = Polygon
+
+#     def to_representation(self, instance):
+#         return instance.polygon_to_json(shape=False)
 
 
 def extractor(polygon_id):

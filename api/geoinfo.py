@@ -7,7 +7,7 @@ from rest_framework import viewsets, mixins, filters
 from geoinfo.models import Polygon
 
 from api.serializers import PolygonSerializer,\
-    PolygonNoShapeSerializer, extractor
+    PolygonUpdateSerializer, extractor
 from api.permissions import IsSafe
 
 
@@ -24,7 +24,7 @@ class PolygonViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     Example:  .../polygon/?search=студ
 
     .
-    
+
     - to get polygons, filtered by layer use .../polygon/_layer_/
 
     Available layers:
@@ -39,7 +39,7 @@ class PolygonViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
 
     queryset = Polygon.objects.all().order_by('updated')
-    serializer_class = PolygonNoShapeSerializer
+    serializer_class = PolygonUpdateSerializer
 
     permission_classes = (IsSafe,)
     lookup_value_regex = '\d'
@@ -60,12 +60,13 @@ class PolygonViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return Response(serializer.data)
 
 
-
 class GetNearestPolygons(viewsets.ViewSet):
     """
-    API endpoint for getting polygons in radius (_distance_) to point (_coordinates_)
+    API endpoint for getting polygons
+    in radius (_distance_) to point (_coordinates_)
 
-    - to get nearest polygons, use .../polygon/get_nearest/_layer_/_distance_/_coordinates_
+    - to get nearest polygons,
+    use .../polygon/get_nearest/_layer_/_distance_/_coordinates_
 
     Available layers:
         region = 1
@@ -76,8 +77,8 @@ class GetNearestPolygons(viewsets.ViewSet):
     Example:  .../polygon/get_nearest/4/0.05/36.226147,49.986106/
 
     .
-    
-    - to search polygon by addres in nearest polygons, 
+
+    - to search polygon by addres in nearest polygons,
     use .../polygon/get_nearest/_layer_/_distance_/_coordinates_/?search=_value_
 
     Example:  .../polygon/get_nearest/4/0.05/36.226147,49.986106/?search=студ
@@ -103,7 +104,8 @@ class GetNearestPolygons(viewsets.ViewSet):
 
 class FitBoundsPolygons(viewsets.ViewSet):
     """
-    API endpoint for getting polygons that fit to bounds (_coordinates_ in W, S, E, N).
+    API endpoint for getting polygons
+    that fit to bounds (_coordinates_ in W, S, E, N).
 
     - to get polygons, use .../polygon/fit_bounds/_layer_/_coordinates_
 

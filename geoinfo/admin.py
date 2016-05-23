@@ -44,7 +44,7 @@ class PolygonAdmin(admin.OSMGeoAdmin):
                     'total_claims',
                     # 'claims',
                     'centroid', 'level',
-                    'zoom', 'is_verified',
+                    'is_verified',
                     'updated')
     search_fields = ('polygon_id', 'address')
     list_filter = ('level', 'is_verified', 'is_default')
@@ -53,4 +53,3 @@ class PolygonAdmin(admin.OSMGeoAdmin):
 # admin.site.register(Uploader, UploaderAdmin)
 admin.site.register(Uploader)
 admin.site.register(Polygon, PolygonAdmin)
-
