@@ -97,6 +97,7 @@ class Organization(models.Model):
     url = models.URLField(null=True, blank=True)
     org_type = models.ForeignKey(OrganizationType, null=True, blank=True)
 
+    is_verified = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
 
     def moderation_filter(self):

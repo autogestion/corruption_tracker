@@ -69,7 +69,7 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     def perform_create(self, serializer):
         print(self.request.user)
-        print(self.request.auth)
+        print(self.request.POST)
         user = None if self.request.user.is_anonymous() else self.request.user
         serializer.save(complainer=user)
 
@@ -96,21 +96,21 @@ class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
     .
 
     - to add organization use POST with next parameters:
-
+    
+    Example:
+        'shape': '{'type': 'Polygon', 'coordinates': [ [ [ 36.296753463843954,
+            50.006170131432199 ], [ 36.296990304344928, 50.006113443092367 ],
+            [ 36.296866409713009, 50.005899627208827 ], [ 36.296629569212049,
+            50.00595631580083 ], [ 36.296753463843954, 50.006170131432199 ] ] ]}',
+        'org_type': 'prosecutors',
+        'layer_id': '21citzhovt',
+        'address': 'Shevshenko street, 3',
+        'org_name': 'Ministry of defence',
+        'centroid': '36.2968099,50.0060348'
 
     .
     """
 
-    # Example:
-    #     'shape': '{'type': 'Polygon', 'coordinates': [ [ [ 36.296753463843954,
-    #         50.006170131432199 ], [ 36.296990304344928, 50.006113443092367 ],
-    #         [ 36.296866409713009, 50.005899627208827 ], [ 36.296629569212049,
-    #         50.00595631580083 ], [ 36.296753463843954, 50.006170131432199 ] ] ]}',
-    #     'org_type': 'prosecutors',
-    #     'layer_id': '21citzhovt',
-    #     'address': 'Shevshenko street, 3',
-    #     'org_name': 'Ministry of defence',
-    #     'centroid': '36.2968099,50.0060348'
 
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
@@ -178,7 +178,8 @@ class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 
         organization = Organization(
             name=request.data['name'],
-            org_type=org_type)
+            org_type=org_type,
+            is_verified=False)
         organization.save()
 
         polygon.organizations.add(organization)

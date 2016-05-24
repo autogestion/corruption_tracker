@@ -55,6 +55,7 @@ class Polygon(models.Model):
         (building, _("Houses"))
     )
     level = models.IntegerField(choices=LEVEL, default=building)
+    
     is_verified = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
 
