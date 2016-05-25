@@ -1,0 +1,49 @@
+upstream ctracker_app_server {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response (in case the Unicorn master nukes a
+  # single worker for timing out).
+
+  server unix:/home/mk/corruption_tracker/deploy/run/gunicorn.sock fail_timeout=0;
+}
+
+server {
+
+    listen   80;
+    server_name 0.0.0.0;
+
+    client_max_body_size 4G;
+
+    access_log /home/mk/corruption_tracker/deploy/logs/nginx-access.log;
+    error_log /home/mk/corruption_tracker/deploy/logs/nginx-error.log;
+ 
+    location /static/ {
+        alias   /var/www/static/;
+    }
+    
+    location /media/ {
+        alias   /var/www/media/;
+    }
+
+    location / {
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # proxy_set_header X-Forwarded-Proto https;
+
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        # proxy_buffering off;
+
+        # Try to serve static files from nginx, no point in making an
+        # *application* server like Unicorn/Rainbows! serve static files.
+        if (!-f $request_filename) {
+            proxy_pass http://ctracker_app_server;
+            break;
+        }
+    }
+
+    # Error pages
+    error_page 500 502 503 504 /500.html;
+    location = /500.html {
+        root /home/mk/corruption_tracker/static/;
+    }
+}

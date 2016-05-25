@@ -103,7 +103,7 @@ class Organization(models.Model):
     def moderation_filter(self):
         allowed_statuses = Moderator.objects.get(id=1).show_claims
         return self.claim_set.filter(
-            moderation__in=allowed_statuses).order_by('created')
+            moderation__in=allowed_statuses).order_by('-created')
 
     def first_polygon(self):
         try:

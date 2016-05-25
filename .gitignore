@@ -5,3 +5,9 @@ __pycache__/
 local_settings.py
 /media/
 /src/
+/deploy/logs/
+/deploy/run/
+/deploy/gunicorn_start
+/deploy/backup.py
+/backups/
+

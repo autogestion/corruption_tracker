@@ -18,7 +18,7 @@ def update_organizations(l):
 
 class UserBehavior(TaskSet):
     tasks = {index:1, 
-            # update_organizations:2
+            # update_organizations:1
             }
 
     # def on_start(self):
