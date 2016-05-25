@@ -49,7 +49,7 @@ msgstr "Анонім"
 
 #: corruption_tracker/settings.py:82
 msgid "Ukrainian"
-msgstr "Україньска"
+msgstr "Українська"
 
 #: corruption_tracker/settings.py:83
 msgid "English"
