@@ -1,4 +1,7 @@
 
+#locust --host=http://localhost:port-where-server-is-running/ 
+#http://localhost:8089/ 
+
 from locust import HttpLocust, TaskSet
 
 # def login(l):

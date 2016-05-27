@@ -115,6 +115,7 @@ function select_building (org_id, coordinates) {
                 var record;
                 var count = 0
                 data = data['results']
+
                 for (var i = data.length - 1; i >= 0; i--) {
 
                     if (count < 3) {

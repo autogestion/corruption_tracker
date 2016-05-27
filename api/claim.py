@@ -61,7 +61,7 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     def retrieve(self, request, id=None):
         # queryset = self.queryset.filter(organization__id=id)
         organization = Organization.objects.get(id=id)
-        queryset = organization.moderation_filter()
+        queryset = organization.moderation_filter().order_by('-created')
 
         page = self.paginate_queryset(queryset)
         if page is not None:

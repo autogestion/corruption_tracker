@@ -44,9 +44,11 @@ class Moderator(models.Model):
 
     @classmethod
     def get_moderator(cls):
-        print('cls.objects.get(id=1).values_list()')
-        print(cls.objects.filter(id=1).values_list())
         return cls.objects.get(id=1)
+
+    @classmethod
+    def allowed_statuses(cls):
+        return cls.objects.get(id=1).show_claims
 
 
 class OrganizationType(models.Model):
@@ -101,9 +103,8 @@ class Organization(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def moderation_filter(self):
-        allowed_statuses = Moderator.objects.get(id=1).show_claims
         return self.claim_set.filter(
-            moderation__in=allowed_statuses).order_by('-created')
+            moderation__in=Moderator.allowed_statuses())
 
     def first_polygon(self):
         try:

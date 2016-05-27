@@ -1,16 +1,17 @@
 from pprint import pprint
 import json
 
+
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response
-# from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.gis.geoip2 import GeoIP2
 from django.utils.safestring import mark_safe
 from django.views.generic import View
 from django.core.urlresolvers import reverse
+from django.core.cache import cache
 # from django.utils.translation import ugettext as _
 
 from geoip2.errors import AddressNotFoundError
@@ -27,7 +28,7 @@ class MapPageView(View):
         resp_dict = {
             'login_error': request.GET.get('login_error', 0),
             'page': 'single',
-            'org_types': OrganizationType.objects.all(),
+            'org_types': OrganizationType.objects.all().prefetch_related("claimtype_set"),
             'test_alarm': False}
 
         claim_type_sets = {}
@@ -38,7 +39,7 @@ class MapPageView(View):
                                       'value': claim_type.name})
             claim_type_sets[org_type.type_id] = claim_type_set
 
-        resp_dict['claim_types'] = mark_safe(json.dumps(claim_type_sets))
+        resp_dict['claim_types'] = mark_safe(json.dumps(claim_type_sets))        
 
         if settings.RECAPTCHA_ENABLED is False:
             settings.RECAPTCHA_PUBLIC = ''
@@ -46,19 +47,23 @@ class MapPageView(View):
 
         if settings.TEST_SERVER:
             resp_dict['test_alarm'] = True
+        
+        ip = get_client_ip(request)
+        # cached_zoom = cache.get('lat_lon_for::%s' % ip)
 
-        if hasattr(settings, 'TEST_COORDINATES'):
-            resp_dict['zoom_to'] = getattr(settings, 'TEST_COORDINATES')
-        else:
-            g = GeoIP2()
-            ip = get_client_ip(request)
-            try:
-                if g.country(ip)['country_code'] == settings.COUNTRY_CODE:
-                    resp_dict['zoom_to'] = list(g.lat_lon(ip))
-                else:
-                    resp_dict['zoom_to'] = settings.DEFAULT_ZOOM
-            except AddressNotFoundError:
+        # if cached_zoom is not None:
+        #     resp_dict['zoom_to']=cached_zoom
+        # else:
+        g = GeoIP2()
+        try:
+            if g.country(ip)['country_code'] == settings.COUNTRY_CODE:
+                resp_dict['zoom_to'] = list(g.lat_lon(ip))
+            else:
                 resp_dict['zoom_to'] = settings.DEFAULT_ZOOM
+        except AddressNotFoundError:
+            resp_dict['zoom_to'] = settings.DEFAULT_ZOOM
+
+            # cache.set('lat_lon_for::%s' % ip, resp_dict['zoom_to'])
 
         return render(request, self.template_name, resp_dict)
 

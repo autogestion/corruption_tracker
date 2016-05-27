@@ -10,4 +10,4 @@ python-memcached==1.57
 psycopg2==2.6.1
 geoip2==2.3.0
 #locustio==0.7.4
--e git+https://github.com/pmdarrow/locust.git#egg=locustio
+#-e git+https://github.com/pmdarrow/locust.git#egg=locustio
