@@ -24,11 +24,3 @@ class Command(BaseCommand):
         geojsons = list(map(GeoJSONParser.get_geojson_file, fullpathes))
         geojsons.sort(key=lambda x: x['ctracker_config']['AL'])
         list(map(GeoJSONParser.geojson_to_db, geojsons))
-
-        # try:
-        #     default = Polygon.objects.get(polygon_id='21citzhovt')
-        #     default.is_default = True
-        #     default.centroid = fromstr("POINT(36.226147 49.986106)", srid=4326)
-        #     default.save()
-        # except Polygon.DoesNotExist:
-        #     pass

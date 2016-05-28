@@ -85,7 +85,8 @@ class GetUpdatedViewSet(viewsets.GenericViewSet):
     def polygon(self, request, date=None):
 
         start_date = datetime.datetime.strptime(date, '%Y-%m-%d')
-        queryset = Polygon.objects.filter(updated__gte=start_date)
+        queryset = Polygon.objects.filter(updated__gte=start_date, 
+                                          is_verified=True)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -98,7 +99,7 @@ class GetUpdatedViewSet(viewsets.GenericViewSet):
     @detail_route()
     def organization(self, request, date=None):
         start_date = datetime.datetime.strptime(date, '%Y-%m-%d')
-        queryset = Organization.objects.filter(updated__gte=start_date)
+        queryset = Organization.objects.filter(updated__gte=start_date, is_verified=True)
 
         page = self.paginate_queryset(queryset)
         if page is not None:

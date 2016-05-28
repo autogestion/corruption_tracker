@@ -2,12 +2,14 @@ import json
 from pprint import pprint
 
 from django.contrib.gis.db import models
+from django.db.models import Sum, Count
 from django.utils.translation import ugettext as _
 # from django.utils.safestring import mark_safe
 from django.core.cache import cache
 
+
 # from claim.models import Organization, OrganizationType, Moderator
-from claim.models import Organization
+from claim.models import Organization, Moderator
 
 
 class Uploader(models.Model):
@@ -55,6 +57,7 @@ class Polygon(models.Model):
         (building, _("Houses"))
     )
     level = models.IntegerField(choices=LEVEL, default=building)
+    
     is_verified = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -66,11 +69,15 @@ class Polygon(models.Model):
 
     objects = models.GeoManager()
 
+    # moderation_filter
     @property
     def total_claims(self):
         claims = 0
         if self.level == self.building:
-            claims += sum([x.claims for x in self.organizations.all()])
+            claims += sum([x.claims for x in self.organizations.all()])  
+            # claims2 = sum([x.num_claims for x in self.organizations.annotate(
+            #     num_claims=Count(claim__moderation__in=Moderator.allowed_statuses()))])
+            # print(claims ,claims2)
 
         else:
             cached = cache.get('claims_for::%s' % self.polygon_id)
@@ -81,7 +88,7 @@ class Polygon(models.Model):
                 for child in childs:
                     claims += child.total_claims
 
-                cache.set('claims_for::%s' % self.polygon_id, claims)
+                cache.set('claims_for::%s' % self.polygon_id, claims, 300)
 
         return claims
 
@@ -114,7 +121,7 @@ class Polygon(models.Model):
                 self.total_claims, max_claims_value)\
                 if self.total_claims else 'grey'
 
-            cache.set('color_for::%s' % self.polygon_id, color)
+            cache.set('color_for::%s' % self.polygon_id, color, 300)
 
         return color
 

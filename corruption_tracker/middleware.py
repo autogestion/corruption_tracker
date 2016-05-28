@@ -1,8 +1,8 @@
-from django.db import connection
 import time
 import datetime
 import uuid
 
+from django.db import connection
 
 def request_id(request):
     if not hasattr(request, "request_id"):        
@@ -44,7 +44,7 @@ class SqlProfilingMiddleware():
     def process_exception(self, request, exception):
         return None
 
-    def _add_sql_queries(self, request):           
+    def _add_sql_queries(self, request):              
         for q in connection.queries:
             # q["time"] = time.time() + float(q["time"])
             q['type'] = 'sql_query'

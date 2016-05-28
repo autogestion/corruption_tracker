@@ -1,0 +1,54 @@
+Original manual - http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/ 
+
+## Install Dependencies
+sudo apt-get install python3-dev python-pip libpq-dev postgresql postgresql-contrib postgis postgresql-9.3-postgis-2.1 git supervisor nginx
+sudo pip install virtualenv virtualenvwrapper gunicorn
+nano ~/.bashrc
+    if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
+        export WORKON_HOME=$HOME/envs
+        source /usr/local/bin/virtualenvwrapper.sh
+    fi
+source ~/.bashrc
+mkvirtualenv --python=/usr/bin/python3.4 ctracker
+git clone https://github.com/autogestion/corruption_tracker.git && cd corruption_tracker
+pip install -r requirements.txt
+
+## Configure Database
+cp corruption_tracker/local_settings.py.sample  corruption_tracker/local_settings.py
+sudo su postgres
+psql
+    CREATE DATABASE ctracker;
+    \c ctracker;
+    CREATE EXTENSION postgis;
+    CREATE USER destructor WITH PASSWORD 'password';
+    GRANT ALL PRIVILEGES ON DATABASE ctracker TO destructor;
+    \q
+exit
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py initiate_db
+
+## Setup server
+cp deploy/gunicorn_start.sample deploy/gunicorn_start 
+    end edit copy
+sudo chmod u+x deploy/gunicorn_start
+sudo cp deploy/ctracker_sv.conf.sample /etc/supervisor/conf.d/ctracker_sv.conf
+    end edit copy
+mkdir deploy/logs
+touch /home/mk/corruption_tracker/deploy/logs/gunicorn_supervisor.log
+mkdir deploy/run
+sudo chmod -R g+w deploy/run
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start ctracker
+sudo cp deploy/ctracker.nginxconf.sample /etc/nginx/sites-available/ctracker.nginxconf
+    end edit copy
+sudo ln -s /etc/nginx/sites-available/ctracker.nginxconf /etc/nginx/sites-enabled/ctracker.nginxconf
+sudo rm /etc/nginx/sites-enabled/default
+sudo service nginx start
+sudo mkdir /var/www/
+sudo chmod -R 777 /var/www/
+mkdir /var/www/media
+python manage.py collectstatic
+
+sudo supervisorctl restart ctracker

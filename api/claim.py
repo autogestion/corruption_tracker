@@ -31,7 +31,8 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
 
     - to add claim use POST request with next parameters:
-        'text', 'live', 'organization', 'servant', 'claim_type',
+        required - 'text', 'organization', 'servant', 'claim_type'
+        optional - 'live', 'bribe', 'anonymously':'on'
 
     Example:
         'text': 'Покусали комарі',
@@ -50,6 +51,7 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     throttle_classes = (PostThrottle,)
     lookup_field = 'id'
 
+
     @detail_route()
     def user(self, request, id=None):
         queryset = self.queryset.filter(complainer__id=id)
@@ -57,7 +59,9 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, id=None):
-        queryset = self.queryset.filter(organization__id=id)
+        # queryset = self.queryset.filter(organization__id=id)
+        organization = Organization.objects.get(id=id)
+        queryset = organization.moderation_filter().order_by('-created')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -68,10 +72,12 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         return Response(serializer.data)
 
     def perform_create(self, serializer):
-        print(self.request.user)
-        print(self.request.auth)
-        user = None if self.request.user.is_anonymous() else self.request.user
-        serializer.save(complainer=user)
+        if self.request.user.is_anonymous() or \
+            self.request.data.get('anonymously', None):
+            serializer.save(moderation='anonymous')
+        else:
+            serializer.save(complainer=self.request.user)
+
 
 
 class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
@@ -97,20 +103,20 @@ class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 
     - to add organization use POST with next parameters:
 
+    Example:
+        'shape': '{'type': 'Polygon', 'coordinates': [ [ [ 36.296753463843954,
+            50.006170131432199 ], [ 36.296990304344928, 50.006113443092367 ],
+            [ 36.296866409713009, 50.005899627208827 ], [ 36.296629569212049,
+            50.00595631580083 ], [ 36.296753463843954, 50.006170131432199 ] ] ]}',
+        'org_type': 'prosecutors',
+        'layer_id': '21citzhovt',
+        'address': 'Shevshenko street, 3',
+        'org_name': 'Ministry of defence',
+        'centroid': '36.2968099,50.0060348'
 
     .
     """
 
-    # Example:
-    #     'shape': '{'type': 'Polygon', 'coordinates': [ [ [ 36.296753463843954,
-    #         50.006170131432199 ], [ 36.296990304344928, 50.006113443092367 ],
-    #         [ 36.296866409713009, 50.005899627208827 ], [ 36.296629569212049,
-    #         50.00595631580083 ], [ 36.296753463843954, 50.006170131432199 ] ] ]}',
-    #     'org_type': 'prosecutors',
-    #     'layer_id': '21citzhovt',
-    #     'address': 'Shevshenko street, 3',
-    #     'org_name': 'Ministry of defence',
-    #     'centroid': '36.2968099,50.0060348'
 
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
@@ -178,7 +184,8 @@ class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 
         organization = Organization(
             name=request.data['name'],
-            org_type=org_type)
+            org_type=org_type,
+            is_verified=False)
         organization.save()
 
         polygon.organizations.add(organization)

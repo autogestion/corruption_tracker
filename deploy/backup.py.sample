@@ -1,0 +1,11 @@
+#!/usr/bin/python
+import os
+import datetime
+
+
+com_line = "cd /home/mk/corruption_tracker/ && PGPASSWORD='password' pg_dump -U destructor -h localhost ctracker > 'backups/acts_%s.sql'" % datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+os.system(com_line)
+
+
+# crontab sample
+# 0 01 * * * cd /home/mk/corruption_tracker/deploy && python backup.py
