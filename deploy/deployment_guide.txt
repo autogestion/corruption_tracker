@@ -1,17 +1,13 @@
-Original manual - http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/ 
+Deploy on Ubuntu 16
 
 ## Install Dependencies
-sudo apt-get install python3-dev python-pip libpq-dev postgresql postgresql-contrib postgis postgresql-9.3-postgis-2.1 git supervisor nginx
-sudo pip install virtualenv virtualenvwrapper gunicorn
-nano ~/.bashrc
-    if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
-        export WORKON_HOME=$HOME/envs
-        source /usr/local/bin/virtualenvwrapper.sh
-    fi
-source ~/.bashrc
-mkvirtualenv --python=/usr/bin/python3.4 ctracker
+sudo apt-get install git supervisor nginx python3-dev python3-venv libpq-dev postgresql postgresql-contrib postgis memcached
+mkdir envs && cd envs/
+python3.5 -m venv ctracker
+. ctracker/bin/activate && cd
 git clone https://github.com/autogestion/corruption_tracker.git && cd corruption_tracker
 pip install -r requirements.txt
+
 
 ## Configure Database
 cp corruption_tracker/local_settings.py.sample  corruption_tracker/local_settings.py
@@ -28,7 +24,13 @@ python manage.py migrate
 python manage.py createsuperuser
 python manage.py initiate_db
 
-## Setup server
+
+## Run dev-server
+. /home/mk/envs/ctracker/bin/activate
+python manage.py runserver 0.0.0.0:8888
+
+
+## Setup production server
 cp deploy/gunicorn_start.sample deploy/gunicorn_start 
     end edit copy
 sudo chmod u+x deploy/gunicorn_start
@@ -40,7 +42,6 @@ mkdir deploy/run
 sudo chmod -R g+w deploy/run
 sudo supervisorctl reread
 sudo supervisorctl update
-sudo supervisorctl start ctracker
 sudo cp deploy/ctracker.nginxconf.sample /etc/nginx/sites-available/ctracker.nginxconf
     end edit copy
 sudo ln -s /etc/nginx/sites-available/ctracker.nginxconf /etc/nginx/sites-enabled/ctracker.nginxconf
@@ -49,6 +50,8 @@ sudo service nginx start
 sudo mkdir /var/www/
 sudo chmod -R 777 /var/www/
 mkdir /var/www/media
+    point STATIC_ROOT and MEDIA_ROOT to /var/www/ in corruption_tracker/local_settings.py
 python manage.py collectstatic
 
+## Restart production server
 sudo supervisorctl restart ctracker

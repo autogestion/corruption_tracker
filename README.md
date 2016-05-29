@@ -15,25 +15,23 @@ FB - https://www.facebook.com/activecorruptiontracking/
 
 Prerequisites
 
-    Python 3.4
+    Python 3.5
     PostgreSQL + PostGIS
     Memcached
 
-## Quickstart
-
-Create a virtual environment
-
-    virtualenv --python=/usr/bin/python3.4 ctracker
-    source ctracker/bin/activate
+## Quickstart on Ubuntu 16.04
 
 Install dependencies and project
 
-    sudo apt-get install python3.4-dev libpq-dev postgresql postgresql-contrib postgis postgresql-9.3-postgis-2.1 memcached
-    git clone git@github.com:autogestion/corruption_tracker.git
-    cd YOUR_SOURCE_DIR
+    sudo apt-get install git supervisor nginx python3-dev python3-venv libpq-dev postgresql postgresql-contrib postgis memcached
+
+    python3.5 -m venv ctracker
+    . ctracker/bin/activate
+
+    git clone git@github.com:autogestion/corruption_tracker.git && cd corruption_tracker
     pip install -r requirements.txt
 
-Create a default local settings file
+Create local settings file
 
     cp corruption_tracker/local_settings.py.sample  corruption_tracker/local_settings.py
 
