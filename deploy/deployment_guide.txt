@@ -42,11 +42,12 @@ mkdir deploy/run
 sudo chmod -R g+w deploy/run
 sudo supervisorctl reread
 sudo supervisorctl update
+sudo service nginx start
 sudo cp deploy/ctracker.nginxconf.sample /etc/nginx/sites-available/ctracker.nginxconf
     end edit copy
 sudo ln -s /etc/nginx/sites-available/ctracker.nginxconf /etc/nginx/sites-enabled/ctracker.nginxconf
 sudo rm /etc/nginx/sites-enabled/default
-sudo service nginx start
+sudo service nginx restart
 sudo mkdir /var/www/
 sudo chmod -R 777 /var/www/
 mkdir /var/www/media

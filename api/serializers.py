@@ -1,6 +1,6 @@
 
 import json
-# from pprint import pprint
+from pprint import pprint
 
 from django.contrib.auth.models import User
 from rest_framework import serializers
@@ -79,6 +79,13 @@ class SkipEmptyListSerializer(serializers.ListSerializer):
 
 class OrganizationSerializer(serializers.ModelSerializer):
 
+    def __init__(self, *args, **kwargs):
+        print('OrganizationSerializer', args, kwargs)
+        dynamic = False            
+        super(OrganizationSerializer, self).__init__(*args, **kwargs)
+        if dynamic:
+            self.fields.append('claims')
+
     centroid = serializers.CharField(write_only=True)
     address = serializers.CharField()
 
@@ -92,9 +99,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'org_type',
                   'centroid', 'address',
                   'parent_polygon_id', 'polygon_id',
-                  'shape', 'level',
-                  'claims',
-                  'polygons'
+                  'shape', 'level',                  
+                  'polygons', 'claims'
                   )
         extra_kwargs = {'org_type': {'required': True}}
 
@@ -139,8 +145,8 @@ class PolygonSerializer(serializers.ModelSerializer):
         }
 
         if dynamic:
-            responce["properties"]["polygon_claims"] = instance.total_claims
-            responce["properties"]['color'] = instance.get_color
+            responce["properties"]['color'] = instance.get_color 
+            # responce["properties"]["polygon_claims"] = instance.total_claims       
 
         if with_shape:
             responce["geometry"] = geometry
@@ -149,6 +155,15 @@ class PolygonSerializer(serializers.ModelSerializer):
             queryset = instance.organizations.all()
             serializer = OrganizationSerializer(queryset, many=True)
             responce["properties"]["organizations"] = serializer.data
+
+            if dynamic:
+                responce["properties"]["polygon_claims"]=sum(
+                    [x['claims'] for x in responce["properties"]["organizations"]])
+
+        elif dynamic:
+            responce["properties"]["polygon_claims"] = instance.total_claims
+            
+
 
         return responce
 
