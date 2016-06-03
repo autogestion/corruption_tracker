@@ -1,0 +1,29 @@
+@import "../../assets/less/palette.less";
+
+.TodosPage {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
+    .AddTodo, .TodoList {
+        max-width: 500px;
+        width: 100%;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    .AddTodo {
+
+        margin: 30px auto;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .TodoList {
+
+        .completed {
+            text-decoration: line-through !important;
+            background: @complete;
+        }
+    }
+
+}
