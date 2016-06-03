@@ -74,10 +74,15 @@ class Polygon(models.Model):
     def total_claims(self):
         claims = 0
         if self.level == self.building:
-            claims += sum([x.claims for x in self.organizations.all()])  
+            claims += sum([x.claims for x in self.organizations.all()])
+            # claims = self.organizations.aggregate(Count(claim__moderation__in=Moderator.allowed_statuses()))['claim__count']
+            # print(claims)
+
+            # print(claims, x['claims'])
             # claims2 = sum([x.num_claims for x in self.organizations.annotate(
             #     num_claims=Count(claim__moderation__in=Moderator.allowed_statuses()))])
-            # print(claims ,claims2)
+            # claims =  self.organizations.filter(claim__moderation__in=Moderator.allowed_statuses()).count()
+            # print(claims, claims2)            
 
         else:
             cached = cache.get('claims_for::%s' % self.polygon_id)
@@ -108,6 +113,7 @@ class Polygon(models.Model):
     @property
     def get_color(self):
         cached = cache.get('color_for::%s' % self.polygon_id)
+        # cached = None
         if cached is not None:
             color = cached
         else:

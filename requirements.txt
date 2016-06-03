@@ -11,3 +11,4 @@ psycopg2==2.6.1
 geoip2==2.3.0
 #locustio==0.7.4
 #-e git+https://github.com/pmdarrow/locust.git#egg=locustio
+gunicorn==19.6.0
