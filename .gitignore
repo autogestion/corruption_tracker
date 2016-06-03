@@ -10,4 +10,7 @@ local_settings.py
 /deploy/gunicorn_start
 /deploy/backup.py
 /backups/
-
+node_modules/
+npm-debug.log
+react-frontend-public/
+.DS_Store
