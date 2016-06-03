@@ -3,13 +3,6 @@
 import React    from 'react';
 import ReactDOM from 'react-dom';
 
-import Table             from 'material-ui/lib/table/table';
-import TableBody         from 'material-ui/lib/table/table-body';
-import TableHeader       from 'material-ui/lib/table/table-header';
-import TableRow          from 'material-ui/lib/table/table-row';
-import TableHeaderColumn from 'material-ui/lib/table/table-header-column';
-import TableRowColumn from 'material-ui/lib/table/table-row-column';
-
 import Todo from './Todo.jsx';
 
 import '../TodosPage.less';
@@ -40,23 +33,18 @@ class TodoList extends React.Component {
 
         return (
             <div className='TodoList'>
-                <Table
-                    fixedHeader = {true}
-                >
-                    <TableHeader
-                        displaySelectAll  = {false}
-                        adjustForCheckbox = {false}
-                    >
-                        <TableRow>
-                            <TableHeaderColumn><b>Check</b></TableHeaderColumn>
-                            <TableHeaderColumn><b>Todo</b></TableHeaderColumn>
-                            <TableHeaderColumn><b>Date</b></TableHeaderColumn>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
+                <table>
+                    <thead>
+                        <tr>
+                            <th><b>Check</b></th>
+                            <th><b>Todo</b></th>
+                            <th><b>Date</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {rows}
-                    </TableBody>
-                </Table>
+                    </tbody>
+                </table>
             </div>
         );
     }

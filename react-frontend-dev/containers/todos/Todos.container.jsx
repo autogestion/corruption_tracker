@@ -44,5 +44,5 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps)(TodosPageContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(TodosPageContainer);
 

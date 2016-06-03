@@ -11,6 +11,7 @@ import { Router } from 'react-router';
 import routes         from './config/appRoutes.jsx';
 import configureStore from './store/root.store';
 import appHistory     from './config/appHistory';
+import Map from './Map.jsx';
 
 const initialState = {};
 const store = configureStore(initialState);
@@ -23,6 +24,6 @@ ReactDOM.render(
     document.getElementById('react-view')
 );
 
-
+ReactDOM.render(Map, document.getElementById('map-container'));
 
 

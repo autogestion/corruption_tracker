@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-
-import AppBar   from 'material-ui/lib/app-bar';
 import AddTodo  from './AddTodo.jsx';
 import TodoList from './TodoList/TodoList.jsx';
 
@@ -23,10 +21,6 @@ class TodosPage extends React.Component {
 
         return (
             <div className='TodosPage'>
-                <AppBar
-                    style={{padding: 0, textAlign: 'center'}}
-                    title="< Todo key='react-redux' />"
-                />
                 <AddTodo
                     handleAddTodo   = {handleAddTodo}
                     handleClearAll  = {handleClearAll}
