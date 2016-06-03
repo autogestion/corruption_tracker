@@ -3,10 +3,6 @@
 import React    from 'react';
 import ReactDOM from 'react-dom';
 
-import TextField    from 'material-ui/lib/text-field';
-import FlatButton   from 'material-ui/lib/flat-button';
-import FontIcon     from 'material-ui/lib/font-icon';
-
 import './TodosPage.less';
 
 
@@ -26,19 +22,20 @@ class AddTodo extends React.Component {
         if (event.keyCode === 13) {
             this.handleAdTodo();
         }
+        console.log(this.refs);
 
-        const isTodoEmpty = !this.refs.todoNode.getValue().length;
+        const isTodoEmpty = !this.refs.todoNode.value.length;
         this.setState({ isDisabled: isTodoEmpty });
     }
 
     handleAdTodo() {
         const addTodo = this.refs.todoNode;
 
-        if (!addTodo.getValue().length) return false;
+        if (!addTodo.value.length) return false;
 
-        this.props.handleAddTodo({todo: addTodo.getValue()});
+        this.props.handleAddTodo({todo: addTodo.value});
 
-        addTodo.setValue('');
+        addTodo.value = '';
     }
 
     render() {
@@ -50,25 +47,22 @@ class AddTodo extends React.Component {
 
         return (
             <div className='AddTodo'>
-                <TextField
-                    ref       = 'todoNode'
-                    hintText  = 'Enter todo'
+                <input
+                    ref = 'todoNode'
+                    placeholder = 'Enter todo'
                     style     = {textFieldStyle}
                     onChange  = {this.handleChange.bind(this)}
                     onKeyDown = {this.handleChange.bind(this)}
                 />
-                <FlatButton
-                    label    = 'Add'
-                    secondary= {true}
+                <button
                     onClick  = {this.handleAdTodo.bind(this)}
                     disabled = {this.state.isDisabled}
-                />
-                <FlatButton
-                    label     = 'clear all'
-                    secondary = {true}
+                >
+                    Add</button>
+                <button
                     onClick   = {handleClearAll}
-                    disabled  = {isClearDisabled}
-                />
+                    disabled  = {isClearDisabled}>
+                    clear all</button>
             </div>
         );
     }
