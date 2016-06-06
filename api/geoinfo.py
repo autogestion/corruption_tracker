@@ -7,7 +7,7 @@ from rest_framework import viewsets, mixins, filters
 from geoinfo.models import Polygon
 
 from api.serializers import PolygonSerializer,\
-    PolygonUpdateSerializer, extractor
+    PolgygonBaseSerializer, extractor
 from api.permissions import IsSafe
 
 
@@ -39,7 +39,7 @@ class PolygonViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
 
     queryset = Polygon.objects.all().order_by('updated')
-    serializer_class = PolygonUpdateSerializer
+    serializer_class = PolgygonBaseSerializer
 
     permission_classes = (IsSafe,)
     lookup_value_regex = '\d'

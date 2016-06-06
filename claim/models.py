@@ -113,11 +113,26 @@ class Organization(models.Model):
             return None
 
     def polygons(self):
-        return self.polygon_set.all().values_list('polygon_id', flat=True)
+        polygons = None
+        cached = cache.get('polygons_for::%s' % self.id)
+        if cached is not None:
+            polygons = cached
+        else:
+            polygons = self.polygon_set.all().values_list('polygon_id', flat=True)
+            cache.set('polygons_for::%s' % self.id, polygons, 300)
+
+        return polygons
 
     def address(self):
         try:
-            return self.polygon_set.all()[0].address
+            cached = cache.get('address_for::%s' % self.id)
+            if cached is not None:
+                address = cached
+            else:
+                address = self.polygon_set.all()[0].address
+                cache.set('address_for::%s' % self.id, address, 300)
+
+            return address
         except IndexError:
             raise AddressException
 

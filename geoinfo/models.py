@@ -86,6 +86,7 @@ class Polygon(models.Model):
 
         else:
             cached = cache.get('claims_for::%s' % self.polygon_id)
+            # cached = None
             if cached is not None:
                 claims = cached
             else:

@@ -7,9 +7,7 @@ and as result track the level of it in public institutions
 
 Mobile app that works with API https://github.com/konchunas/mobilepdrk
 
-Test instance available on http://test.acts.pp.ua:8000/
-
-Test api is available on http://test.acts.pp.ua:8000/api/docs/
+Demo http://beta.acts.pp.ua/
 
 FB - https://www.facebook.com/activecorruptiontracking/
 
@@ -47,7 +45,10 @@ Start the server
 
     python manage.py runserver 0.0.0.0:8000
 
+Perfomance Tests
 
+    choose test to run in corruption_tracker.tests
+    python manage.py test --testrunner=corruption_tracker.test_runner.DefaultDbTestRunner
 
 ## Submit a bug
 

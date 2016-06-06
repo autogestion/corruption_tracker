@@ -79,12 +79,16 @@ class SkipEmptyListSerializer(serializers.ListSerializer):
 
 class OrganizationSerializer(serializers.ModelSerializer):
 
-    def __init__(self, *args, **kwargs):
-        print('OrganizationSerializer', args, kwargs)
-        dynamic = False            
+    def __init__(self, *args, **kwargs):        
+        dynamic = kwargs.pop('dynamic', False)
+        skip_address = kwargs.pop('skip_address', False)
         super(OrganizationSerializer, self).__init__(*args, **kwargs)
-        if dynamic:
-            self.fields.append('claims')
+        if not dynamic:            
+            self.fields.pop('claims', None)
+        if skip_address:
+            self.fields.pop('address', None)
+
+
 
     centroid = serializers.CharField(write_only=True)
     address = serializers.CharField()
@@ -100,7 +104,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
                   'centroid', 'address',
                   'parent_polygon_id', 'polygon_id',
                   'shape', 'level',                  
-                  'polygons', 'claims'
+                  'polygons', 
+                  'claims'
                   )
         extra_kwargs = {'org_type': {'required': True}}
 
@@ -113,22 +118,19 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
     @classmethod
     def many_init(cls, *args, **kwargs):
-        kwargs['child'] = cls()
+        kwargs['child'] = cls(**kwargs)
+        kwargs.pop('dynamic', None) 
+        kwargs.pop('skip_address', None)
         return SkipEmptyListSerializer(*args, **kwargs)
 
 
-class PolygonSerializer(serializers.ModelSerializer):
+
+class PolgygonBaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Polygon
 
-    def to_representation(self, instance, with_shape=True, dynamic=True):
-        if with_shape and instance.shape:
-            geometry = json.loads(instance.shape.json)
-            [x.reverse() for x in geometry["coordinates"][0]]
-        else:
-            geometry = None
-
+    def to_representation(self, instance):
         centroid = list(instance.centroid.coords)
         centroid.reverse()
 
@@ -138,54 +140,40 @@ class PolygonSerializer(serializers.ModelSerializer):
                 "ID": instance.polygon_id,
                 "centroid": centroid,
                 'address': instance.address,
-                'parent_id': instance.layer.polygon_id if instance.layer else None,
+                'parent_id': instance.layer_id,
                 'level': instance.level,
-                # 'zoom': instance.zoom,
             },
         }
-
-        if dynamic:
-            responce["properties"]['color'] = instance.get_color 
-            # responce["properties"]["polygon_claims"] = instance.total_claims       
-
-        if with_shape:
-            responce["geometry"] = geometry
-
-        if instance.level == instance.building:
-            queryset = instance.organizations.all()
-            serializer = OrganizationSerializer(queryset, many=True)
-            responce["properties"]["organizations"] = serializer.data
-
-            if dynamic:
-                responce["properties"]["polygon_claims"]=sum(
-                    [x['claims'] for x in responce["properties"]["organizations"]])
-
-        elif dynamic:
-            responce["properties"]["polygon_claims"] = instance.total_claims
-            
-
-
         return responce
 
 
-class PolygonUpdateSerializer(PolygonSerializer):
-
-    class Meta:
-        model = Polygon
+class PolygonSerializer(PolgygonBaseSerializer):
 
     def to_representation(self, instance):
-        return super(PolygonUpdateSerializer,
-                     self).to_representation(instance, with_shape=False,
-                                             dynamic=False)
+        responce = super(PolygonSerializer,
+                     self).to_representation(instance)
+        if instance.shape:
+            responce["geometry"] = json.loads(instance.shape.json)
+            [x.reverse() for x in responce["geometry"]["coordinates"][0]]
+        else:
+            responce["geometry"] = None
 
+        responce["properties"]['color'] = instance.get_color       
 
-# class PolygonNoShapeSerializer(serializers.ModelSerializer):
+        if instance.level == instance.building:
+            queryset = instance.organizations.all()
+            serializer = OrganizationSerializer(queryset, many=True, 
+                skip_address=True, dynamic=True)
 
-#     class Meta:
-#         model = Polygon
+            responce["properties"]["organizations"] = serializer.data
+            responce["properties"]["polygon_claims"]=sum(
+                [x['claims'] for x in responce["properties"]["organizations"]])
 
-#     def to_representation(self, instance):
-#         return instance.polygon_to_json(shape=False)
+        else:
+            responce["properties"]["polygon_claims"] = instance.total_claims
+
+        return responce
+
 
 
 def extractor(polygon_id):

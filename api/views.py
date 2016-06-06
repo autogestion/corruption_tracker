@@ -11,7 +11,7 @@ from claim.models import Organization
 from api.permissions import IsSafe, IsAuthenticatedOrCreate
 
 from api.serializers import OrganizationSerializer, \
-    PolygonUpdateSerializer, SignUpSerializer
+    PolgygonBaseSerializer, SignUpSerializer
 
 from django.contrib.auth.models import User
 
@@ -75,7 +75,7 @@ class GetUpdatedViewSet(viewsets.GenericViewSet):
     .
     """
     queryset = Polygon.objects.all()
-    serializer_class = PolygonUpdateSerializer
+    serializer_class = PolgygonBaseSerializer
 
     permission_classes = (IsSafe,)
     lookup_value_regex = '\d{4}-\d{2}-\d{2}'
