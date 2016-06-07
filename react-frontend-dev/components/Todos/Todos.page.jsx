@@ -5,7 +5,6 @@ import React from 'react';
 import AddTodo  from './AddTodo.jsx';
 import TodoList from './TodoList/TodoList.jsx';
 
-import './TodosPage.less';
 import './sass-test.scss';
 
 

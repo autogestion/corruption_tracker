@@ -3,8 +3,6 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import '../TodosPage.less';
-
 class Todo extends React.Component {
     static propTypes = {
         todo               : React.PropTypes.object,

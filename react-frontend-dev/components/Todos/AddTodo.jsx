@@ -3,9 +3,6 @@
 import React    from 'react';
 import ReactDOM from 'react-dom';
 
-import './TodosPage.less';
-
-
 class AddTodo extends React.Component {
     constructor() {
         super();
