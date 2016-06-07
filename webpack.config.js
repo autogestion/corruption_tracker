@@ -10,9 +10,7 @@ module.exports = {
     module: {
         loaders: [
             { test: /\.css$/, loader: 'style-loader!css-loader!autoprefixer-loader' },
-            { test: /\.less$/, loader: 'style-loader!css-loader!autoprefixer-loader!less-loader' },
             { test: /\.scss$/, loader: 'style-loader!css-loader!autoprefixer-loader!sass-loader' },
-
             { test: /\.gif$/, loader: 'url-loader?limit=10000&mimetype=image/gif' },
             { test: /\.jpg$/, loader: 'url-loader?limit=10000&mimetype=image/jpg' },
             { test: /\.png$/, loader: 'url-loader?limit=10000&mimetype=image/png' },

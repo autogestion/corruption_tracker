@@ -5,9 +5,6 @@ import ReactDOM from 'react-dom';
 
 import Todo from './Todo.jsx';
 
-import '../TodosPage.less';
-
-
 class TodoList extends React.Component {
     static propTypes = {
         todos              : React.PropTypes.array,
