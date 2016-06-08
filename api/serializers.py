@@ -3,6 +3,7 @@ import json
 from pprint import pprint
 
 from django.contrib.auth.models import User
+from django.db import models
 from rest_framework import serializers
 
 from claim.models import Claim, Organization, ClaimType,\
@@ -71,10 +72,11 @@ class OrganizationTypeSerializer(serializers.ModelSerializer):
 
 
 class SkipEmptyListSerializer(serializers.ListSerializer):
-    @property
-    def data(self):
-        ret = super(SkipEmptyListSerializer, self).data
-        return [x for x in ret if x]
+     def to_representation(self, data):
+        iterable = data.all() if isinstance(data, models.Manager) else data
+        return [
+            self.child.to_representation(item) for item in iterable if item
+        ]
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -147,7 +149,48 @@ class PolgygonBaseSerializer(serializers.ModelSerializer):
         return responce
 
 
+class OrgsForPolySerializer(serializers.ListSerializer):
+
+    def to_representation(self, data):
+        iterable = data.all() if isinstance(data, models.Manager) else data
+        # return [
+        #     self.child.to_representation(item) for item in iterable
+        # ]
+        polygons = []
+        polygons_with_orgs = []
+        for item in iterable:
+            item_obj, item_id = self.child.to_representation(item)
+            polygons.append(item_obj)
+            if item_id:
+                polygons_with_orgs.append(item_id)
+
+        if polygons_with_orgs:
+            queryset = Organization.objects.filter(polygon__in=polygons_with_orgs)
+            serializer = OrganizationSerializer(queryset, many=True, 
+                skip_address=True, dynamic=True)
+            orgs = serializer.data
+            for polygon in polygons:
+                for org in orgs:
+                    if polygon["properties"]['ID'] in org['polygons']:
+                        if "organizations" in polygon["properties"]:
+                            polygon["properties"]["organizations"].append(org)
+                        else:
+                            polygon["properties"]["organizations"]=[org]
+
+            for polygon in polygons:
+                polygon["properties"]["polygon_claims"]=sum(
+                [x['claims'] for x in polygon["properties"]["organizations"]])                
+
+        return polygons
+
+
 class PolygonSerializer(PolgygonBaseSerializer):
+
+    @classmethod
+    def many_init(cls, *args, **kwargs):
+        kwargs['child'] = cls()
+        return OrgsForPolySerializer(*args, **kwargs)
+
 
     def to_representation(self, instance):
         responce = super(PolygonSerializer,
@@ -158,21 +201,23 @@ class PolygonSerializer(PolgygonBaseSerializer):
         else:
             responce["geometry"] = None
 
-        responce["properties"]['color'] = instance.get_color       
+        # responce["properties"]['color'] = instance.get_color       
 
+        id_for_orgs = None
         if instance.level == instance.building:
-            queryset = instance.organizations.all()
-            serializer = OrganizationSerializer(queryset, many=True, 
-                skip_address=True, dynamic=True)
+            id_for_orgs = instance.polygon_id
+            # queryset = instance.organizations.all()
+            # serializer = OrganizationSerializer(queryset, many=True, 
+            #     skip_address=True, dynamic=True)
 
-            responce["properties"]["organizations"] = serializer.data
-            responce["properties"]["polygon_claims"]=sum(
-                [x['claims'] for x in responce["properties"]["organizations"]])
+            # responce["properties"]["organizations"] = serializer.data
+            # responce["properties"]["polygon_claims"]=sum(
+            #     [x['claims'] for x in responce["properties"]["organizations"]])
 
         else:
             responce["properties"]["polygon_claims"] = instance.total_claims
 
-        return responce
+        return responce, id_for_orgs
 
 
 

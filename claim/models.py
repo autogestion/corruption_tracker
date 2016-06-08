@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from django.db import models
+from django.db import models, connection
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.core.cache import cache
@@ -138,8 +138,17 @@ class Organization(models.Model):
 
     @property
     def claims(self):
-        return self.moderation_filter().count()
+        # return self.moderation_filter().count()
+        cursor = connection.cursor()
+        cursor.execute("""
+            SELECT COUNT(*) AS __count FROM claim_claim WHERE 
+                (claim_claim.organization_id = %d AND position(claim_claim.moderation in 
+                    (SELECT claim_moderator.show_claims  
+                    FROM claim_moderator WHERE claim_moderator.id = 1)) <>0 );                   
+            """ % self.id)
 
+        return cursor.fetchone()[0]
+  
     def __str__(self):
         return self.name
 

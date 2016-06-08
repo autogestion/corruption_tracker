@@ -45,11 +45,6 @@ Start the server
 
     python manage.py runserver 0.0.0.0:8000
 
-Perfomance Tests
-
-    choose test to run in corruption_tracker.tests
-    python manage.py test --testrunner=corruption_tracker.test_runner.DefaultDbTestRunner
-
 ## Submit a bug
 
 We would like to hear about any bugs or odd behavior that you uncover. Use the [issue tracker](../../issues/) to open a new item. When describing the issue, we recommend that you discuss the following items:
