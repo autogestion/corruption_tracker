@@ -3,7 +3,7 @@ import json
 from pprint import pprint
 
 from django.contrib.auth.models import User
-from django.db import models
+from django.db import models, connection
 from rest_framework import serializers
 
 from claim.models import Claim, Organization, ClaimType,\
@@ -79,6 +79,7 @@ class SkipEmptyListSerializer(serializers.ListSerializer):
         ]
 
 
+
 class OrganizationSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):        
@@ -89,8 +90,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
             self.fields.pop('claims', None)
         if skip_address:
             self.fields.pop('address', None)
-
-
 
     centroid = serializers.CharField(write_only=True)
     address = serializers.CharField()
@@ -153,9 +152,7 @@ class OrgsForPolySerializer(serializers.ListSerializer):
 
     def to_representation(self, data):
         iterable = data.all() if isinstance(data, models.Manager) else data
-        # return [
-        #     self.child.to_representation(item) for item in iterable
-        # ]
+
         polygons = []
         polygons_with_orgs = []
         for item in iterable:
@@ -165,10 +162,50 @@ class OrgsForPolySerializer(serializers.ListSerializer):
                 polygons_with_orgs.append(item_id)
 
         if polygons_with_orgs:
-            queryset = Organization.objects.filter(polygon__in=polygons_with_orgs)
+            queryset = Organization.objects.filter(polygon__in=polygons_with_orgs)  
+
+            # """
+            # (SELECT COUNT(*)  FROM claim_claim WHERE (claim_claim.organization_id = claim_organization.id 
+            # and position(claim_claim.moderation in (SELECT claim_moderator.show_claims  
+            # FROM claim_moderator WHERE claim_moderator.id = 1)) <>0 )) AS claims
+            # """
+
+            # queryset =  Organization.objects.raw("""
+            #     SELECT claim_organization.id, claim_organization.name, claim_organization.url, claim_organization.org_type_id, 
+            #         claim_organization.is_verified, claim_organization.updated
+            #         FROM claim_organization 
+            #         INNER JOIN geoinfo_polygon_organizations ON (claim_organization.id = geoinfo_polygon_organizations.organization_id) 
+            #         WHERE geoinfo_polygon_organizations.polygon_id IN (%s)
+            #     """ % ','.join(["'" + str(x) + "'" for x in polygons_with_orgs]))
+
+            # from django.db.models import Count
+            # queryset = Organization.objects.filter(polygon__in=polygons_with_orgs).annotate(claims=Count('claim'))  
+
             serializer = OrganizationSerializer(queryset, many=True, 
-                skip_address=True, dynamic=True)
+                skip_address=True, dynamic=False)
+
             orgs = serializer.data
+            org_ids = [x['id'] for x in orgs]
+
+            cursor = connection.cursor()
+            cursor.execute("""
+                SELECT claim_organization.id, COUNT(claim_claim.id) AS claims FROM claim_organization 
+                    LEFT OUTER JOIN claim_claim ON (claim_organization.id = claim_claim.organization_id) 
+                    WHERE (claim_organization.id IN (%s) AND position(claim_claim.moderation IN
+                        (SELECT claim_moderator.show_claims  
+                        FROM claim_moderator WHERE claim_moderator.id = 1)) <>0 )
+                    GROUP BY claim_organization.id                 
+                """ % ','.join([str(x) for x in org_ids])
+                )
+
+            claims_for_orgs = dict(cursor.fetchall())
+
+            for org in orgs:
+                if org['id'] in claims_for_orgs:
+                    org['claims']=claims_for_orgs[org['id']]
+                else:
+                    org['claims']=0
+
             for polygon in polygons:
                 for org in orgs:
                     if polygon["properties"]['ID'] in org['polygons']:
@@ -178,8 +215,9 @@ class OrgsForPolySerializer(serializers.ListSerializer):
                             polygon["properties"]["organizations"]=[org]
 
             for polygon in polygons:
-                polygon["properties"]["polygon_claims"]=sum(
-                [x['claims'] for x in polygon["properties"]["organizations"]])                
+                if polygon["properties"]["level"]==4:
+                    polygon["properties"]["polygon_claims"]=sum(
+                    [x['claims'] for x in polygon["properties"]["organizations"]])                
 
         return polygons
 
@@ -199,9 +237,7 @@ class PolygonSerializer(PolgygonBaseSerializer):
             responce["geometry"] = json.loads(instance.shape.json)
             [x.reverse() for x in responce["geometry"]["coordinates"][0]]
         else:
-            responce["geometry"] = None
-
-        # responce["properties"]['color'] = instance.get_color       
+            responce["geometry"] = None            
 
         id_for_orgs = None
         if instance.level == instance.building:
@@ -216,6 +252,8 @@ class PolygonSerializer(PolgygonBaseSerializer):
 
         else:
             responce["properties"]["polygon_claims"] = instance.total_claims
+
+        responce["properties"]['color'] = instance.get_color
 
         return responce, id_for_orgs
 

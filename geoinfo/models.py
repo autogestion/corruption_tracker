@@ -1,6 +1,7 @@
 import json
 from pprint import pprint
 
+from django.db import connection
 from django.contrib.gis.db import models
 from django.db.models import Sum, Count
 from django.utils.translation import ugettext as _
@@ -73,28 +74,38 @@ class Polygon(models.Model):
     @property
     def total_claims(self):
         claims = 0
-        if self.level == self.building:
-            claims += sum([x.claims for x in self.organizations.all()])
-            # claims = self.organizations.aggregate(Count(claim__moderation__in=Moderator.allowed_statuses()))['claim__count']
-            # print(claims)
+        p_claims = getattr(self, 'p_claims', None)
+        if p_claims is None:
+            if self.level == self.building:
+                # claims += sum([x.claims for x in self.organizations.all()])
+                # claims =  self.organizations.filter(claim__moderation__in=Moderator.allowed_statuses()).count()
 
-            # print(claims, x['claims'])
-            # claims2 = sum([x.num_claims for x in self.organizations.annotate(
-            #     num_claims=Count(claim__moderation__in=Moderator.allowed_statuses()))])
-            # claims =  self.organizations.filter(claim__moderation__in=Moderator.allowed_statuses()).count()
-            # print(claims, claims2)            
+                cursor = connection.cursor()
+                cursor.execute("""
+                    SELECT COUNT(*) AS "__count" FROM "claim_organization" INNER JOIN "geoinfo_polygon_organizations" 
+                        ON ("claim_organization"."id" = "geoinfo_polygon_organizations"."organization_id") 
+                        INNER JOIN "claim_claim" ON ("claim_organization"."id" = "claim_claim"."organization_id") 
+                        WHERE ("geoinfo_polygon_organizations"."polygon_id" = '%s' AND position(claim_claim.moderation in 
+                        (SELECT claim_moderator.show_claims FROM claim_moderator WHERE claim_moderator.id = 1)) <>0)
+                        
+                    """ % self.polygon_id)
 
-        else:
-            cached = cache.get('claims_for::%s' % self.polygon_id)
-            # cached = None
-            if cached is not None:
-                claims = cached
+                claims = cursor.fetchone()[0]          
+
             else:
-                childs = self.polygon_set.all()
-                for child in childs:
-                    claims += child.total_claims
+                cached = cache.get('claims_for::%s' % self.polygon_id)
+                # cached = None
+                if cached is not None:
+                    claims = cached
+                else:
+                    childs = self.polygon_set.all()
+                    for child in childs:
+                        claims += child.total_claims
 
-                cache.set('claims_for::%s' % self.polygon_id, claims, 300)
+                    cache.set('claims_for::%s' % self.polygon_id, claims, 300)
+            self.p_claims = claims
+        else:
+            claims = p_claims
 
         return claims
 
@@ -118,9 +129,18 @@ class Polygon(models.Model):
         if cached is not None:
             color = cached
         else:
-            if self.layer:
-                brothers = self.layer.polygon_set.all()
-                max_claims_value = max([x.total_claims for x in brothers])
+            if self.layer_id:                
+                # brothers = self.layer.polygon_set.all()
+                # max_claims_value = max([x.total_claims for x in brothers])
+                # max_claims_value = self.layer.layer_max_claims()
+
+                cached = cache.get('max_claims_for::%s' % self.layer_id)
+                if cached is not None:
+                    max_claims_value = cached
+                else:
+                    brothers = self.layer.polygon_set.all()
+                    max_claims_value = max([x.total_claims for x in brothers])
+                    cache.set('max_claims_for::%s' % self.layer_id, max_claims_value, 300)
             else:
                 max_claims_value = 0
 
@@ -132,8 +152,6 @@ class Polygon(models.Model):
 
         return color
 
-    # def orgs_count(self):
-    #     return self.organizations.all().count()
 
     def first_organization(self):
         orgs = self.organizations.all()
@@ -145,48 +163,54 @@ class Polygon(models.Model):
     def __str__(self):
         return 'Polygon ' + str(self.polygon_id)
 
-    def polygon_to_json(self, shape=True):
-        # reverse coordinates for manualy adding polgygons
-        if shape and self.shape:
-            geometry = json.loads(self.shape.json)
-            [x.reverse() for x in geometry["coordinates"][0]]
-        else:
-            geometry = None
 
-        centroid = list(self.centroid.coords)
-        centroid.reverse()
 
-        responce = {
-            "type": "Feature",
-            "properties": {
-                "ID": self.polygon_id,
-                "centroid": centroid,
-                'address': self.address,
-                'parent_id': self.layer.polygon_id if self.layer else None,
-                'level': self.level,
-                # "polygon_claims": self.claims
-            },
-            "geometry": geometry
-        }
 
-        if self.level == self.building:
-            orgs = []
-            polygon_claims = 0
-            for org in self.organizations.all():
-                org_claims = org.claims
-                polygon_claims += org_claims
-                orgs.append({'id': org.id,
-                            'name': org.name,
-                             'claims_count': org_claims,
-                             # 'claim_types': org.claim_types()
-                             'org_type_id': org.org_type.type_id
-                             })
 
-            responce["properties"]["organizations"] = orgs
-            responce["properties"]["polygon_claims"] = polygon_claims
 
-        else:
-            responce["properties"]["polygon_claims"] = self.total_claims
 
-        # print(responce)
-        return responce
+    # def polygon_to_json(self, shape=True):
+    #     # reverse coordinates for manualy adding polgygons
+    #     if shape and self.shape:
+    #         geometry = json.loads(self.shape.json)
+    #         [x.reverse() for x in geometry["coordinates"][0]]
+    #     else:
+    #         geometry = None
+
+    #     centroid = list(self.centroid.coords)
+    #     centroid.reverse()
+
+    #     responce = {
+    #         "type": "Feature",
+    #         "properties": {
+    #             "ID": self.polygon_id,
+    #             "centroid": centroid,
+    #             'address': self.address,
+    #             'parent_id': self.layer.polygon_id if self.layer else None,
+    #             'level': self.level,
+    #             # "polygon_claims": self.claims
+    #         },
+    #         "geometry": geometry
+    #     }
+
+    #     if self.level == self.building:
+    #         orgs = []
+    #         polygon_claims = 0
+    #         for org in self.organizations.all():
+    #             org_claims = org.claims
+    #             polygon_claims += org_claims
+    #             orgs.append({'id': org.id,
+    #                         'name': org.name,
+    #                          'claims_count': org_claims,
+    #                          # 'claim_types': org.claim_types()
+    #                          'org_type_id': org.org_type.type_id
+    #                          })
+
+    #         responce["properties"]["organizations"] = orgs
+    #         responce["properties"]["polygon_claims"] = polygon_claims
+
+    #     else:
+    #         responce["properties"]["polygon_claims"] = self.total_claims
+
+    #     # print(responce)
+    #     return responce

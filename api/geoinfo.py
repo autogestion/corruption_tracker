@@ -1,11 +1,11 @@
 
 from django.contrib.gis import geos
+from django.conf import settings
 
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins, filters
 
 from geoinfo.models import Polygon
-
 from api.serializers import PolygonSerializer,\
     PolgygonBaseSerializer, extractor
 from api.permissions import IsSafe
@@ -139,8 +139,12 @@ class FitBoundsPolygons(viewsets.ViewSet):
         area_coord_str = ', '.join([' '.join(x) for x in area_coord])
         area = geos.GEOSGeometry('POLYGON ((%s))' % area_coord_str)
 
-        queryset = Polygon.objects.filter(
-            centroid__within=area, level=int(layer))
+        if settings.DISPLAY_DISTRICTS and int(layer)== 4:
+            queryset = Polygon.objects.filter(
+                shape__bboverlaps=area, level__in=[3,4])
+        else:
+            queryset = Polygon.objects.filter(
+                shape__bboverlaps=area, level=int(layer))
 
         search = self.request.query_params.get('search', None)
         if search:
