@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework_swagger',
     'leaflet',
+    'corsheaders',
 
     'corruption_tracker',
     'claim',
@@ -37,6 +38,7 @@ MIDDLEWARE_CLASSES = (
     'corruption_tracker.middleware.SqlProfilingMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

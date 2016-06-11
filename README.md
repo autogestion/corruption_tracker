@@ -7,9 +7,7 @@ and as result track the level of it in public institutions
 
 Mobile app that works with API https://github.com/konchunas/mobilepdrk
 
-Test instance available on http://test.acts.pp.ua:8000/
-
-Test api is available on http://test.acts.pp.ua:8000/api/docs/
+Demo http://beta.acts.pp.ua/
 
 FB - https://www.facebook.com/activecorruptiontracking/
 
@@ -46,8 +44,6 @@ Create the tables
 Start the server
 
     python manage.py runserver 0.0.0.0:8000
-
-
 
 ## Submit a bug
 

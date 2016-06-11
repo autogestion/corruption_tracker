@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from django.db import models
+from django.db import models, connection
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.core.cache import cache
@@ -113,18 +113,42 @@ class Organization(models.Model):
             return None
 
     def polygons(self):
-        return self.polygon_set.all().values_list('polygon_id', flat=True)
+        polygons = None
+        cached = cache.get('polygons_for::%s' % self.id)
+        if cached is not None:
+            polygons = cached
+        else:
+            polygons = self.polygon_set.all().values_list('polygon_id', flat=True)
+            cache.set('polygons_for::%s' % self.id, polygons, 300)
+
+        return polygons
 
     def address(self):
         try:
-            return self.polygon_set.all()[0].address
+            cached = cache.get('address_for::%s' % self.id)
+            if cached is not None:
+                address = cached
+            else:
+                address = self.polygon_set.all()[0].address
+                cache.set('address_for::%s' % self.id, address, 300)
+
+            return address
         except IndexError:
             raise AddressException
 
     @property
     def claims(self):
-        return self.moderation_filter().count()
+        # return self.moderation_filter().count()
+        cursor = connection.cursor()
+        cursor.execute("""
+            SELECT COUNT(*) AS __count FROM claim_claim WHERE 
+                (claim_claim.organization_id = %d AND position(claim_claim.moderation in 
+                    (SELECT claim_moderator.show_claims  
+                    FROM claim_moderator WHERE claim_moderator.id = 1)) <>0 );                   
+            """ % self.id)
 
+        return cursor.fetchone()[0]
+  
     def __str__(self):
         return self.name
 
