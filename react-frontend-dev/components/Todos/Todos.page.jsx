@@ -5,7 +5,7 @@ import React from 'react';
 import AddTodo  from './AddTodo.jsx';
 import TodoList from './TodoList/TodoList.jsx';
 
-import './sass-test.scss';
+import './../../Styles/mainstyles.scss';
 
 
 class TodosPage extends React.Component {

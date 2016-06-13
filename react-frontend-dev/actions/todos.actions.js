@@ -5,9 +5,17 @@ import api from '../config/apiSingleton';
 import {
     ADD_TODO,
     CLEAR_ALL,
-    COMPLETE_TODO
-} from './types/todos.types.js';
+    COMPLETE_TODO,
+    TOGGLE_MODAL
+} from './types/types.js';
 
+export function toggleModal(showNavModal = false) {
+    console.log(showNavModal);
+   return {
+       type: TOGGLE_MODAL,
+       showNavModal
+   } 
+}
 export function addTodo(params = {}, query = {}) {
     return {
         type: ADD_TODO,
