@@ -1,5 +1,7 @@
 import json
 from pprint import pprint
+import itertools
+import operator
 
 from django.db import connection
 from django.contrib.gis.db import models
@@ -11,6 +13,7 @@ from django.core.cache import cache
 
 # from claim.models import Organization, OrganizationType, Moderator
 from claim.models import Organization, Moderator
+from api.sql import moderation_filter
 
 
 class Uploader(models.Model):
@@ -82,15 +85,14 @@ class Polygon(models.Model):
 
                 cursor = connection.cursor()
                 cursor.execute("""
-                    SELECT COUNT(*) AS "__count" FROM "claim_organization" INNER JOIN "geoinfo_polygon_organizations" 
-                        ON ("claim_organization"."id" = "geoinfo_polygon_organizations"."organization_id") 
+                    SELECT COUNT(*) AS "__count" FROM "claim_organization" 
+                        INNER JOIN "geoinfo_polygon_organizations" ON ("claim_organization"."id" = "geoinfo_polygon_organizations"."organization_id") 
                         INNER JOIN "claim_claim" ON ("claim_organization"."id" = "claim_claim"."organization_id") 
-                        WHERE ("geoinfo_polygon_organizations"."polygon_id" = '%s' AND position(claim_claim.moderation in 
-                        (SELECT claim_moderator.show_claims FROM claim_moderator WHERE claim_moderator.id = 1)) <>0)
+                        WHERE ("geoinfo_polygon_organizations"."polygon_id" = '%s' AND %s)
                         
-                    """ % self.polygon_id)
+                    """ % (self.polygon_id, moderation_filter))
 
-                claims = cursor.fetchone()[0]          
+                claims = cursor.fetchone()[0]
 
             else:
                 cached = cache.get('claims_for::%s' % self.polygon_id)
@@ -109,7 +111,8 @@ class Polygon(models.Model):
 
         return claims
 
-    def color_spot(self, value, max_value):
+    @staticmethod
+    def color_spot(value, max_value):
         if max_value:
             percent = value * 100 / max_value
         else:
@@ -122,25 +125,56 @@ class Polygon(models.Model):
         else:
             return 'red'
 
-    @property
+    @staticmethod
+    def get_max_for_layers(layer_id, level=4):
+        if level==4:
+            # x = Polygon.objects.filter(layer_id=layer_id).annotate(claimz=Count('organizations__claim')) 
+            cursor = connection.cursor()
+            cursor.execute("""
+                SELECT geoinfo_polygon.layer_id, COUNT(claim_claim.id) AS claimz FROM geoinfo_polygon 
+                        LEFT OUTER JOIN geoinfo_polygon_organizations  ON (geoinfo_polygon.polygon_id = geoinfo_polygon_organizations.polygon_id) 
+                        LEFT OUTER JOIN claim_organization ON (geoinfo_polygon_organizations.organization_id = claim_organization.id) 
+                        LEFT OUTER JOIN claim_claim ON (claim_organization.id = claim_claim.organization_id) 
+                        WHERE (geoinfo_polygon.layer_id IN (%s) AND %s)
+                        GROUP BY geoinfo_polygon.layer_id, geoinfo_polygon.polygon_id
+            """ % (','.join(["'" + str(x) + "'" for x in layer_id]), moderation_filter)
+            )
+
+            layers_tuples = cursor.fetchall()
+            layers_dict = {}
+            # sorted(layers_tuples, key=lambda x: x[0])
+            it = itertools.groupby(layers_tuples, operator.itemgetter(0))
+            for key, subiter in it:                                    
+                group_max =  max(item[1] for item in subiter) 
+                if key in layers_dict:
+                    layers_dict[key] = max(layers_dict[key], group_max)
+                else:
+                    layers_dict[key] = group_max      
+
+            max_claims_value = layers_dict
+
+        else:
+            cached = cache.get('max_claims_for::%s' % layer_id)
+            cached = None
+            if cached is not None:
+                max_claims_value = cached
+            else:
+                brothers = Polygon.objects.filter(layer_id=layer_id)
+                max_claims_value = max([x.total_claims for x in brothers])
+
+                cache.set('max_claims_for::%s' % layer_id, max_claims_value, 300)
+
+        return max_claims_value
+
+    # @property
     def get_color(self):
         cached = cache.get('color_for::%s' % self.polygon_id)
-        # cached = None
+        cached = None
         if cached is not None:
             color = cached
         else:
-            if self.layer_id:                
-                # brothers = self.layer.polygon_set.all()
-                # max_claims_value = max([x.total_claims for x in brothers])
-                # max_claims_value = self.layer.layer_max_claims()
-
-                cached = cache.get('max_claims_for::%s' % self.layer_id)
-                if cached is not None:
-                    max_claims_value = cached
-                else:
-                    brothers = self.layer.polygon_set.all()
-                    max_claims_value = max([x.total_claims for x in brothers])
-                    cache.set('max_claims_for::%s' % self.layer_id, max_claims_value, 300)
+            if self.layer_id:
+                max_claims_value = self.get_max_for_layers(self.layer_id, self.level)
             else:
                 max_claims_value = 0
 
@@ -162,10 +196,6 @@ class Polygon(models.Model):
 
     def __str__(self):
         return 'Polygon ' + str(self.polygon_id)
-
-
-
-
 
 
 

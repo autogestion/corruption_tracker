@@ -10,9 +10,11 @@ def run_kha_distritc():
 def kha_houses():
     perfomance_test('/api/polygon/fit_bounds/4/36.08374,49.96337,36.41333,50.03575/')
 
-
+def hole_ua():
+    perfomance_test('/api/polygon/fit_bounds/1/22.89551,46.00459,43.98926,52.46940/')
 
 
 # run_home()
-# run_kha_distritc()
-kha_houses()
+# hole_ua()
+run_kha_distritc()
+# kha_houses()

@@ -9,7 +9,7 @@ from rest_framework import serializers
 from claim.models import Claim, Organization, ClaimType,\
     OrganizationType, AddressException
 from geoinfo.models import Polygon
-
+from api.sql import moderation_filter
 
 class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
@@ -155,31 +155,21 @@ class OrgsForPolySerializer(serializers.ListSerializer):
 
         polygons = []
         polygons_with_orgs = []
+        parents = []
         for item in iterable:
             item_obj, item_id = self.child.to_representation(item)
             polygons.append(item_obj)
             if item_id:
                 polygons_with_orgs.append(item_id)
 
+            if 'parent_id' in item_obj["properties"]:
+                if item_obj["properties"]['parent_id'] not in parents:
+                    parents.append(item_obj["properties"]['parent_id'])
+
+
         if polygons_with_orgs:
+            max_claims_dict = Polygon.get_max_for_layers(parents)
             queryset = Organization.objects.filter(polygon__in=polygons_with_orgs)  
-
-            # """
-            # (SELECT COUNT(*)  FROM claim_claim WHERE (claim_claim.organization_id = claim_organization.id 
-            # and position(claim_claim.moderation in (SELECT claim_moderator.show_claims  
-            # FROM claim_moderator WHERE claim_moderator.id = 1)) <>0 )) AS claims
-            # """
-
-            # queryset =  Organization.objects.raw("""
-            #     SELECT claim_organization.id, claim_organization.name, claim_organization.url, claim_organization.org_type_id, 
-            #         claim_organization.is_verified, claim_organization.updated
-            #         FROM claim_organization 
-            #         INNER JOIN geoinfo_polygon_organizations ON (claim_organization.id = geoinfo_polygon_organizations.organization_id) 
-            #         WHERE geoinfo_polygon_organizations.polygon_id IN (%s)
-            #     """ % ','.join(["'" + str(x) + "'" for x in polygons_with_orgs]))
-
-            # from django.db.models import Count
-            # queryset = Organization.objects.filter(polygon__in=polygons_with_orgs).annotate(claims=Count('claim'))  
 
             serializer = OrganizationSerializer(queryset, many=True, 
                 skip_address=True, dynamic=False)
@@ -191,11 +181,9 @@ class OrgsForPolySerializer(serializers.ListSerializer):
             cursor.execute("""
                 SELECT claim_organization.id, COUNT(claim_claim.id) AS claims FROM claim_organization 
                     LEFT OUTER JOIN claim_claim ON (claim_organization.id = claim_claim.organization_id) 
-                    WHERE (claim_organization.id IN (%s) AND position(claim_claim.moderation IN
-                        (SELECT claim_moderator.show_claims  
-                        FROM claim_moderator WHERE claim_moderator.id = 1)) <>0 )
+                    WHERE (claim_organization.id IN (%s) AND %s )
                     GROUP BY claim_organization.id                 
-                """ % ','.join([str(x) for x in org_ids])
+                """ % (','.join([str(x) for x in org_ids]), moderation_filter)
                 )
 
             claims_for_orgs = dict(cursor.fetchall())
@@ -217,7 +205,17 @@ class OrgsForPolySerializer(serializers.ListSerializer):
             for polygon in polygons:
                 if polygon["properties"]["level"]==4:
                     polygon["properties"]["polygon_claims"]=sum(
-                    [x['claims'] for x in polygon["properties"]["organizations"]])                
+                    [x['claims'] for x in polygon["properties"]["organizations"]])
+
+                    if 'parent_id' in polygon["properties"] and polygon["properties"]['parent_id'] in max_claims_dict:                                  
+                        max_claims = max_claims_dict[polygon["properties"]['parent_id']]                 
+                    else:
+                        max_claims = 0
+
+                    polygon["properties"]['color'] = Polygon.color_spot(polygon["properties"]["polygon_claims"], max_claims)\
+                        if polygon["properties"]["polygon_claims"] else 'grey'
+
+
 
         return polygons
 
@@ -252,8 +250,7 @@ class PolygonSerializer(PolgygonBaseSerializer):
 
         else:
             responce["properties"]["polygon_claims"] = instance.total_claims
-
-        responce["properties"]['color'] = instance.get_color
+            responce["properties"]['color'] = instance.get_color()
 
         return responce, id_for_orgs
 
