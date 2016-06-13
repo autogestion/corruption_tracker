@@ -1,7 +1,7 @@
 'use strict';
 
 import { expect }  from 'chai';
-import types       from '../../develop/actions/types/todos.types.js';
+import types       from '../../develop/actions/types/types.js';
 import todoReducer     from '../../develop/reducers/todos.reducer';
 import rootReducer from '../../develop/reducers/root.reducer';
 

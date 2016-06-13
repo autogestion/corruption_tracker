@@ -23,12 +23,20 @@ module.exports = {
             { test: /\.json$/, loader: 'json-loader'}
         ]
     },
-    plugins: [
+    plugins:  process.env.NODE_ENV === 'production' ? [
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.OccurrenceOrderPlugin(),
+        new webpack.optimize.UglifyJsPlugin(),
+        new HtmlWebpackPlugin({
+            filename: '../../index.html',
+            template: 'react-frontend-dev/index.html'
+        })] :
+        [
         new HtmlWebpackPlugin({
             filename: '../../index.html',
             template: 'react-frontend-dev/index.html'
         })
-    ],
+        ],
     eslint: {
         configFile: '.eslintrc'
     }
