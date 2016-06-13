@@ -53,3 +53,43 @@ We would like to hear about any bugs or odd behavior that you uncover. Use the [
   * Describe the steps you did to discover the bug
   * What was the expected outcome of the above steps?
   * Please provide screenshots, if applicable     
+
+## FRONTEND SINGLE-PAGE REALISATION WITH REACT
+
+## Requirements
+- ``` $ node -v ``` is a **^4.2.0**
+
+- ``` $ npm -v ``` is a **^3.0.0**
+
+
+## Instalation
+
+```
+$ npm install
+$ npm run start
+$ npm run devserver
+```
+Open your browser at http://localhost:3030.
+
+
+
+## Development
+- ``` $ npm run start ``` - Provides **compiled** bundles to 'public' directory.
+
+- ``` $ npm run devserver ``` - Runs the project in development mode with hot-reloading of 'public' folder. Open your browser at http://localhost:3030.
+
+- ``` $ npm run build ``` - Provide **compiled**, and **minified** bundles to 'public' directory.
+
+- ``` npm run test ``` - Runs tests **once** with Mocha(server side interpretation). Entry point: **'test/setup.js'**.
+
+- ``` npm run test:watch ``` - **Continuously** watch changes and run tests immediately after changes.
+
+
+- ``` npm run test:TeamCity ``` - Provides tests coverage report to TeamCity build system.
+
+
+- ``` npm run lint ``` - Runs eslint checker **once**. Entry point: **'.eslintrc'**.
+
+- ``` npm run lint:watch ``` - **Continuously** watch changes and run Run eslint checker immediately after some changes.
+
+- ``` npm run clear ``` - Remove 'public' and 'node_modules' folders.
