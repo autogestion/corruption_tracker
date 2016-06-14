@@ -23,13 +23,15 @@ class MapPageContainer extends React.Component {
         };
         return (
             <div>
+                <div id="full-screen-mapwrapper">
+                    <Map position={[50, 36.25]} zoom={13}/>
+                </div>
                 <NavbarWrapper
                     modalstate = {modalstate}
                     handleToggleModal = {handleToggleModal}
                     content = {content}
                 />
                 <FormTabs text={'I\'m form'}/>
-                <Map/>
             </div>
         );
     }
