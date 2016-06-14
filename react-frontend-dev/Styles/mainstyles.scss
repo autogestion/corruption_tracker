@@ -1,17 +1,27 @@
-body {
+body, .navbar {
     background-color: #222;
     color: #ededed;
-    padding: 50px;
-    #react-view {
-        //background-color: #c13c5f;
-    }
 }
 .modal-content, .claim-form {
     background-color: #000000;
+    margin-right: 20px
 }
 
 a {
     color: white;
+}
+
+#full-screen-mapwrapper {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    &>.leaflet-container {
+        width: 100%;
+        height: 100%;
+    }
 }
 
 
@@ -174,16 +184,15 @@ nav .navbar-brand {
     #float_block {
         border-radius: 3px;
         margin: 10px;
-
         right: 5px;
         /*top: 50px;        */
-        padding-top: 10px;
+        padding: 10px;
         max-height: calc(100% - 52px);
-        z-index: -1;
-        /*position: fixed;   */
-        overflow: scroll;
-
-        /*border-color: #e7e7e7;*/
+        z-index: 1;
+        position: relative;
+        overflow: auto;
+        background-color: black;
+        border-color: #e7e7e7;
         overflow-x:hidden;
         border-bottom-left-radius: 6px;
         float: right;
