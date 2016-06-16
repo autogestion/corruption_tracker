@@ -8,7 +8,7 @@ from django.core.cache import cache
 
 from multiselectfield import MultiSelectField
 
-from api.sql import moderation_filter
+from claim.sql import moderation_filter
 
 STATUSES = (('not_moderated', _('Not moderated')),
             ('suspicious', _('Suspicious')),
