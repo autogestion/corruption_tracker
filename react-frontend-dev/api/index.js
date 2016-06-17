@@ -1,7 +1,7 @@
 'use strict';
 
 import ApiClient from './ApiClient';
-import TodosAPI  from './TodosAPI';
+import { SignUpAPI, ClaimAPI, OrganizationAPI, PolygonAPI, UpdateAPI }  from './allEndpointsAPI';
 
 export default function({apiPrefix} = {}) {
     if (!apiPrefix) throw '[apiPrefix] is required';
@@ -9,6 +9,10 @@ export default function({apiPrefix} = {}) {
     const api = new ApiClient({ prefix: apiPrefix });
 
     return {
-        todos: new TodosAPI({ apiClient: api })
+        signup: new SignUpAPI({ apiClient: api }),
+        claim: new ClaimAPI({ apiClient: api }),
+        organization: new OrganizationAPI({ apiClient: api }),
+        polygon: new PolygonAPI({ apiClient: api }),
+        update: new UpdateAPI({ apiClient: api })
     };
 }
