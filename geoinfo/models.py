@@ -11,6 +11,7 @@ from django.core.cache import cache
 
 # from claim.models import Organization, OrganizationType, Moderator
 from claim.models import Organization, Moderator
+from claim.sql import get_claims_for_poly, get_sum_for_layers
 
 
 class Uploader(models.Model):
@@ -74,42 +75,29 @@ class Polygon(models.Model):
     @property
     def total_claims(self):
         claims = 0
-        p_claims = getattr(self, 'p_claims', None)
-        if p_claims is None:
-            if self.level == self.building:
-                # claims += sum([x.claims for x in self.organizations.all()])
-                # claims =  self.organizations.filter(claim__moderation__in=Moderator.allowed_statuses()).count()
-
-                cursor = connection.cursor()
-                cursor.execute("""
-                    SELECT COUNT(*) AS "__count" FROM "claim_organization" INNER JOIN "geoinfo_polygon_organizations" 
-                        ON ("claim_organization"."id" = "geoinfo_polygon_organizations"."organization_id") 
-                        INNER JOIN "claim_claim" ON ("claim_organization"."id" = "claim_claim"."organization_id") 
-                        WHERE ("geoinfo_polygon_organizations"."polygon_id" = '%s' AND position(claim_claim.moderation in 
-                        (SELECT claim_moderator.show_claims FROM claim_moderator WHERE claim_moderator.id = 1)) <>0)
-                        
-                    """ % self.polygon_id)
-
-                claims = cursor.fetchone()[0]          
-
-            else:
-                cached = cache.get('claims_for::%s' % self.polygon_id)
-                # cached = None
-                if cached is not None:
-                    claims = cached
-                else:
-                    childs = self.polygon_set.all()
-                    for child in childs:
-                        claims += child.total_claims
-
-                    cache.set('claims_for::%s' % self.polygon_id, claims, 300)
-            self.p_claims = claims
+        if self.level == self.building:
+            # claims += sum([x.claims for x in self.organizations.all()])
+            # claims =  self.organizations.filter(claim__moderation__in=Moderator.allowed_statuses()).count()
+            claims = get_claims_for_poly(self.polygon_id)
         else:
-            claims = p_claims
+            # cached = cache.get('claims_for::%s' % self.polygon_id)
+            cached = None
+            if cached is not None:
+                claims = cached
+            else:
+                # childs = self.polygon_set.all()
+                # for child in childs:
+                    # claims += child.total_claims
+                try:
+                    claims = get_sum_for_layers([self.polygon_id], self.level)[self.polygon_id]
+                except KeyError:
+                    claims = 0
 
+                # cache.set('claims_for::%s' % self.polygon_id, claims, 300)
         return claims
 
-    def color_spot(self, value, max_value):
+    @staticmethod
+    def color_spot(value, max_value):
         if max_value:
             percent = value * 100 / max_value
         else:
@@ -122,37 +110,6 @@ class Polygon(models.Model):
         else:
             return 'red'
 
-    @property
-    def get_color(self):
-        cached = cache.get('color_for::%s' % self.polygon_id)
-        # cached = None
-        if cached is not None:
-            color = cached
-        else:
-            if self.layer_id:                
-                # brothers = self.layer.polygon_set.all()
-                # max_claims_value = max([x.total_claims for x in brothers])
-                # max_claims_value = self.layer.layer_max_claims()
-
-                cached = cache.get('max_claims_for::%s' % self.layer_id)
-                if cached is not None:
-                    max_claims_value = cached
-                else:
-                    brothers = self.layer.polygon_set.all()
-                    max_claims_value = max([x.total_claims for x in brothers])
-                    cache.set('max_claims_for::%s' % self.layer_id, max_claims_value, 300)
-            else:
-                max_claims_value = 0
-
-            color = self.color_spot(
-                self.total_claims, max_claims_value)\
-                if self.total_claims else 'grey'
-
-            cache.set('color_for::%s' % self.polygon_id, color, 300)
-
-        return color
-
-
     def first_organization(self):
         orgs = self.organizations.all()
         if orgs:
@@ -164,10 +121,25 @@ class Polygon(models.Model):
         return 'Polygon ' + str(self.polygon_id)
 
 
+    # # @property
+    # def get_color(self):
+    #     cached = cache.get('color_for::%s' % self.polygon_id)
+    #     cached = None
+    #     if cached is not None:
+    #         color = cached
+    #     else:
+    #         if self.layer_id:
+    #             max_claims_value = self.get_max_for_layers(self.layer_id, self.level)
+    #         else:
+    #             max_claims_value = 0
 
+    #         color = self.color_spot(
+    #             self.total_claims, max_claims_value)\
+    #             if self.total_claims else 'grey'
 
+    #         cache.set('color_for::%s' % self.polygon_id, color, 300)
 
-
+    #     return color
 
     # def polygon_to_json(self, shape=True):
     #     # reverse coordinates for manualy adding polgygons

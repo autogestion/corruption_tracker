@@ -8,6 +8,7 @@ from django.core.cache import cache
 
 from multiselectfield import MultiSelectField
 
+from claim.sql import moderation_filter
 
 STATUSES = (('not_moderated', _('Not moderated')),
             ('suspicious', _('Suspicious')),
@@ -142,10 +143,8 @@ class Organization(models.Model):
         cursor = connection.cursor()
         cursor.execute("""
             SELECT COUNT(*) AS __count FROM claim_claim WHERE 
-                (claim_claim.organization_id = %d AND position(claim_claim.moderation in 
-                    (SELECT claim_moderator.show_claims  
-                    FROM claim_moderator WHERE claim_moderator.id = 1)) <>0 );                   
-            """ % self.id)
+                (claim_claim.organization_id = %d AND %s );                   
+            """ % (self.id, moderation_filter))
 
         return cursor.fetchone()[0]
   
