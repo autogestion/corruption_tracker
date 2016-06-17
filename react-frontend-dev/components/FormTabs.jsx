@@ -5,8 +5,13 @@ import AddClaimForm from './AddClaimForm.jsx';
 import AddOrganizationForm from './AddOrganizationForm.jsx';
 
 //class ClaimForm extends React.Component {
-const FormTabs = props => {
-        const { handleSubmitClaim } = props;
+class FormTabs extends React.Component {
+    // handleOnSubmit(param) {
+    //     console.log(param);
+    //     handleSubmitClaim()
+    // }
+    render() {
+        const {handleSubmitClaim} = this.props;
         return (
             <div className="claim-form">
                 <Tabs defaultActiveKey={2} id="float_block">
@@ -14,12 +19,12 @@ const FormTabs = props => {
                         <AddClaimForm handleSubmitClaim={handleSubmitClaim}/>
                     </Tab>
                     <Tab eventKey={2} title="Add organization">
-                        <AddOrganizationForm/>
+                        <AddOrganizationForm />
                     </Tab>
                 </Tabs>
             </div>
         )
-
+    }
 };
 
 export default FormTabs;

@@ -1,40 +1,44 @@
 import React from 'react';
 import { FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap';
 import { reduxForm } from 'redux-form';
-const fields = ['organizationType', 'violationType', 'servantName', 'claimMsg', 'bribeAmount'];
+const fields = ['organization', 'claim_type', 'servant', 'text', 'bribe'];
 
 
 class AddClaimForm extends React.Component {
     render() {
-        console.log(this.props);  
         const {
-            fields: { organizationType, violationType, servantName, claimMsg, bribeAmount },
+            fields: { organization, claim_type, servant, text, bribe },
+            handleSubmit,
             handleSubmitClaim
         } = this.props;
+        const submitResult = (values) => {
+            console.log(values);
+            handleSubmitClaim(values);
+        };
         return (
-            <form onSubmit={handleSubmitClaim} >
+        <form onSubmit={handleSubmit(submitResult)}>
                 <FormGroup controlId="formControlsText">
-                    <FormControl type="text" placeholder="Type organization name and select" {...organizationType} />
+                    <FormControl type="text" placeholder="Type organization name and select" {...organization} />
                 </FormGroup>
                 <FormGroup controlId="formControlsSelect">
                     <ControlLabel>Choose Violation type</ControlLabel>
-                    <FormControl componentClass="select" placeholder="select" {...violationType}>
-                        <option value="select">select</option>
-                        <option value="select">variant</option>
-                        <option value="other">...</option>
+                    <FormControl componentClass="select" placeholder="select" {...claim_type}>
+                        <option value="1">Murder</option>
+                        <option value="2">Money</option>
+                        <option value="0">Prostitution</option>
                     </FormControl>
                 </FormGroup>
                 <FormGroup controlId="formControlsEmail">
                     <ControlLabel>Servant name</ControlLabel>
-                    <FormControl type="text" {...servantName}/>
+                    <FormControl type="text" {...servant}/>
                 </FormGroup>
                 <FormGroup controlId="formControlsTextarea">
                     <ControlLabel>Claim message</ControlLabel>
-                    <FormControl componentClass="textarea" {...claimMsg}/>
+                    <FormControl componentClass="textarea" {...text}/>
                 </FormGroup>
                 <FormGroup controlId="formControlsPassword">
                     <ControlLabel>Brime amount</ControlLabel>
-                    <FormControl type="text" {...bribeAmount}/>
+                    <FormControl type="text" {...bribe}/>
                 </FormGroup>
 
                 <Button type="submit">

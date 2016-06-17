@@ -16,11 +16,7 @@ class MapPageContainer extends React.Component {
     };
 
     render() {
-        const {modalstate, handleToggleModal, handleSubmitClaim} = this.props;
-        const content = {
-            title_cont: 'Break corruption',
-            body_cont: (<p>Test body cont</p>)
-        };
+        const {modalstate, handleToggleModal, handleSubmitClaim, navModalcontent} = this.props;
         return (
             <div>
                 <div id="full-screen-mapwrapper">
@@ -29,7 +25,7 @@ class MapPageContainer extends React.Component {
                 <NavbarWrapper
                     modalstate = {modalstate}
                     handleToggleModal = {handleToggleModal}
-                    content = {content}
+                    content = {navModalcontent}
                 />
                 <FormTabs handleSubmitClaim={handleSubmitClaim} />
             </div>
@@ -39,7 +35,8 @@ class MapPageContainer extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        modalstate: state.uibehavior.showNavModal || false
+        modalstate: state.uibehavior.showNavModal || false,
+        navModalcontent: state.uibehavior.navModalcontent
     };
 }
 

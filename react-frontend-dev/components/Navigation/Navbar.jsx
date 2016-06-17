@@ -6,20 +6,28 @@ class NavbarWrapper extends React.Component {
     static propTypes = {
         modalstate: React.PropTypes.bool,
         content: React.PropTypes.object,
-        handleToggleModal: React.PropTypes.func,
+        handleToggleModal: React.PropTypes.func
     };
 
     render() {
         const { content, modalstate, handleToggleModal } = this.props;
+        const whoisModalAction = {
+            showNavModal: true,
+            navModalcontent: {
+                title_cont: "Test title",
+                body_cont: "Test body",
+                footer_cont: "Test footer"
+            }
+        };
         return (
             <Navbar>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a href="#">PDRK</a>
+                        <a href="#">PDRK</a>  
                     </Navbar.Brand>
                 </Navbar.Header>
                 <Nav>
-                    <NavItem onClick={() => handleToggleModal(true)} eventKey={1} href="#">Who is here?</NavItem>
+                    <NavItem onClick={()=>{handleToggleModal(whoisModalAction)}} eventKey={1} href="#">Who is here?</NavItem>
                     <NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">
                         <MenuItem eventKey={3.1}>API Docs</MenuItem>
                         <MenuItem eventKey={3.2}>Login</MenuItem>

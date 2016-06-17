@@ -3,7 +3,8 @@ import { Modal, Button } from 'react-bootstrap';
 
 export default React.createClass({
     render() {
-        const { title_cont, body_cont, footer_cont } = this.props.content;
+        const content = this.props.content || {title_cont:"", body_cont:"", footer_cont:""};
+        const { title_cont, body_cont, footer_cont } = content;
         return (
             <Modal show={this.props.show} onHide={this.props.close}>
                 <Modal.Header closeButton>

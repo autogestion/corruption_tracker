@@ -5,26 +5,36 @@ import api from '../config/apiSingleton';
 import {
     TOGGLE_MODAL,
     FETCH_TEST,
-    SEND_CLAIM
+    SEND_CLAIM,
+    NETWORK_ERROR,
+    SUCCESSFUL_REQUEST
 } from './types/types.js';
 
-export function toggleModal(showNavModal = false) {
+export function toggleModal(params = {showNavModal: false}) {
    return {
        type: TOGGLE_MODAL,
-       showNavModal
+       showNavModal: params.showNavModal,
+       navModalcontent: params.navModalcontent
    } 
 }
 
 export function submitClaim(params) {
     return (dispatch) => {
+        console.log(params);
         api.claim.sendClaim(params)
             .then((resp) => {
-                debugger;
                 dispatch({
-                    type: SEND_CLAIM,
-                    results: resp.results
+                    type: SUCCESSFUL_REQUEST,
+                    results: resp
                 })
-            });
+            })
+            .catch((resp) => {
+                dispatch({
+                    type: NETWORK_ERROR,
+                    status: resp.status
+                })
+            })
+        ;
     };
     // console.log();
 
