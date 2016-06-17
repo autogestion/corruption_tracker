@@ -3,11 +3,12 @@ import json
 from pprint import pprint
 
 from django.contrib.auth.models import User
-from django.db import models, connection
+from django.db import models
 from rest_framework import serializers
 
 from claim.models import Claim, Organization, ClaimType,\
     OrganizationType, AddressException
+from claim.sql import get_sum_for_layers, get_max_for_layers
 from geoinfo.models import Polygon
 
 
@@ -148,57 +149,65 @@ class PolgygonBaseSerializer(serializers.ModelSerializer):
         return responce
 
 
+def level_separator(item_obj, parents, ids, poly_objects):
+    ids.append(item_obj["properties"]['ID'])
+    poly_objects.append(item_obj)
+    if 'parent_id' in item_obj["properties"]:
+        if item_obj["properties"]['parent_id'] not in parents:
+            parents.append(item_obj["properties"]['parent_id'])
+
+
+def level_appender(polygon, claims_dict, max_claims_dict):
+    if polygon["properties"]["ID"] in claims_dict:
+        polygon["properties"]["polygon_claims"]=claims_dict[polygon["properties"]["ID"]]
+    else:
+        polygon["properties"]["polygon_claims"]=0
+
+    if 'parent_id' in polygon["properties"] and polygon["properties"]['parent_id'] in max_claims_dict:                                  
+        max_claims = max_claims_dict[polygon["properties"]['parent_id']]                 
+    else:
+        max_claims = 0
+
+    polygon["properties"]['color'] = Polygon.color_spot(polygon["properties"]["polygon_claims"], max_claims)\
+        if polygon["properties"]["polygon_claims"] else 'grey'
+
+
 class OrgsForPolySerializer(serializers.ListSerializer):
 
     def to_representation(self, data):
         iterable = data.all() if isinstance(data, models.Manager) else data
 
         polygons = []
-        polygons_with_orgs = []
+        buildings_parents, buildings_ids, buildings_objects = [],[],[]
+        district_parents, district_ids, district_objects = [],[],[]
+        area_parents, area_ids, area_objects = [],[],[]
+        region_ids, region_objects = [],[]
+
         for item in iterable:
-            item_obj, item_id = self.child.to_representation(item)
-            polygons.append(item_obj)
-            if item_id:
-                polygons_with_orgs.append(item_id)
+            item_obj = self.child.to_representation(item)  
+            level = item_obj["properties"]['level']
+            if level ==4:
+                level_separator(item_obj, buildings_parents, buildings_ids, buildings_objects)
+            elif level ==3:
+                level_separator(item_obj, district_parents, district_ids, district_objects)
+            elif level ==2:
+                level_separator(item_obj, area_parents, area_ids, area_objects) 
+            elif level ==1:
+                region_ids.append(item_obj["properties"]['ID'])
+                region_objects.append(item_obj)                
 
-        if polygons_with_orgs:
-            queryset = Organization.objects.filter(polygon__in=polygons_with_orgs)  
 
-            # """
-            # (SELECT COUNT(*)  FROM claim_claim WHERE (claim_claim.organization_id = claim_organization.id 
-            # and position(claim_claim.moderation in (SELECT claim_moderator.show_claims  
-            # FROM claim_moderator WHERE claim_moderator.id = 1)) <>0 )) AS claims
-            # """
-
-            # queryset =  Organization.objects.raw("""
-            #     SELECT claim_organization.id, claim_organization.name, claim_organization.url, claim_organization.org_type_id, 
-            #         claim_organization.is_verified, claim_organization.updated
-            #         FROM claim_organization 
-            #         INNER JOIN geoinfo_polygon_organizations ON (claim_organization.id = geoinfo_polygon_organizations.organization_id) 
-            #         WHERE geoinfo_polygon_organizations.polygon_id IN (%s)
-            #     """ % ','.join(["'" + str(x) + "'" for x in polygons_with_orgs]))
-
-            # from django.db.models import Count
-            # queryset = Organization.objects.filter(polygon__in=polygons_with_orgs).annotate(claims=Count('claim'))  
+        # ------------------------------Process buildings -----------------------
+        if buildings_ids:
+            
+            queryset = Organization.objects.filter(polygon__in=buildings_ids)  
 
             serializer = OrganizationSerializer(queryset, many=True, 
                 skip_address=True, dynamic=False)
 
             orgs = serializer.data
             org_ids = [x['id'] for x in orgs]
-
-            cursor = connection.cursor()
-            cursor.execute("""
-                SELECT claim_organization.id, COUNT(claim_claim.id) AS claims FROM claim_organization 
-                    LEFT OUTER JOIN claim_claim ON (claim_organization.id = claim_claim.organization_id) 
-                    WHERE (claim_organization.id IN (%s) AND position(claim_claim.moderation IN
-                        (SELECT claim_moderator.show_claims  
-                        FROM claim_moderator WHERE claim_moderator.id = 1)) <>0 )
-                    GROUP BY claim_organization.id                 
-                """ % ','.join([str(x) for x in org_ids])
-                )
-
-            claims_for_orgs = dict(cursor.fetchall())
+            claims_for_orgs = get_sum_for_layers(org_ids, 4)
 
             for org in orgs:
                 if org['id'] in claims_for_orgs:
@@ -206,7 +215,8 @@ class OrgsForPolySerializer(serializers.ListSerializer):
                 else:
                     org['claims']=0
 
-            for polygon in polygons:
+
+            for polygon in buildings_objects:
                 for org in orgs:
                     if polygon["properties"]['ID'] in org['polygons']:
                         if "organizations" in polygon["properties"]:
@@ -214,10 +224,55 @@ class OrgsForPolySerializer(serializers.ListSerializer):
                         else:
                             polygon["properties"]["organizations"]=[org]
 
-            for polygon in polygons:
-                if polygon["properties"]["level"]==4:
-                    polygon["properties"]["polygon_claims"]=sum(
-                    [x['claims'] for x in polygon["properties"]["organizations"]])                
+
+            buildings_max_claims_dict = get_max_for_layers(buildings_parents, 4)            
+            for polygon in buildings_objects:
+                polygon["properties"]["polygon_claims"]=sum(
+                [x['claims'] for x in polygon["properties"]["organizations"]])
+
+                if 'parent_id' in polygon["properties"] and polygon["properties"]['parent_id'] in buildings_max_claims_dict:                                  
+                    max_claims = buildings_max_claims_dict[polygon["properties"]['parent_id']]                 
+                else:
+                    max_claims = 0
+
+                polygon["properties"]['color'] = Polygon.color_spot(polygon["properties"]["polygon_claims"], max_claims)\
+                    if polygon["properties"]["polygon_claims"] else 'grey'
+
+
+            polygons += buildings_objects
+
+        # ---------------------- Process districts -----------------------
+        elif district_ids:
+
+            claims_for_houses = get_sum_for_layers(district_ids, 3)
+            district_max_claims_dict = get_max_for_layers(district_parents, 3)
+            for polygon in district_objects:
+                level_appender(polygon, claims_for_houses, district_max_claims_dict)
+
+            polygons += district_objects
+
+
+        # ---------------------- Process cities -----------------------
+        elif area_ids:
+
+            claims_for_areas = get_sum_for_layers(area_ids, 2)
+            area_max_claims_dict = get_max_for_layers(area_parents, 2)
+            for polygon in area_objects:
+                level_appender(polygon, claims_for_areas, area_max_claims_dict)
+
+            polygons += area_objects
+
+
+        # ---------------------- Process regions -----------------------
+        elif region_ids:
+
+            claims_for_regions =  get_sum_for_layers(region_ids, 1)
+            region_max_claims_dict = get_max_for_layers(['root'], 1)
+            for polygon in region_objects:
+                level_appender(polygon, claims_for_regions, region_max_claims_dict)
+
+            polygons += region_objects
+
 
         return polygons
 
@@ -239,23 +294,7 @@ class PolygonSerializer(PolgygonBaseSerializer):
         else:
             responce["geometry"] = None            
 
-        id_for_orgs = None
-        if instance.level == instance.building:
-            id_for_orgs = instance.polygon_id
-            # queryset = instance.organizations.all()
-            # serializer = OrganizationSerializer(queryset, many=True, 
-            #     skip_address=True, dynamic=True)
-
-            # responce["properties"]["organizations"] = serializer.data
-            # responce["properties"]["polygon_claims"]=sum(
-            #     [x['claims'] for x in responce["properties"]["organizations"]])
-
-        else:
-            responce["properties"]["polygon_claims"] = instance.total_claims
-
-        responce["properties"]['color'] = instance.get_color
-
-        return responce, id_for_orgs
+        return responce
 
 
 
