@@ -39,7 +39,7 @@ class MapPageView(View):
                                       'value': claim_type.name})
             claim_type_sets[org_type.type_id] = claim_type_set
 
-        resp_dict['claim_types'] = mark_safe(json.dumps(claim_type_sets))        
+        resp_dict['claim_types'] = mark_safe(json.dumps(claim_type_sets))
 
         if settings.RECAPTCHA_ENABLED is False:
             settings.RECAPTCHA_PUBLIC = ''
@@ -47,7 +47,7 @@ class MapPageView(View):
 
         if settings.TEST_SERVER:
             resp_dict['test_alarm'] = True
-        
+
         ip = get_client_ip(request)
         # cached_zoom = cache.get('lat_lon_for::%s' % ip)
 
@@ -66,6 +66,12 @@ class MapPageView(View):
             # cache.set('lat_lon_for::%s' % ip, resp_dict['zoom_to'])
 
         return render(request, self.template_name, resp_dict)
+
+
+
+class ReactView(MapPageView):
+    template_name = 'index.html'
+
 
 
 class LoginView(View):

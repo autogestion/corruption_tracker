@@ -16,6 +16,8 @@ urlpatterns = [
     url(r'^i18n/', include('django.conf.urls.i18n')),
 
     url(r'^$', views.MapPageView.as_view(), name="single"),
+    url(r'^react/$', views.ReactView.as_view(), name="react"),
+
 
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^login/$', views.LoginView.as_view(),
