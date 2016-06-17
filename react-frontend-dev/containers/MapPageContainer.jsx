@@ -3,7 +3,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import { toggleModal } from '../actions/map.actions.js';
+import { toggleModal, submitClaim } from '../actions/map.actions.js';
 
 import NavbarWrapper from '../components/Navigation/Navbar.jsx';
 import FormTabs from '../components/FormTabs.jsx';
@@ -16,7 +16,7 @@ class MapPageContainer extends React.Component {
     };
 
     render() {
-        const {modalstate, handleToggleModal} = this.props;
+        const {modalstate, handleToggleModal, handleSubmitClaim} = this.props;
         const content = {
             title_cont: 'Break corruption',
             body_cont: (<p>Test body cont</p>)
@@ -31,7 +31,7 @@ class MapPageContainer extends React.Component {
                     handleToggleModal = {handleToggleModal}
                     content = {content}
                 />
-                <FormTabs text={'I\'m form'}/>
+                <FormTabs handleSubmitClaim={handleSubmitClaim} />
             </div>
         );
     }
@@ -45,7 +45,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        handleToggleModal: bindActionCreators(toggleModal, dispatch)
+        handleToggleModal: bindActionCreators(toggleModal, dispatch),
+        handleSubmitClaim: bindActionCreators(submitClaim, dispatch)
     }
 }
 

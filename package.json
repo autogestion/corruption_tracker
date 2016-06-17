@@ -49,7 +49,8 @@
     "redux": "^3.2.1",
     "redux-logger": "^2.4.0",
     "redux-thunk": "^1.0.0",
-    "react-bootstrap": "^0.29.4"
+    "react-bootstrap": "^0.29.4",
+    "redux-form": "^5.2.5"
   },
   "devDependencies": {
     "autoprefixer-loader": "*",

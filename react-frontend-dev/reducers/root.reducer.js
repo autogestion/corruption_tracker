@@ -7,11 +7,12 @@ import { combineReducers } from 'redux';
  */
 import todos from './todos.reducer';
 import uibehavior from './uibehavior.reducer';
-
+import {reducer as formReducer} from 'redux-form';
 
 const rootReducer = combineReducers({
     todos,
-    uibehavior
+    uibehavior,
+    form: formReducer
 });
 
 export default rootReducer;

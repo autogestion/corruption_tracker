@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import { TOGGLE_MODAL } from '../actions/types/types.js';
+import { TOGGLE_MODAL, SEND_CLAIM} from '../actions/types/types.js';
 
 function uibehavior(state = [], action) {
     // console.log('---> ACTION', action);
