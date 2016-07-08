@@ -122,7 +122,7 @@ function select_building (org_id, coordinates) {
                         message = process_claim_template(template, data[i])
 
                         if (data[i]['complainer']) { message = message.replace('%complainer%', 
-                            '<a style="color:red;" id="' + data[i]['complainer'] + '" href="#" class="claims_of_user" onclick="get_claims_for_user('+data[i]['complainer']+','+ "'"+data[i]['complainer_name']+ "'"+')">' + data[i]['complainer_name'] + ' <--> Click to see claims for user' +'</a>');}
+                            '<a style="color:green;" id="' + data[i]['complainer'] + '" href="#" class="claims_of_user" onclick="get_claims_for_user('+data[i]['complainer']+','+ "'"+data[i]['complainer_name']+ "'"+')">' + data[i]['complainer_name'] + '</a>');}
                         else { message = message.replace('%complainer%', 'Anon');};
                         messages += message;
                         count += 1

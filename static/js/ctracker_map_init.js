@@ -28,7 +28,7 @@ function main_map_init (map, options) {
         zoom = map.getZoom();
                if ( zoom <=8 )   { dataType = 1; // region = 1     <=8
         } else if ( zoom <= 10 ) { dataType = 2; // area = 2       <=10
-        } else if ( zoom <= 12 ) { dataType = 3; // district = 3   <=12
+        } else if ( zoom <= 14 ) { dataType = 3; // district = 3   <=12
         } else                   { dataType = 4; // building = 4   >=13
         };
 
