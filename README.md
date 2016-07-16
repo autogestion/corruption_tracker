@@ -7,7 +7,7 @@ and as result track the level of it in public institutions
 
 Mobile app that works with API https://github.com/konchunas/mobilepdrk
 
-Demo http://beta.acts.pp.ua/
+Demo http://alpha.acts.pp.ua/
 
 FB - https://www.facebook.com/activecorruptiontracking/
 

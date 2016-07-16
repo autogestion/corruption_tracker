@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-06 21:35+0300\n"
+"POT-Creation-Date: 2016-07-16 18:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,103 +39,49 @@ msgstr "Перевірено"
 msgid "Non-verified markers"
 msgstr "Не перевірені огранізації"
 
-#: claim/models.py:130
-msgid "Others"
-msgstr "Інше"
-
-#: claim/models.py:134
-msgid "Anon"
-msgstr "Анонім"
-
-#: corruption_tracker/settings.py:82
+#: corruption_tracker/settings.py:97
 msgid "Ukrainian"
 msgstr "Українська"
 
-#: corruption_tracker/settings.py:83
+#: corruption_tracker/settings.py:98
 msgid "English"
 msgstr "Англійська"
 
-#: geoinfo/models.py:49
+#: geoinfo/models.py:55
 msgid "Root polygon"
 msgstr ""
 
-#: geoinfo/models.py:50
+#: geoinfo/models.py:56
 msgid "Regions of country"
 msgstr ""
 
-#: geoinfo/models.py:51
+#: geoinfo/models.py:57
 msgid "Subregions or big sities"
 msgstr ""
 
-#: geoinfo/models.py:52
+#: geoinfo/models.py:58
 msgid "Towns or districts of city"
 msgstr ""
 
-#: geoinfo/models.py:53
+#: geoinfo/models.py:59
 msgid "Houses"
 msgstr ""
 
-#: templates/add_page.html:39 templates/general.html.py:35
-#: templates/single.html:115
-msgid "Add claim"
-msgstr "Викрити зраду"
-
-#: templates/add_page.html:40
-msgid ""
-"To add claim please click on building on the map, or enter organization name "
-"in searchbox 'Organization', name of servant and describe what was wrong. "
-"After it press 'Send claim' button."
-msgstr ""
-"Щоб додати скаргу зробіть клік на будівлі на мапі, або введіть назву закладу "
-"в полi 'Заклад', вкажiть ПIБ службовця i опишiть проблему та натисніть "
-"кнопку 'Відправити скаргу'."
-
-#: templates/add_page.html:48
-msgid "Organization"
-msgstr "Заклад"
-
-#: templates/add_page.html:49 templates/general.html.py:41
-#: templates/map.html:37 templates/single.html.py:197
-#: templates/single.html:198
-msgid "Organization name"
-msgstr "Назва установи"
-
-#: templates/add_page.html:56 templates/single.html.py:134
-msgid "Choose Violation type"
-msgstr "Оберіть тип порушення"
-
-#: templates/add_page.html:62 templates/single.html.py:140
-msgid "Servant name"
-msgstr "ПІБ службовця"
-
-#: templates/add_page.html:66 templates/single.html.py:144
-msgid "Claim message"
-msgstr "Текст скарги"
-
-#: templates/add_page.html:75 templates/single.html.py:157
-msgid "Keep me anonymously"
-msgstr "Зробити анонімно"
-
-#: templates/add_page.html:89 templates/single.html.py:171
-msgid "Send claim"
-msgstr "Відправити скаргу"
-
-#: templates/admin/geoinfo/change_form.html:9
-msgid "Export layer as json"
-msgstr ""
-
 #: templates/auth/login.html:11 templates/auth/login.html.py:36
-#: templates/general.html:82 templates/single.html.py:96
+#: templates/modals/services_modal.html:8
+#: templates/modals/services_modal.html:27 templates/navigation.html.py:57
 msgid "Login"
 msgstr "Увійти"
 
 #: templates/auth/login.html:17 templates/auth/login.html.py:19
-#: templates/general.html:74 templates/single.html.py:88
+#: templates/modals/services_modal.html:19
+#: templates/modals/services_modal.html:49
 msgid "Username"
 msgstr "Юзернейм"
 
 #: templates/auth/login.html:24 templates/auth/login.html.py:25
-#: templates/general.html:77 templates/single.html.py:91
+#: templates/modals/services_modal.html:23
+#: templates/modals/services_modal.html:53
 msgid "Password"
 msgstr "Пароль"
 
@@ -147,113 +93,181 @@ msgstr "Запам'ятати мене"
 msgid "Forget password?"
 msgstr ""
 
-#: templates/claims.html:104
-msgid "Claims list for"
-msgstr "Список скарг для"
+#: templates/map.html:67
+msgid "Fork me on GitHub"
+msgstr ""
 
-#: templates/claims.html:106
-msgid "Export to CSV"
-msgstr "Експортувати як CSV"
+#: templates/modals/add_objects_modal.html:8
+#: templates/modals/claims_modal.html:44
+msgid "Add claim"
+msgstr "Викрити зраду"
 
-#: templates/claims.html:111 templates/map.html.py:53
-#: templates/single.html:214
-msgid "Servant"
+#: templates/modals/add_objects_modal.html:11
+msgid "Processing"
+msgstr "Обробляється"
+
+#: templates/modals/add_objects_modal.html:22
+msgid "Choose Violation type"
+msgstr "Оберіть тип порушення"
+
+#: templates/modals/add_objects_modal.html:28
+msgid "Servant name"
 msgstr "ПІБ службовця"
 
-#: templates/claims.html:112 templates/map.html.py:52
-#: templates/single.html:213
-msgid "Complainer"
-msgstr "Позивач"
-
-#: templates/claims.html:113 templates/map.html.py:54
-#: templates/single.html:215
-msgid "Claim type"
-msgstr "Тип скарги"
-
-#: templates/claims.html:114 templates/map.html.py:56
-#: templates/single.html:218
-msgid "Created"
-msgstr "Створено"
-
-#: templates/general.html:36
-msgid "Corruption map"
-msgstr "Карта корупції"
-
-#: templates/general.html:37 templates/single.html.py:59
-msgid "Who is here?"
-msgstr "Хто тут?"
-
-#: templates/general.html:38
-msgid "Single page"
-msgstr ""
-
-#: templates/general.html:43 templates/map.html.py:31 templates/map.html:39
-msgid "Search"
-msgstr "Пошук"
-
-#: templates/general.html:69 templates/single.html.py:83
-msgid "Logout"
-msgstr "Вийти"
-
-#: templates/general.html:84 templates/single.html.py:99
-msgid "Register"
-msgstr "Зареєструватися"
-
-#: templates/map.html:32
-msgid ""
-"To check claims you should click on building on the map, or enter "
-"organization name in searchbox."
-msgstr ""
-"Щоб побачии скарги зробіть клік на будівлі на мапі, або введіть назву "
-"закладу в поле пошуку"
-
-#: templates/map.html:55 templates/single.html.py:217
-msgid "Claim text"
+#: templates/modals/add_objects_modal.html:32
+msgid "Claim message"
 msgstr "Текст скарги"
 
-#: templates/map.html:61 templates/single.html.py:225
-msgid "Show all claims as tiles"
-msgstr "Показати всі скарги як тайли"
-
-#: templates/map.html:64 templates/single.html.py:226
-msgid "Show all claims as table"
-msgstr "Показати всі скарги як таблицю"
-
-#: templates/single.html:58
-msgid "Map"
-msgstr "Мапа"
-
-#: templates/single.html:60
-msgid "API Docs"
-msgstr ""
-
-#: templates/single.html:116
-msgid "Add organization"
-msgstr "Додати установу"
-
-#: templates/single.html:127
-msgid "Type organization name and select"
-msgstr "Назва установи"
-
-#: templates/single.html:149 templates/single.html.py:216
+#: templates/modals/add_objects_modal.html:37
+#: templates/modals/claims_modal.html:9 templates/modals/claims_modal.html:22
 msgid "Bribe amount"
 msgstr "Розмір хабаря"
 
-#: templates/single.html:181
+#: templates/modals/add_objects_modal.html:45
+msgid "Keep me anonymously"
+msgstr "Зробити анонімно"
+
+#: templates/modals/add_objects_modal.html:57
+msgid "Send claim"
+msgstr "Відправити скаргу"
+
+#: templates/modals/add_objects_modal.html:77 templates/navigation.html:47
+msgid "Add organization"
+msgstr "Додати установу"
+
+#: templates/modals/add_objects_modal.html:83
 msgid "Choose Organization type"
 msgstr "Оберіть тип установи"
 
-#: templates/single.html:189
+#: templates/modals/add_objects_modal.html:91
 msgid "Centroid"
 msgstr "Центроїд"
 
-#: templates/single.html:193 templates/single.html.py:194
+#: templates/modals/add_objects_modal.html:95
+#: templates/modals/add_objects_modal.html:96
 msgid "Address"
 msgstr "Адреса"
 
-#: templates/single.html:203
+#: templates/modals/add_objects_modal.html:99
+#: templates/modals/add_objects_modal.html:100
+msgid "Organization name"
+msgstr "Назва установи"
+
+#: templates/modals/add_objects_modal.html:105
 msgid "Send organization"
 msgstr "Додати установу"
+
+#: templates/modals/add_objects_modal.html:112
+#: templates/modals/claims_modal.html:45 templates/modals/claims_modal.html:63
+#: templates/modals/services_modal.html:87
+msgid "Close"
+msgstr "Закрити"
+
+#: templates/modals/claims_modal.html:6
+msgid "Complainer"
+msgstr "Позивач"
+
+#: templates/modals/claims_modal.html:7 templates/modals/claims_modal.html:20
+msgid "Servant"
+msgstr "ПІБ службовця"
+
+#: templates/modals/claims_modal.html:8 templates/modals/claims_modal.html:21
+msgid "Claim type"
+msgstr "Тип скарги"
+
+#: templates/modals/claims_modal.html:10 templates/modals/claims_modal.html:23
+msgid "Claim text"
+msgstr "Текст скарги"
+
+#: templates/modals/claims_modal.html:11 templates/modals/claims_modal.html:24
+msgid "Created"
+msgstr "Створено"
+
+#: templates/modals/claims_modal.html:19
+msgid "Organization"
+msgstr "Заклад"
+
+#: templates/modals/claims_modal.html:30
+msgid "Show all claims as table"
+msgstr "Показати всі скарги як таблицю"
+
+#: templates/modals/claims_modal.html:62
+msgid "Back"
+msgstr "Назад"
+
+#: templates/modals/services_modal.html:13
+msgid "Login with Facebook"
+msgstr "Авторизуватися через Facebook"
+
+#: templates/modals/services_modal.html:26
+#: templates/modals/services_modal.html:58
+msgid "Cancel"
+msgstr "Відміна"
+
+#: templates/modals/services_modal.html:43
+#: templates/modals/services_modal.html:59 templates/navigation.html.py:59
+msgid "Register"
+msgstr "Зареєструватися"
+
+#: templates/navigation.html:20
+msgid "Who is here?"
+msgstr "Хто тут?"
+
+#: templates/navigation.html:44
+msgid "Tools "
+msgstr "Інше"
+
+#: templates/navigation.html:48
+msgid "API Docs"
+msgstr ""
+
+#: templates/navigation.html:54
+msgid "Logout"
+msgstr "Вийти"
+
+#: templates/navigation.html:68
+msgid "Type organization name and select"
+msgstr "Назва установи"
+
+#~ msgid "Others"
+#~ msgstr "Інше"
+
+#~ msgid "Anon"
+#~ msgstr "Анонім"
+
+#~ msgid ""
+#~ "To add claim please click on building on the map, or enter organization "
+#~ "name in searchbox 'Organization', name of servant and describe what was "
+#~ "wrong. After it press 'Send claim' button."
+#~ msgstr ""
+#~ "Щоб додати скаргу зробіть клік на будівлі на мапі, або введіть назву "
+#~ "закладу в полi 'Заклад', вкажiть ПIБ службовця i опишiть проблему та "
+#~ "натисніть кнопку 'Відправити скаргу'."
+
+#~ msgid "Claims list for"
+#~ msgstr "Список скарг для"
+
+#~ msgid "Export to CSV"
+#~ msgstr "Експортувати як CSV"
+
+#~ msgid "Corruption map"
+#~ msgstr "Карта корупції"
+
+#~ msgid "Search"
+#~ msgstr "Пошук"
+
+#~ msgid ""
+#~ "To check claims you should click on building on the map, or enter "
+#~ "organization name in searchbox."
+#~ msgstr ""
+#~ "Щоб побачии скарги зробіть клік на будівлі на мапі, або введіть назву "
+#~ "закладу в поле пошуку"
+
+#~ msgid "Show all claims as tiles"
+#~ msgstr "Показати всі скарги як тайли"
+
+#~ msgid "Map"
+#~ msgstr "Мапа"
 
 #~ msgid "Russian"
 #~ msgstr "Московитська"

@@ -38,27 +38,18 @@ $(document).ready(function () {
         }
     });
 
-    $("#back_button").click(function() {
-      $("#userclaimsModal").modal("hide");
-      $("#claimsModal").modal("show");
-      $(".navbar-collapse.in").collapse("hide");
-      return false;
-    });   
-
-
-    $("#claim_form").submit(function(event){
-        add_claim(event);
-    });
-    $("#org_form").submit(function(event){
-        add_organization(event)
-    });
-
-
     $("#about-btn").click(function() {
       $("#aboutModal").modal("show");
       $(".navbar-collapse.in").collapse("hide");
       return false;
-    });    
+    });  
+
+
+    $("#addorg-btn").click(function() {
+      $("#addorgModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
+    });        
 
 
     $("#login-btn").click(function() {

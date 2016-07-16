@@ -12,6 +12,7 @@ from corruption_tracker import views
 urlpatterns = [
     # Rest API
     url(r'^api/', include('api.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
 
@@ -24,16 +25,14 @@ urlpatterns = [
     url(r'^logout/$', views.logout_user,
         name='logout'),
 
-    # url(r'^accounts/logout/$', logout,
-    #     {'next_page': '/'}),
-    # url(r'^accounts/', include('allauth.urls')),
-    # url(r'^export_layer/(?P<layer_id>[\w.]{0,256})/$',
-    #     geo_views.export_layer, name="export_layer"),
-
     url(r'^static/(?P<path>.*)$', serve,
         {'document_root': settings.STATIC_ROOT}),
 
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
-    urlpatterns += [url(r'^profiling/$', views.profiling)]
+    urlpatterns += [
+        url(r'^profiling/$', views.profiling),
+        url(r'^press/', include('blog.urls')),
+        url(r'^user/', include('interaction.urls')),
+    ]

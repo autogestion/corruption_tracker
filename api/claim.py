@@ -1,4 +1,5 @@
 from django.contrib.gis import geos
+from django.db import models
 
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins, filters, status
@@ -51,17 +52,10 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     throttle_classes = (PostThrottle,)
     lookup_field = 'id'
 
-
     @detail_route()
     def user(self, request, id=None):
         queryset = self.queryset.filter(complainer__id=id)
         serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, id=None):
-        # queryset = self.queryset.filter(organization__id=id)
-        organization = Organization.objects.get(id=id)
-        queryset = organization.moderation_filter().order_by('-created')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -71,9 +65,21 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    def retrieve(self, request, id=None):
+        # queryset = self.queryset.filter(organization__id=id)
+        organization = Organization.objects.get(id=id)
+        queryset = organization.moderation_filter().select_related().annotate(num_c=models.Count('complainer__claim')).order_by('created')
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True, org_or_user='org')
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True, org_or_user='org')
+        return Response(serializer.data)
+
     def perform_create(self, serializer):
-        if self.request.user.is_anonymous() or \
-            self.request.data.get('anonymously', None):
+        if self.request.user.is_anonymous() or self.request.data.get('anonymously', None):
             serializer.save(moderation='anonymous')
         else:
             serializer.save(complainer=self.request.user)

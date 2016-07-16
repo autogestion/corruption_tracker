@@ -1,0 +1,26 @@
+
+.navbar {
+    margin-bottom: 0px; 
+}
+
+.navbar-brand {
+     padding: 0; 
+}
+
+#main {
+    position: fixed;
+    width: 100%;
+    height: calc(100% - 52px);
+}
+
+#float_block {
+    float: right;
+}        
+
+.popup_template {
+    display: none;
+}
+
+.layout_chooser {
+    padding-top: 95px;
+}

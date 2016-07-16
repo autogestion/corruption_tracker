@@ -1,5 +1,5 @@
 # import time
-import datetime
+import time
 import uuid
 
 from django.db import connection
@@ -16,10 +16,10 @@ class SqlProfilingMiddleware():
     Queries = []
 
     def process_request(self, request):
-        self.request_started = datetime.datetime.now()
+        self.request_started = time.time()
         SqlProfilingMiddleware.Queries.insert(0, {"time": 15 * 'o',
             "sql": 10 * '-', 'type': 'delimeter', 'request_id': 35 * 'o'})
-        SqlProfilingMiddleware.Queries.insert(0, {"time": self.request_started.strftime('%H:%M:%S %f'),
+        SqlProfilingMiddleware.Queries.insert(0, {"time": self.request_started,
             "sql": request.path, 'type': 'request_started', 'request_id': request_id(request)})
         return None
 
@@ -32,10 +32,10 @@ class SqlProfilingMiddleware():
 
     def process_response(self, request, response):
         self._add_sql_queries(request)
-        responce_rendered = datetime.datetime.now()
+        responce_rendered = time.time()
         request_total = responce_rendered - self.request_started
         # print('request cycle', request_total)
-        SqlProfilingMiddleware.Queries.insert(0, {"time": responce_rendered.strftime('%H:%M:%S %f'),
+        SqlProfilingMiddleware.Queries.insert(0, {"time": responce_rendered,
             "sql": request.path, 'type': 'responce_rendered', 'request_id': request_id(request)})
         SqlProfilingMiddleware.Queries.insert(0, {"time": request_total,
             "sql": request.path, 'type': 'request_total', 'request_id': request_id(request)})

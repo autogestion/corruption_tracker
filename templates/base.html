@@ -1,0 +1,39 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>   
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="{% static "img/favicon.ico" %}"/>
+
+    <link href= "{% static "css/bootstrap.min.css" %}"  rel="stylesheet">
+
+    <!-- <link href= "{% static "css/base.css" %}"  rel="stylesheet"> -->
+     <link href= "{% static "css/map.css" %}"  rel="stylesheet">
+
+    <script src="{% static "js/jquery-1.11.3.min.js" %}"></script> 
+    <script src="{% static "js/jquery.cookie.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+
+    {% block login_error %}
+    {% endblock login_error %}
+
+    <script src="{% static "js/ctracker_main.js" %}"></script>
+
+    {% block head %}
+    {% endblock head %}
+
+
+</head>
+
+<body>
+    <!-- Navigation -->
+    {% include "navigation.html" %}  
+
+    {% block body %}
+    {% endblock body %}
+  
+</body> 

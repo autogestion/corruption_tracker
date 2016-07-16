@@ -1,0 +1,67 @@
+{% load i18n %}
+  
+  <div id="claim_template_for_org" class="popup_template">
+      <div class='claim_icon'></div>
+      <div class="claim_tempalte">
+          <div class="complainer"><b>{% trans "Complainer" %}:</b> %complainer% </div>
+          <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
+          <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
+          <div class="bribe"><b>{% trans "Bribe amount" %}:</b> <span>%bribe%</span></div>
+          <div class="claim"><b>{% trans "Claim text" %}:</b> <span>%text%</span></div>
+          <div class="created"><b>{% trans "Created" %}:</b> <span>%created%</span></div>
+          <hr>
+      </div>
+  </div>
+
+  <div id="claim_template_for_user" class="popup_template">
+      <div class='claim_icon'></div>
+      <div class="claim_tempalte">
+          <div class="organization"><b>{% trans "Organization" %}:</b> <span>%organization%</span></div>
+          <div class="servant"><b>{% trans "Servant" %}:</b> <span>%servant%</span></div>
+          <div class="claim_type"><b>{% trans "Claim type" %}:</b> <span>%claim_type%</span></div>
+          <div class="bribe"><b>{% trans "Bribe amount" %}:</b> <span>%bribe%</span></div>
+          <div class="claim"><b>{% trans "Claim text" %}:</b> <span>%text%</span></div>
+          <div class="created"><b>{% trans "Created" %}:</b> <span>%created%</span></div>
+          <hr>
+      </div>
+  </div>
+
+  <div id="show_all_button_template" class="popup_template">       
+      <button class="btn" onclick="w2ui_popup()">{% trans "Show all claims as table" %}</button>
+  </div>
+
+
+  <div class="modal fade" id="claimsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content  map_popup">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">                
+         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="addclaim">{% trans "Add claim" %}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div>
+
+
+  <div class="modal fade" id="userclaimsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content  map_popup">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">                
+         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="back_button">{% trans "Back" %}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div>

@@ -64,6 +64,7 @@ function fill_claim_form(org_id){
         if (places[i].data === parseInt(org_id)){
             update_dropdown(places[i].org_type_id)
             $('#organization_name').val(places[i].value);
+            $('#organization_name_div').text(places[i].value);
             break
         }
     }  
@@ -97,7 +98,7 @@ function process_claim_template(template, data) {
 }
 
 
-function select_building (org_id, coordinates) {
+function select_building (org_id, org_name, coordinates) {
     fill_claim_form(org_id);
     window.location.hash = "organization=" + org_id + "&zoom_to=" + coordinates; 
 
@@ -113,7 +114,8 @@ function select_building (org_id, coordinates) {
 
                 var records = [];
                 var record;
-                var count = 0
+                var count = 0;
+                console.log(data);
                 data = data['results']
 
                 for (var i = data.length - 1; i >= 0; i--) {
@@ -121,8 +123,11 @@ function select_building (org_id, coordinates) {
                     if (count < 3) {
                         message = process_claim_template(template, data[i])
 
-                        if (data[i]['complainer']) { message = message.replace('%complainer%', 
-                            '<a style="color:green;" id="' + data[i]['complainer'] + '" href="#" class="claims_of_user" onclick="get_claims_for_user('+data[i]['complainer']+','+ "'"+data[i]['complainer_name']+ "'"+')">' + data[i]['complainer_name'] + '</a>');}
+                        if (data[i]['complainer']) { 
+                            a_text = data[i]['complainer_name'] + ' (' + data[i]['complainer_count'] + ' claims)'
+
+                            message = message.replace('%complainer%', 
+                            '<a style="color:green;" id="' + data[i]['complainer'] + '" href="#" class="claims_of_user" onclick="get_claims_for_user('+data[i]['complainer']+','+ "'"+data[i]['complainer_name']+ "'"+')">' + a_text +'</a>');}
                         else { message = message.replace('%complainer%', 'Anon');};
                         messages += message;
                         count += 1
@@ -136,11 +141,11 @@ function select_building (org_id, coordinates) {
 
                 // template_button = template_button.replace('%org_id%', org_id);
                 if (messages == "") {
-                    messages = 'No claims for this polygon';
+                    messages = 'No claims for this organization';
                     template_button= '';} 
 
                 $("#claimsModal .modal-body").html(messages+template_button);
-                $("#claimsModal .modal-title").html('Claims');          
+                $("#claimsModal .modal-title").html('Claims for ' + org_name);          
 
                 $("#claimsModal").modal("show");
                 $(".navbar-collapse.in").collapse("hide");
@@ -157,7 +162,9 @@ function get_claims_for_user(user_id, username){
             type: "GET",
             url: api_url + 'claim/' + user_id + "/user/",
             success: function(data){
-                console.log(data);
+                var count = data.count;
+                data = data['results'];                
+                console.log(data, count);
                 var messages = "";
                 var template, message;
 
@@ -258,6 +265,32 @@ function add_organization(event){
 }
 
 
+
+$(document).ready(function () {
+
+    $("#back_button").click(function() {
+      $("#userclaimsModal").modal("hide");
+      $("#claimsModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
+    }); 
+
+    $("#addclaim").click(function() {
+      $("#claimsModal").modal("hide");
+      $("#addclaimModal").modal("show");
+      $(".navbar-collapse.in").collapse("hide");
+      return false;
+    });     
+
+
+    $("#claim_form").submit(function(event){
+        add_claim(event);
+    });
+    $("#org_form").submit(function(event){
+        add_organization(event)
+    });
+
+});
 
 
 

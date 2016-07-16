@@ -1,4 +1,4 @@
-import time
+# import time
 # import json
 from pprint import pprint
 
@@ -37,7 +37,16 @@ class ClaimTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ClaimListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        iterable = data.all() if isinstance(data, models.Manager) else data
+        return [
+            self.child.to_representation(item) for item in iterable if item
+        ]
+
+
 class ClaimSerializer(serializers.ModelSerializer):
+
     organization_name = serializers.ReadOnlyField(source='organization.name')
     claim_type_name = serializers.ReadOnlyField(source='claim_type.name')
     created = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",
@@ -59,12 +68,41 @@ class ClaimSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Claim
-        fields = ('text', 'created', 'live', 'organization',
-                  'organization_name', 'claim_type_name',
-                  'servant', 'complainer', 'complainer_name',
-                  'claim_type', 'bribe', 'claim_icon')
-        extra_kwargs = {'claim_type': {'required': True},
-                        'complainer': {'read_only': True}}
+        fields = ('servant', 'claim_type_name', 'bribe',
+                  'text', 'created', 'live', 'claim_icon',
+                  # write only
+                  'organization', 'claim_type',
+                  # changing
+                  'organization_name',
+                  'complainer', 'complainer_name',)
+
+        extra_kwargs = {'claim_type': {'required': True, 'write_only': True},
+                        'organization': {'write_only': True},
+                        'complainer': {'read_only': True},
+                        'claim_icon': {'read_only': True}, }
+
+    def to_representation(self, instance):
+        claim = super(ClaimSerializer, self).to_representation(instance)
+
+        if self.org_or_user == 'org':
+            claim['complainer_count'] = instance.num_c
+
+        return claim
+
+    @classmethod
+    def many_init(cls, *args, **kwargs):
+        kwargs['child'] = cls(**kwargs)
+        kwargs.pop('org_or_user', None)
+        return ClaimListSerializer(*args, **kwargs)
+
+    def __init__(self, *args, **kwargs):
+        self.org_or_user = kwargs.pop('org_or_user', False)
+        super(ClaimSerializer, self).__init__(*args, **kwargs)
+
+        if self.org_or_user == 'org':
+            self.fields.pop('organization_name', None)
+        elif self.org_or_user == 'user':
+            pass
 
 
 class OrganizationTypeSerializer(serializers.ModelSerializer):
@@ -299,17 +337,6 @@ class PolygonSerializer(serializers.ModelSerializer):
         # print('        process_centroid wkt', time.time() - start)
 
         # start = time.time()
-        # orgs = OrganizationSerializer(
-        #             instance.organizations.all(), many=True,
-        #             skip_address=True, dynamic=False).data
-        # print('        process orgs', time.time() - start)
-
-        # start = time.time()
-        orgs = instance.organizations.all()
-        orgs = [model_to_dict(x, fields=['id', 'name', 'org_type']) for x in orgs]
-        # print('        process orgs manually', time.time() - start)
-
-        # start = time.time()
         responce = {
             "type": "Feature",
             "properties": {
@@ -318,10 +345,24 @@ class PolygonSerializer(serializers.ModelSerializer):
                 'address': instance.address,
                 'parent_id': instance.layer_id,
                 'level': instance.level,
-                "organizations": orgs
             },
         }
         # print('        process_responce', time.time() - start)
+
+        if instance.level == 4:
+
+            # start = time.time()
+            # orgs = OrganizationSerializer(
+            #             instance.organizations.all(), many=True,
+            #             skip_address=True, dynamic=False).data
+            # print('        process orgs', time.time() - start)
+
+            # start = time.time()
+            orgs = instance.organizations.all()
+            orgs = [model_to_dict(x, fields=['id', 'name', 'org_type']) for x in orgs]
+            # print('        process orgs manually', time.time() - start)
+
+            responce["properties"]["organizations"] = orgs
 
         # start = time.time()
         if instance.shape:

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+
+{% block head %}
+{% endblock head %}
+
+{% block body %}
+    Post {{ id }}
+
+    <br>
+
+    Text
+
+    <br>
+
+    <a href="/user/1/">Author</a>
+
+    {% include "modals/services_modal.html" %}
+
+{% endblock body %}
