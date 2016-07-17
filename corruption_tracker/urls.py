@@ -5,9 +5,11 @@ from django.conf import settings
 # from django.contrib import admin
 from django.contrib.gis import admin
 from django.views.static import serve
+from django.views.i18n import javascript_catalog
 
 from corruption_tracker import views
 
+js_info_dict = {}
 
 urlpatterns = [
     # Rest API
@@ -15,6 +17,7 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^jsi18n/$', javascript_catalog, js_info_dict, name='javascript-catalog'),
 
     url(r'^$', views.MapPageView.as_view(), name="single"),
 

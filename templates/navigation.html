@@ -20,7 +20,7 @@
                     <i class="fa fa-question-circle white"></i>&nbsp;{% trans "Who is here?" %}</a></li>
 
 
-                <form class="navbar-form navbar-right" action="{% url 'set_language' %}" method="post">
+                <form class="navbar-form navbar-left" action="{% url 'set_language' %}" method="post">
                     <div class="form-group">
                         {% csrf_token %}
                         <i class="fa fa-globe white"></i>

@@ -11,7 +11,7 @@
        <div id='login-error'></div>
        <br>
         <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">{% trans "Login with Facebook" %}</a>
-        <br><br>or
+        <br><br>{% trans "or" %}
         <form id="login_form" method='POST' action='{% url 'login' %}'>
             {% csrf_token %}
             <fieldset>

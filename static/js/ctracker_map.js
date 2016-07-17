@@ -124,11 +124,12 @@ function select_building (org_id, org_name, coordinates) {
                         message = process_claim_template(template, data[i])
 
                         if (data[i]['complainer']) { 
-                            a_text = data[i]['complainer_name'] + ' (' + data[i]['complainer_count'] + ' claims)'
+                            var a_text = data[i]['complainer_name'] + ' (' + data[i]['complainer_count'] + ' ' + gettext("claims") + ')'
+                            var onclick_args = data[i]['complainer']+','+ "'"+data[i]['complainer_name']+ "'"
+                            var replace_str = '<a style="color:green;" id="' + data[i]['complainer'] + '" href="#" class="claims_of_user" onclick="get_claims_for_user('+ onclick_args +')">' + a_text +'</a>'
+                            message = message.replace('%complainer%', replace_str);}
 
-                            message = message.replace('%complainer%', 
-                            '<a style="color:green;" id="' + data[i]['complainer'] + '" href="#" class="claims_of_user" onclick="get_claims_for_user('+data[i]['complainer']+','+ "'"+data[i]['complainer_name']+ "'"+')">' + a_text +'</a>');}
-                        else { message = message.replace('%complainer%', 'Anon');};
+                        else { message = message.replace('%complainer%', gettext('Anon'));};
                         messages += message;
                         count += 1
                     } 
@@ -141,11 +142,11 @@ function select_building (org_id, org_name, coordinates) {
 
                 // template_button = template_button.replace('%org_id%', org_id);
                 if (messages == "") {
-                    messages = 'No claims for this organization';
+                    messages = gettext('No claims for this organization');
                     template_button= '';} 
 
                 $("#claimsModal .modal-body").html(messages+template_button);
-                $("#claimsModal .modal-title").html('Claims for ' + org_name);          
+                $("#claimsModal .modal-title").html(org_name);          
 
                 $("#claimsModal").modal("show");
                 $(".navbar-collapse.in").collapse("hide");
@@ -183,7 +184,7 @@ function get_claims_for_user(user_id, username){
                 }
               
                 $("#userclaimsModal .modal-body").html(messages);
-                $("#userclaimsModal .modal-title").html('Claims for '+ username);                              
+                $("#userclaimsModal .modal-title").html(gettext('Claims from ')+ username);                              
 
                 $("#claimsModal").modal("hide");
                 $("#userclaimsModal").modal("show");
@@ -216,12 +217,12 @@ function add_claim(event){
                 //
             },
             403: function (response) {
-                alert("Too much claims. Please wait an hour and try again.");
+                alert(gettext("Too much claims. Please wait an hour and try again."));
             }
         },
         success: function(data){                 
             $('#processing').hide();
-            $('#message').html('Thank you for your message');
+            // $('#message').html('Thank you for your message');
             window.location.reload();
 
             // $('#claim_text').val('');

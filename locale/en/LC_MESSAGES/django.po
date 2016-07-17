@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-16 18:27+0000\n"
+"POT-Creation-Date: 2016-07-16 19:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,7 +91,7 @@ msgstr ""
 msgid "Forget password?"
 msgstr ""
 
-#: templates/map.html:67
+#: templates/map.html:66
 msgid "Fork me on GitHub"
 msgstr ""
 
@@ -129,6 +129,13 @@ msgstr ""
 msgid "Send claim"
 msgstr ""
 
+#: templates/modals/add_objects_modal.html:63
+#: templates/modals/add_objects_modal.html:112
+#: templates/modals/claims_modal.html:45 templates/modals/claims_modal.html:63
+#: templates/modals/services_modal.html:87
+msgid "Close"
+msgstr ""
+
 #: templates/modals/add_objects_modal.html:77 templates/navigation.html:47
 msgid "Add organization"
 msgstr ""
@@ -153,12 +160,6 @@ msgstr ""
 
 #: templates/modals/add_objects_modal.html:105
 msgid "Send organization"
-msgstr ""
-
-#: templates/modals/add_objects_modal.html:112
-#: templates/modals/claims_modal.html:45 templates/modals/claims_modal.html:63
-#: templates/modals/services_modal.html:87
-msgid "Close"
 msgstr ""
 
 #: templates/modals/claims_modal.html:6
@@ -195,6 +196,10 @@ msgstr ""
 
 #: templates/modals/services_modal.html:13
 msgid "Login with Facebook"
+msgstr ""
+
+#: templates/modals/services_modal.html:14
+msgid "or"
 msgstr ""
 
 #: templates/modals/services_modal.html:26

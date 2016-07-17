@@ -1,7 +1,4 @@
 function main_map_init (map, options) {
-    $("#main > div.leaflet-control-container > div.leaflet-top.leaflet-right").addClass('layout_chooser');
-    $('.layout_chooser').removeClass("leaflet-right");
-    $('.layout_chooser').addClass("leaflet-left");
 
     // var reselect_selected = false;
 
@@ -111,7 +108,7 @@ function main_map_init (map, options) {
                         });
                         
                         marker.addTo(districtLayer);              
-                        polygon.addTo(districtLayer).bindPopup(org_list);                       
+                        polygon.addTo(districtLayer).bindPopup(org_list);
 
                         // polygon select callback
                         polygon.on('click',function() {                      

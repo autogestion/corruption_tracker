@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-16 18:27+0000\n"
+"POT-Creation-Date: 2016-07-16 19:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,7 +93,7 @@ msgstr "Запам'ятати мене"
 msgid "Forget password?"
 msgstr ""
 
-#: templates/map.html:67
+#: templates/map.html:66
 msgid "Fork me on GitHub"
 msgstr ""
 
@@ -131,6 +131,13 @@ msgstr "Зробити анонімно"
 msgid "Send claim"
 msgstr "Відправити скаргу"
 
+#: templates/modals/add_objects_modal.html:63
+#: templates/modals/add_objects_modal.html:112
+#: templates/modals/claims_modal.html:45 templates/modals/claims_modal.html:63
+#: templates/modals/services_modal.html:87
+msgid "Close"
+msgstr "Закрити"
+
 #: templates/modals/add_objects_modal.html:77 templates/navigation.html:47
 msgid "Add organization"
 msgstr "Додати установу"
@@ -156,12 +163,6 @@ msgstr "Назва установи"
 #: templates/modals/add_objects_modal.html:105
 msgid "Send organization"
 msgstr "Додати установу"
-
-#: templates/modals/add_objects_modal.html:112
-#: templates/modals/claims_modal.html:45 templates/modals/claims_modal.html:63
-#: templates/modals/services_modal.html:87
-msgid "Close"
-msgstr "Закрити"
 
 #: templates/modals/claims_modal.html:6
 msgid "Complainer"
@@ -199,6 +200,10 @@ msgstr "Назад"
 msgid "Login with Facebook"
 msgstr "Авторизуватися через Facebook"
 
+#: templates/modals/services_modal.html:14
+msgid "or"
+msgstr "або"
+
 #: templates/modals/services_modal.html:26
 #: templates/modals/services_modal.html:58
 msgid "Cancel"
@@ -227,7 +232,7 @@ msgstr "Вийти"
 
 #: templates/navigation.html:68
 msgid "Type organization name and select"
-msgstr "Назва установи"
+msgstr "Пошук по назві установи"
 
 #~ msgid "Others"
 #~ msgstr "Інше"

@@ -18,6 +18,8 @@
     <script src="{% static "js/jquery.cookie.js" %}"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
 
+
+
     {% block login_error %}
     {% endblock login_error %}
 
@@ -25,6 +27,8 @@
 
     {% block head %}
     {% endblock head %}
+
+    <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
 
 
 </head>
