@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% load i18n %}
+
+
+{% block login_error %}
+    <script type="text/javascript">
+        var login_error = {{ login_error }}
+    </script>
+{% endblock login_error %}
+
+
+{% block head %}
+
+    <title>Corruption map</title>
+    
+    <link href= "{% static "css/gh-fork-ribbon.min.css" %}"  rel="stylesheet">      
+    
+    <script src="{% static "js/jquery.autocomplete.min.js" %}"></script>
+
+    <link href="{% static "css/w2ui-1.4.3.min.css" %}" rel="stylesheet" type="text/css" />  
+    <script src="{% static "js/w2ui-1.4.3.min.js" %}" type="text/javascript"></script>    
+
+    {% leaflet_js %}
+    {% leaflet_css %}
+
+    <script type="text/javascript">        
+        var api_url = "{% url 'api-root' %}"
+        var claim_types = {{claim_types}}
+        var zoom_to = {{ zoom_to }}
+        var places= []
+    </script>
+    <script src="{% static "js/ctracker_map_init.js" %}"></script>
+    <script src="{% static "js/ctracker_map.js" %}"></script>
+    
+
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script type="text/javascript">
+        {% if not user.is_authenticated %}
+            var grecaptcha_reset = true
+        {% else %}
+            var grecaptcha_reset = false
+        {% endif %}
+    </script>   
+
+{% endblock head %}
+
+{% block body %}
+
+    <!-- Map  -->
+    <div id="main" class="leaflet-container-default"></div>
+
+    <script type="text/javascript">
+    (function () {
+
+        function loadmap() {
+            var djoptions = {
+                "resetview": false, 
+                "attributionprefix": null, 
+                "scale": "metric", 
+                "minzoom": null, 
+                "zoom": null, 
+                "fitextent": true, 
+                "tilesextent": [], 
+                "layers": [
+                    ["Hydda", "http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png", 
+                        {"attribution": "Tiles courtesy of <a href=\"http://openstreetmap.se/\" target=\"_blank\">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>"}]],
+                "minimap": false, 
+                "overlays": [], 
+                "maxzoom": null, 
+                "srid": null, 
+                "extent": [[-90, -180], [90, 180]], 
+                "center": null},
+
+            options = {djoptions: djoptions, initfunc: loadmap,
+                           globals: false, callback: main_map_init};
+            L.Map.djangoMap('main', options);
+        }
+
+        var loadevents = ["load"];
+        if (loadevents.length === 0) loadmap();
+        else if (window.addEventListener) for (var i=0; i<loadevents.length; i++) window.addEventListener(loadevents[i], loadmap, false);
+        else if (window.jQuery) jQuery(window).on(loadevents.join(' '), loadmap);
+        
+    })();
+    </script>    
+
+    <!-- Alarm text, only on test servers-->
+    {% if test_alarm %}<div class="col-md-2" id="alarm">
+        <p>УВАГА! Ресурс працює в тестовому режимі. Усі П.І.Б. посадовців уявні, співпадіння випадкові.</p> 
+    </div>{% endif %}
+
+    <!-- Footer -->
+    <div class="navbar-fixed-bottom row-fluid">
+        <div class="github-fork-ribbon-wrapper right-bottom hidden-xs">
+            <div class="github-fork-ribbon">
+                <a href="https://github.com/autogestion/corruption_tracker" target="_blank">{% trans "Fork me on GitHub" %}</a>
+            </div>
+        </div>    
+    </div>
+
+    <!-- Claim templates and modals -->
+    {% include "modals/claims_modal.html" %}
+    {% include "modals/add_objects_modal.html" %}
+    {% include "modals/services_modal.html" %}
+  
+{% endblock body %}

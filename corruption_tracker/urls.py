@@ -5,15 +5,19 @@ from django.conf import settings
 # from django.contrib import admin
 from django.contrib.gis import admin
 from django.views.static import serve
+from django.views.i18n import javascript_catalog
 
 from corruption_tracker import views
 
+js_info_dict = {}
 
 urlpatterns = [
     # Rest API
     url(r'^api/', include('api.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^jsi18n/$', javascript_catalog, js_info_dict, name='javascript-catalog'),
 
     url(r'^$', views.MapPageView.as_view(), name="single"),
 
@@ -24,16 +28,14 @@ urlpatterns = [
     url(r'^logout/$', views.logout_user,
         name='logout'),
 
-    # url(r'^accounts/logout/$', logout,
-    #     {'next_page': '/'}),
-    # url(r'^accounts/', include('allauth.urls')),
-    # url(r'^export_layer/(?P<layer_id>[\w.]{0,256})/$',
-    #     geo_views.export_layer, name="export_layer"),
-
     url(r'^static/(?P<path>.*)$', serve,
         {'document_root': settings.STATIC_ROOT}),
 
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
-    urlpatterns += [url(r'^profiling/$', views.profiling)]
+    urlpatterns += [
+        url(r'^profiling/$', views.profiling),
+        url(r'^press/', include('blog.urls')),
+        url(r'^user/', include('interaction.urls')),
+    ]

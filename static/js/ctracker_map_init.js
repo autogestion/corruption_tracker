@@ -1,7 +1,4 @@
 function main_map_init (map, options) {
-    $("#main > div.leaflet-control-container > div.leaflet-top.leaflet-right").addClass('layout_chooser');
-    $('.layout_chooser').removeClass("leaflet-right");
-    $('.layout_chooser').addClass("leaflet-left");
 
     // var reselect_selected = false;
 
@@ -28,7 +25,7 @@ function main_map_init (map, options) {
         zoom = map.getZoom();
                if ( zoom <=8 )   { dataType = 1; // region = 1     <=8
         } else if ( zoom <= 10 ) { dataType = 2; // area = 2       <=10
-        } else if ( zoom <= 12 ) { dataType = 3; // district = 3   <=12
+        } else if ( zoom <= 14 ) { dataType = 3; // district = 3   <=12
         } else                   { dataType = 4; // building = 4   >=13
         };
 
@@ -52,9 +49,10 @@ function main_map_init (map, options) {
                 for (var i = polygons.length - 1; i >= 0; i--) {
                     orgs_set = polygons[i]['properties']["organizations"]
                     object_centroid = polygons[i]['properties']["centroid"]
-                    
+
+                    // console.log(orgs_set, 'orgs_set');
                     // if geo-object is building, process its orgs
-                    if (orgs_set){
+                    if (orgs_set){                        
                         org_rows = [];                
                         for (var ii = orgs_set.length - 1; ii >= 0; ii--) {                    
                             org_row = document.createElement('a');
@@ -63,7 +61,7 @@ function main_map_init (map, options) {
                             org_row.innerHTML = orgs_set[ii]['name'] + ': <div class="counts">' + orgs_set[ii]['claims'] + '<div>';
 
                             org_row.onclick = function(event) {
-                                select_building($(this).attr('id'));
+                                select_building($(this).attr('id'), $(this).text().split(":")[0], object_centroid);
                                 event.preventDefault();
                             };
                             org_rows.push(org_row);
@@ -79,8 +77,8 @@ function main_map_init (map, options) {
                                 .addClass('ui-menu-item')
                                 .attr('role', 'menuitem')
                                 .appendTo(org_list);        
-                            li.html(org_rows[i]);  
-                        }); 
+                            li.html(org_rows[i]);
+                        });
 
                     // if geo-object is district or higher
                     } else {
@@ -98,8 +96,9 @@ function main_map_init (map, options) {
 
                         var polygon = L.polygon(polygons[i]["geometry"]["coordinates"]);
 
-                        if (orgs_set && orgs_set.length==1){       
+                        if (orgs_set){       
                             polygon.organization = orgs_set[0]['id']
+                            polygon.org_name = orgs_set[0]['name']
                         }
 
                         polygon.setStyle({
@@ -109,7 +108,7 @@ function main_map_init (map, options) {
                         });
                         
                         marker.addTo(districtLayer);              
-                        polygon.addTo(districtLayer).bindPopup(org_list);                       
+                        polygon.addTo(districtLayer).bindPopup(org_list);
 
                         // polygon select callback
                         polygon.on('click',function() {                      
@@ -123,7 +122,7 @@ function main_map_init (map, options) {
                             $_selectedPolygon = this;
 
                             if (this.organization) {
-                                select_building(this.organization, object_centroid);
+                                select_building(this.organization, this.org_name, object_centroid);
                             }
                             else {
                                 $('#claims_list').empty();            
@@ -136,6 +135,7 @@ function main_map_init (map, options) {
 
                         if (orgs_set.length==1){       
                             marker.organization = orgs_set[0]['id']
+                            marker.org_name = orgs_set[0]['name']
                         }
 
                         marker.addTo(districtLayer).bindPopup(org_list);                  
@@ -144,7 +144,7 @@ function main_map_init (map, options) {
                             deselect_selected();
                             // $_selectedPolygon = null;                        
                             if (this.organization) {
-                                select_building(this.organization, object_centroid);
+                                select_building(this.organization, this.org_name, object_centroid);
                             }
                             else {
                                 $('#claims_list').empty();            
@@ -179,14 +179,22 @@ function main_map_init (map, options) {
     var districtLayer = L.geoJson(null,{});
     $_selectedPolygon = null;
     
-    if (window.location.hash) {
+    if (window.location.hash) {        
         try {
             var hash_data = window.location.hash.replace("#", "").split("&");
-            var hashed_org_id = hash_data[0].split('=')[1];
-            var hashed_coordinates = hash_data[1].split('=')[1].split(','); 
-            map.setView(hashed_coordinates, 16);
-            updateMapLayer();     
-            select_building(hashed_org_id, hashed_coordinates);  
+
+            if (hash_data[0].split('=')[0]=='cityzoom'){
+                var hashed_coordinates = hash_data[0].split('=')[1].split(',');
+                map.setView(hashed_coordinates, 12);
+                updateMapLayer(); 
+
+            } else {
+                var hashed_org_id = hash_data[0].split('=')[1];
+                var hashed_coordinates = hash_data[1].split('=')[1].split(','); 
+                map.setView(hashed_coordinates, 16);
+                updateMapLayer();     
+                select_building(hashed_org_id, 'organization', hashed_coordinates );  
+            }
         } catch(err) {
             console.log(err)
             map.setView(zoom_to, 12);

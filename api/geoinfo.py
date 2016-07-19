@@ -1,7 +1,7 @@
+import time
 
 from django.contrib.gis import geos
 from django.conf import settings
-
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins, filters
 
@@ -139,9 +139,9 @@ class FitBoundsPolygons(viewsets.ViewSet):
         area_coord_str = ', '.join([' '.join(x) for x in area_coord])
         area = geos.GEOSGeometry('POLYGON ((%s))' % area_coord_str)
 
-        if settings.DISPLAY_DISTRICTS and int(layer)== 4:
+        if settings.DISPLAY_DISTRICTS and int(layer) == 4:
             queryset = Polygon.objects.filter(
-                shape__bboverlaps=area, level__in=[3,4])
+                shape__bboverlaps=area, level__in=[3, 4])
         else:
             queryset = Polygon.objects.filter(
                 shape__bboverlaps=area, level=int(layer))
@@ -150,8 +150,19 @@ class FitBoundsPolygons(viewsets.ViewSet):
         if search:
             queryset = queryset.filter(address__icontains=search)
 
-        serializer = PolygonSerializer(queryset, many=True)
-        return Response(serializer.data)
+        # db_start = time.time()
+        geodata = list(queryset.prefetch_related('organizations'))
+        # print('  get polygon and orgs(sql)', time.time() - db_start)
+
+        # serializer_start = time.time()
+        serializer = PolygonSerializer(geodata, many=True)
+        data = serializer.data
+        # print('  serialization', time.time() - serializer_start)
+
+        return Response(data)
+
+        # serializer = PolygonSerializer(queryset.prefetch_related('organizations'), many=True)
+        # return Response(serializer.data)
 
 
 class CheckInPolygon(viewsets.ViewSet):

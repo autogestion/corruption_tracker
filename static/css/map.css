@@ -1,0 +1,32 @@
+
+.navbar {
+    margin-bottom: 0px; 
+}
+
+.navbar-brand {
+     padding: 0; 
+}
+
+#main {
+    position: fixed;
+    width: 100%;
+    height: calc(100% - 52px);
+}
+
+#alarm {
+    float: right;
+}
+
+
+#alarm p {    
+    font-weight: bold;
+    text-align: right;
+    color:#800000; 
+    padding-top: 5px; 
+    padding-left:30px;    
+
+}        
+
+.popup_template {
+    display: none;
+}

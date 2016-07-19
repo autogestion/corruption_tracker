@@ -1,0 +1,91 @@
+{% load i18n %}
+
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content map_popup">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">{% trans "Login" %}</h4>
+      </div>
+      <div class="modal-body">
+       <div id='login-error'></div>
+       <br>
+        <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">{% trans "Login with Facebook" %}</a>
+        <br><br>{% trans "or" %}
+        <form id="login_form" method='POST' action='{% url 'login' %}'>
+            {% csrf_token %}
+            <fieldset>
+            <div class="form-group">
+              <label for="name">{% trans "Username" %}:</label>
+              <input type="text" class="form-control" id="id_login" name="username">
+            </div>
+            <div class="form-group">
+              <label for="email">{% trans "Password" %}:</label>
+              <input type="password" class="form-control" id="id_password" name='password'>
+            </div>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Cancel" %}</button>
+            <button type="submit" class="btn btn-primary">{% trans "Login" %}</button>                   
+            </fieldset>           
+        </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content map_popup">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">{% trans "Register" %}</h4>
+      </div>
+      <div class="modal-body">
+        <form id="signup_form">
+          <fieldset>
+            <div class="form-group">
+              <label for="name">{% trans "Username" %}:</label>
+              <input type="text" class="form-control" id="username" name="username">
+            </div>
+            <div class="form-group">
+              <label for="email">{% trans "Password" %}:</label>
+              <input type="password" class="form-control" id="password" name='password'>
+            </div>                                
+          </fieldset>            
+        </form>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Cancel" %}</button>
+            <button type="submit" class="btn btn-primary" onclick="signup()">{% trans "Register" %}</button>              
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content  map_popup">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Подолати корупцію в один клік.</h4>
+      </div>
+      <div class="modal-body">
+            <p>Кожен громадянин України має важелі впливу на корупційну діяльність. Це - особиста відповідальність та публічність.</p>
+            <p>Відповідальність спонукає зробити вибір підтримувати чи не підтримувати корупцію. А публічність нівелює прояви корупції, якщо вибір було зроблено на користь її подолання.</p>
+            <p>Питання стоїть лише за інструментом, який поєднає особисте прагнення здолати корупцію в Україні з максимальним розголосом актів корупційної діяльності.</p>
+            <p>Система є таким інструментом. Основний акцент у ній зроблено на можливості зафіксувати корупційну діяльність на місці її вчинення. Далі акцент зміщується у публічну сферу. Розголос набуває форми структурованої мапи корупції.</p>
+            <p>Так, Система є найпростішим способом вести облік корупційної активності. А універсальність її даних відкриває можливість боротьби з корупцією на всіх рівнях: від рівня особистого невдоволення до рівня громадянського суспільства чи законодавчих ініціатив.</p>
+            <p>А потрібно лише зробити один клік "Повідомити".</p>       
+            <h3>Проекту потрібні</h3><ul><li>Javascript UI Developer</li><li>Mobile Developer (iOS, Android)</li><li>Та інші.</li></ul>
+            <h3>Долучится до розробки можна</h3><ul>
+            <li>на GitHub => <a href="https://github.com/autogestion/corruption_tracker" target="_blank">Corruption tracker</a></li>
+            <li>у Facebook спільноті => <a href="https://www.facebook.com/activecorruptiontracking/" target="_blank">Система учёта коррупционной активности</a></li>
+           </ul>
+       </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>

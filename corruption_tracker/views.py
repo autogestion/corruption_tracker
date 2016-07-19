@@ -22,7 +22,7 @@ from corruption_tracker.middleware import SqlProfilingMiddleware
 
 
 class MapPageView(View):
-    template_name = 'single.html'
+    template_name = 'map.html'
 
     def get(self, request):
         resp_dict = {

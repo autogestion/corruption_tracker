@@ -42,10 +42,10 @@ nav .navbar-brand {
     text-align: center;
 }
 
-.navbar-brand > img {
+/*.navbar-brand > img {
     top: -15px;
     position: relative;
-}
+}*/
 
 .nav-tabs>li {
     width: 50%;
@@ -78,10 +78,10 @@ nav .navbar-brand {
 .layout_chooser {
     padding-top: 95px;
 }
-
+/*
 #language_selector {
     padding-top: 13px;
-}
+}*/
 
 #processing {
     width: 100%;

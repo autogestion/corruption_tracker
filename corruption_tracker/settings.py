@@ -31,6 +31,8 @@ INSTALLED_APPS = (
     'corruption_tracker',
     'claim',
     'geoinfo',
+    'blog',
+    'interaction',
     'api',
 )
 
