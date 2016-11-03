@@ -2,7 +2,7 @@
 
 <div class="modal fade" id="addclaimModal" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content  map_popup">
+    <div class="modal-content  map_popup transparent-module">
       <div class="modal-header">
         <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">{% trans "Add claim" %}</h4>
@@ -71,44 +71,47 @@
 
 <div class="modal fade" id="addorgModal" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content  map_popup">
+    <div class="modal-content  map_popup transparent-module top-offset">
       <div class="modal-header">
         <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">{% trans "Add organization" %}</h4>
       </div>
-      <div class="modal-body"> 
-        <form role="form" id='org_form' class="forms_padding">
-            {% csrf_token %}              
-            <div class="form-group">
-                <label for="org_type">{% trans "Choose Organization type" %}:</label>
-                <select id="org_type" name="org_type">
-                    {% for org_type in org_types %}
-                      <option value='{{org_type.type_id}}'>{{org_type.name}}</option>                    
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="centroid">{% trans "Centroid" %}:</label>
-                <input type="text" class="form-control" id="centroid" name="centroid" placeholder='36.2543045,50.0075170' required>
-            </div>                
-            <div class="form-group">
-                <label for="address">{% trans "Address" %}:</label>
-                <input type="text" class="form-control" id="address" name="address" placeholder='{% trans "Address" %}' required>
-            </div>
-            <div class="form-group">
-                <label for="name">{% trans "Organization name" %}:</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder='{% trans "Organization name" %}' required>
-            </div>                      
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                <form role="form" id='org_form' class="forms_padding">
+                    {% csrf_token %}              
+                    <div class="form-group">
+                        <label for="org_type">{% trans "Choose Organization type" %}:</label>
+                        <select id="org_type" name="org_type">
+                            {% for org_type in org_types %}
+                              <option value='{{org_type.type_id}}'>{{org_type.name}}</option>                    
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="centroid"></label>
+                        <input type="text" class="form-control" id="centroid" name="centroid" placeholder='{% trans "Centroid" %}/36.2543045,50.0075170' required>
+                    </div>                
+                    <div class="form-group">
+                        <label for="address"></label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder='{% trans "Address" %}' required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name"></label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder='{% trans "Organization name" %}' required>
+                    </div>                      
 
-            <div class="form-group">
-                <div id='message'></div>
-                <button type="submit" class="btn btn-primary">{% trans "Send organization" %}</button>
+                    <div class="form-group">
+                        <div id='message'></div>
+                        <div class="centered-horizontal">
+                            <button type="submit" class="btn btn-primary cta">{% trans "Send organization" %}</button>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
        </div>
-      <div class="modal-footer">       
-        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-      </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div>   

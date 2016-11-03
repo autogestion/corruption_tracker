@@ -1,7 +1,7 @@
 {% load staticfiles %}
 {% load i18n %}
 
-<nav class="navbar navbar-default">
+<nav id="nav" class="navbar navbar-default transparent-module bar">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -18,7 +18,37 @@
                 
                 <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn">
                     <i class="fa fa-question-circle white"></i>&nbsp;{% trans "Who is here?" %}</a></li>
+ 
+               
+                <li class="dropdown">
+                    <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+                        {% trans "Tools " %}<b class="caret"></b></a>
+                    <ul class="dropdown-menu transparent-module">
 
+                        <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="addorg-btn">{% trans "Add organization" %}</a></li>
+                        <li><a href="api/docs" target="_blank">{% trans "API Docs" %}</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a  href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+                        {% trans "My profile " %}<b class="caret"></b></a>
+                    <ul class="dropdown-menu transparent-module">
+                        {% if request.user.is_authenticated %}
+                            <li><a><i class="fa fa-user"></i> {{ user.get_full_name|default:user.username }}</a></li>
+                            <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+                        {% else %}                 
+                            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="login-btn">
+                                <i class="fa fa-user"></i>&nbsp;{% trans "Login" %}</a></li>
+                            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="register-btn">
+                                <i class="fa fa-user"></i>&nbsp;{% trans "Register" %}</a></li>
+                        {% endif %} 
+                    </ul>
+
+
+                </li>                
+<!--                     <li><a href="">{% trans "My profile " %}</a></li>
+                    <li><a href="">{% trans "My profile " %}</a></li> -->
 
                 <form class="navbar-form navbar-left" action="{% url 'set_language' %}" method="post">
                     <div class="form-group">
@@ -37,32 +67,6 @@
                         </select>
                     </div>   
                 </form>
- 
-               
-                <li class="dropdown">
-                    <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
-                        {% trans "Tools " %}<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-
-                        <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="addorg-btn">{% trans "Add organization" %}</a></li>
-                        <li><a href="api/docs" target="_blank">{% trans "API Docs" %}</a></li>
-
-                        <li role="separator" class="divider"></li>
-
-                        {% if request.user.is_authenticated %}
-                            <li><a><i class="fa fa-user"></i> {{ user.get_full_name|default:user.username }}</a></li>
-                            <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
-                        {% else %}                 
-                            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="login-btn">
-                                <i class="fa fa-user"></i>&nbsp;{% trans "Login" %}</a></li>
-                            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="register-btn">
-                                <i class="fa fa-user"></i>&nbsp;{% trans "Register" %}</a></li>
-                        {% endif %} 
-                    </ul>
-
-
-                </li>
-
               <form class="navbar-form navbar-left" role="search">
                 <div class="form-group">
                   <input type='search' id='organization_name' placeholder='{% trans "Type organization name and select" %}' class="form-control" >
