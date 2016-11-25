@@ -9,59 +9,61 @@
       </div>
       <div class="modal-body">
             <div id="processing">{% trans "Processing" %}...</div>
-            <form role="form" id='claim_form' class="forms_padding">
-                {% csrf_token %}         
-                <div class="form-group">
-                    <div id='organization_name_div'></div>
-                </div>
-                <div class="form-group" style="display:none">                      
-                    <div id='organization_error'></div>
-                    <input type="text" class="form-control" id="organization" name="organization" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="claim_type">{% trans "Choose Violation type" %}:</label>
-                    <select id="claim_type" name="claim_type">
-                      <option selected></option>                    
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="servant">{% trans "Servant name" %}:</label>
-                    <input type="text" class="form-control" id="servant" name="servant" required>
-                </div>
-                <div class="form-group">
-                    <label for="text">{% trans "Claim message" %}:</label>
-                    <div id='text_error'></div>
-                    <textarea type="text" class="form-control" id="text" name="text" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="bribe">{% trans "Bribe amount" %}:</label>
-                    <input type="text" class="form-control" id="bribe" name="bribe">
-                </div>
-
-                {% if user.is_authenticated %}
-                    <div class="form-group">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" name="anonymously"> {% trans "Keep me anonymously" %}
-                            </label>
+            <div class="row">
+                <div class="col-xs-12 col-md-6 col-md-offset-3">
+                    <form role="form" id='claim_form' class="forms_padding">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div id='organization_name_div'></div>
                         </div>
-                    </div>
-                {% else %}
-                    <div class="form-group">
-                        <div class="g-recaptcha" data-sitekey="{{ recaptcha_public }}"></div>
-                    </div>
-                {% endif %}                       
+                        <div class="form-group" style="display:none">
+                            <div id='organization_error'></div>
+                            <input type="text" class="form-control" id="organization" name="organization" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="claim_type">{% trans "Choose Violation type" %}:</label>
+                            <select id="claim_type" name="claim_type">
+                              <option selected></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="servant">{% trans "Servant name" %}:</label>
+                            <input type="text" class="form-control" id="servant" name="servant" required placeholder="{% trans "Servant name" %}">
+                        </div>
+                        <div class="form-group">
+                            <label for="text">{% trans "Claim message" %}:</label>
+                            <div id='text_error'></div>
+                            <textarea type="text" class="form-control" id="text" name="text" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="bribe">{% trans "Bribe amount" %}:</label>
+                            <input type="text" class="form-control" id="bribe" name="bribe">
+                        </div>
 
-                <div class="form-group">
-                    <div id='message'></div>
-                    <button type="submit" class="button_red">{% trans "Send claim" %}</button>
+                        {% if user.is_authenticated %}
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="anonymously"> {% trans "Keep me anonymously" %}
+                                    </label>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="form-group">
+                                <div class="g-recaptcha" data-sitekey="{{ recaptcha_public }}"></div>
+                            </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <div id='message'></div>
+                            <div class="centered-horizontal">
+                                <button type="submit" class="btn btn-default cta">{% trans "Send claim" %}</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </form>
-
+            </div>
        </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-      </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div>
@@ -80,19 +82,19 @@
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-sm-offset-3">
                 <form role="form" id='org_form' class="forms_padding">
-                    {% csrf_token %}              
+                    {% csrf_token %}
                     <div class="form-group">
                         <label for="org_type">{% trans "Choose Organization type" %}:</label>
                         <select id="org_type" name="org_type">
                             {% for org_type in org_types %}
-                              <option value='{{org_type.type_id}}'>{{org_type.name}}</option>                    
+                              <option value='{{org_type.type_id}}'>{{org_type.name}}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="centroid"></label>
                         <input type="text" class="form-control" id="centroid" name="centroid" placeholder='{% trans "Centroid" %}/36.2543045,50.0075170' required>
-                    </div>                
+                    </div>
                     <div class="form-group">
                         <label for="address"></label>
                         <input type="text" class="form-control" id="address" name="address" placeholder='{% trans "Address" %}' required>
@@ -100,7 +102,7 @@
                     <div class="form-group">
                         <label for="name"></label>
                         <input type="text" class="form-control" id="name" name="name" placeholder='{% trans "Organization name" %}' required>
-                    </div>                      
+                    </div>
 
                     <div class="form-group">
                         <div id='message'></div>
@@ -114,4 +116,4 @@
        </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
-</div>   
+</div>

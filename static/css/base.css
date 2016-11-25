@@ -137,10 +137,21 @@ nav .navbar-brand {
     color: #fff;
 }
 
-. modal-content {
+.modal-content {
     margin-top: 60px;
+    border: none;
+}
+.modal-body {
+    height: 300px;
+    overflow-y: scroll;
 }
 
+@media screen and (min-width: 769px) {
+    div.modal-body {
+        height: 100%;
+        overflow-y: auto;
+    }
+}
 #claims_list {
     padding-bottom: 12px;
     float: left;
@@ -240,8 +251,8 @@ nav .navbar-brand {
 }
 
 .modal-content.map_popup.transparent-module input,
-.modal-content.map_popup.transparent-module textarea,
-.modal-content.map_popup.transparent-module select {
+.modal-content.map_popup.transparent-module select,
+.modal-content.map_popup.transparent-module textarea {
     background: transparent;
     border-radius: 0;
     border-top: none;
@@ -252,7 +263,12 @@ nav .navbar-brand {
 }
 
 .modal-content.map_popup.transparent-module select {
-    border: none;
+    min-width: 20%;
+}
+
+.modal-content.map_popup.transparent-module select option {
+    background: #fff;
+    color: #000;
 }
 
 .modal-content.map_popup.transparent-module input:focus,
@@ -283,12 +299,14 @@ footer {
 .centered-horizontal {
     text-align: center;
 }
-
-.cta {
-    font-size: 20px;
-    text-transform: uppercase;
+.btn {
     background: #ccc;
     color: #414141;
+    padding:  22px 10px;
+}
+.cta {
+    font-size: 16px;
+    text-transform: uppercase;
     border: none;
 }
 
@@ -303,9 +321,13 @@ footer {
     color: #fff;
     opacity: 1;
 }
-
 .top-offset {
-    margin-top: 200px;
+    margin-top: 80px;
+}
+@media screen and (min-width: 769px) {
+    .top-offset {
+        margin-top: 200px;
+    }
 }
 
 ::-webkit-input-placeholder {
