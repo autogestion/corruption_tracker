@@ -1,75 +1,74 @@
-{% load staticfiles %}
-{% load i18n %}
-
-<nav class="navbar navbar-default">
+{% load staticfiles %} {% load i18n %}
+<nav id="nav" class="navbar navbar-default transparent-module bar">
     <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/"><img src="{% static "img/logo.jpg" %}"></a>           
-        </div>
-
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                
-                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn">
-                    <i class="fa fa-question-circle white"></i>&nbsp;{% trans "Who is here?" %}</a></li>
-
-
-                <form class="navbar-form navbar-left" action="{% url 'set_language' %}" method="post">
-                    <div class="form-group">
-                        {% csrf_token %}
-                        <i class="fa fa-globe white"></i>
-                        <!-- <input name="next" type="hidden" value="{{ redirect_to }}" /> -->
-                        <select name="language" onchange="this.form.submit()">
-                            {% get_current_language as LANGUAGE_CODE %}
-                            {% get_available_languages as LANGUAGES %}
-                            {% get_language_info_list for LANGUAGES as languages %}
-                            {% for language in languages %}
-                                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected="selected"{% endif %}>
-                                    {{ language.name_local }} ({{ language.code }})
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>   
-                </form>
- 
-               
-                <li class="dropdown">
-                    <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
-                        {% trans "Tools " %}<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-
-                        <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="addorg-btn">{% trans "Add organization" %}</a></li>
-                        <li><a href="api/docs" target="_blank">{% trans "API Docs" %}</a></li>
-
-                        <li role="separator" class="divider"></li>
-
-                        {% if request.user.is_authenticated %}
-                            <li><a><i class="fa fa-user"></i> {{ user.get_full_name|default:user.username }}</a></li>
-                            <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
-                        {% else %}                 
-                            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="login-btn">
-                                <i class="fa fa-user"></i>&nbsp;{% trans "Login" %}</a></li>
-                            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="register-btn">
-                                <i class="fa fa-user"></i>&nbsp;{% trans "Register" %}</a></li>
-                        {% endif %} 
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/"><img src="{% static "img/logo.jpg" %}"></a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn">
+                                <i class="fa fa-question-circle white"></i>&nbsp;{% trans "Who is here?" %}</a>
+                        </li>
+                        <li class="dropdown">
+                            <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+                                {% trans "Tools " %}<b class="caret"></b></a>
+                            <ul class="dropdown-menu transparent-module">
+                                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="addorg-btn">{% trans "Add organization" %}</a></li>
+                                <li><a href="api/docs" target="_blank">{% trans "API Docs" %}</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+                                {% trans "My profile " %}<b class="caret"></b></a>
+                            <ul class="dropdown-menu transparent-module">
+                                {% if request.user.is_authenticated %}
+                                <li><a><i class="fa fa-user"></i> {{ user.get_full_name|default:user.username }}</a></li>
+                                <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+                                {% else %}
+                                <li>
+                                    <a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="login-btn">
+                                        <i class="fa fa-user"></i>&nbsp;{% trans "Login" %}</a>
+                                </li>
+                                <li>
+                                    <a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="register-btn">
+                                        <i class="fa fa-user"></i>&nbsp;{% trans "Register" %}</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        <form class="navbar-form navbar-left" action="{% url 'set_language' %}" method="post">
+                            <div class="form-group">
+                                {% csrf_token %}
+                                <i class="fa fa-globe white"></i>
+                                <!-- <input name="next" type="hidden" value="{{ redirect_to }}" /> -->
+                                <select name="language" onchange="this.form.submit()">
+                                    {% get_current_language as LANGUAGE_CODE %} {% get_available_languages as LANGUAGES %} {% get_language_info_list for LANGUAGES as languages %} {% for language in languages %}
+                                    <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected="selected" {% endif %}>
+                                        {{ language.name_local }} ({{ language.code }})
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
+                        <form class="navbar-form navbar-left" role="search">
+                            <div class="form-group">
+                                <input type='search' id='organization_name' placeholder='{% trans "Type organization name and select" %}' class="form-control">
+                            </div>
+                        </form>
                     </ul>
-
-
-                </li>
-
-              <form class="navbar-form navbar-left" role="search">
-                <div class="form-group">
-                  <input type='search' id='organization_name' placeholder='{% trans "Type organization name and select" %}' class="form-control" >
-                </div>             
-              </form>
-
-            </ul>
-        </div> <!-- /.navbar-collapse -->
-    </div> <!-- /.container-fluid -->
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
 </nav>

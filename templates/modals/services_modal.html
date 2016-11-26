@@ -2,7 +2,7 @@
 
 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-sm">
-    <div class="modal-content map_popup">
+    <div class="modal-content map_popup transparent-module top-offset">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">{% trans "Login" %}</h4>
@@ -23,8 +23,9 @@
               <label for="email">{% trans "Password" %}:</label>
               <input type="password" class="form-control" id="id_password" name='password'>
             </div>
-            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Cancel" %}</button>
-            <button type="submit" class="btn btn-primary">{% trans "Login" %}</button>                   
+            <div class="centered-horizontal">
+              <button type="submit" class="btn btn-primary cta">{% trans "Login" %}</button>
+            </div>
             </fieldset>           
         </form>
       </div>
@@ -37,7 +38,7 @@
 
 <div class="modal fade" id="registerModal" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-sm">
-    <div class="modal-content map_popup">
+    <div class="modal-content map_popup transparent-module">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">{% trans "Register" %}</h4>
@@ -55,8 +56,9 @@
             </div>                                
           </fieldset>            
         </form>
-            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Cancel" %}</button>
-            <button type="submit" class="btn btn-primary" onclick="signup()">{% trans "Register" %}</button>              
+          <div class="centered-horizontal">
+            <button type="submit" class="btn btn-primary cta" onclick="signup()">{% trans "Register" %}</button>              
+          </div>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -65,7 +67,7 @@
 
 <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content  map_popup">
+    <div class="modal-content  map_popup transparent-module">
       <div class="modal-header">
         <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">Подолати корупцію в один клік.</h4>

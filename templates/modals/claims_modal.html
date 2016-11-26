@@ -33,7 +33,7 @@
 
   <div class="modal fade" id="claimsModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content  map_popup">
+      <div class="modal-content  map_popup transparent-module top-offset">
         <div class="modal-header">
           <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
           <h4 class="modal-title"></h4>
@@ -41,8 +41,9 @@
         <div class="modal-body">                
          </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" id="addclaim">{% trans "Add claim" %}</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+          <div class="centered-horizontal">
+            <button type="button" class="btn btn-default cta" id="addclaim">{% trans "Add claim" %}</button>
+          </div>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -51,7 +52,7 @@
 
   <div class="modal fade" id="userclaimsModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content  map_popup">
+      <div class="modal-content  map_popup transparent-module">
         <div class="modal-header">
           <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
           <h4 class="modal-title"></h4>
