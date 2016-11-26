@@ -2,6 +2,10 @@ body {
     color: #fff;
 }
 
+footer.bar {
+    padding:  15px;
+}
+
 a {
     color: #fff;
 }
@@ -12,7 +16,7 @@ a {
 
 .leaflet-popup-content-wrapper {
     background-color: #000;
-    color: #fff;
+    color: #000;
 }
 
 .ui-menu-item a {
