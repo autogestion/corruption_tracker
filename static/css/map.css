@@ -27,3 +27,5 @@
 .popup_template {
     display: none;
 }
+.leaflet-control-container .leaflet-left {top: 130px;}
+.leaflet-control-container .leaflet-control.leaflet-control-zoom {margin-top: 35px}
