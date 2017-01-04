@@ -15,8 +15,8 @@ class ClaimAdmin(admin.ModelAdmin):
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'org_type',
                     'first_polygon', 'claims', 'url',
-                    'updated')
-    search_fields = ('name', 'org_type')
+                    'updated', 'is_verified')
+    search_fields = ('name',)
     list_filter = ('org_type',)
 
 
