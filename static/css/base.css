@@ -2,6 +2,10 @@ body {
     color: #fff;
 }
 
+footer.bar {
+    padding:  15px;
+}
+
 a {
     color: #fff;
 }
@@ -12,7 +16,7 @@ a {
 
 .leaflet-popup-content-wrapper {
     background-color: #000;
-    color: #fff;
+    color: #000;
 }
 
 .ui-menu-item a {
@@ -252,23 +256,29 @@ nav .navbar-brand {
 
 .modal-content.map_popup.transparent-module input,
 .modal-content.map_popup.transparent-module select,
-.modal-content.map_popup.transparent-module textarea {
-    background: transparent;
+.modal-content.map_popup.transparent-module textarea,
+.modal-content.map_popup.transparent-module select option{
+    background: #fff;
     border-radius: 0;
     border-top: none;
     border-right: none;
     border-left: none;
-    border-bottom: 1px solid #fff;
-    color: #fff;
+    color: #000;
+}
+
+select[name="language"] {
+    width: 94%;
+    padding: 6px 0;
+}
+
+@media (min-width: 769px) {
+    select[name="language"] {
+        width: 85%;
+    }
 }
 
 .modal-content.map_popup.transparent-module select {
     min-width: 20%;
-}
-
-.modal-content.map_popup.transparent-module select option {
-    background: #fff;
-    color: #000;
 }
 
 .modal-content.map_popup.transparent-module input:focus,

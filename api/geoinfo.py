@@ -2,6 +2,7 @@ import time
 
 from django.contrib.gis import geos
 from django.conf import settings
+from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins, filters
 
@@ -141,10 +142,14 @@ class FitBoundsPolygons(viewsets.ViewSet):
 
         if settings.DISPLAY_DISTRICTS and int(layer) == 4:
             queryset = Polygon.objects.filter(
-                shape__bboverlaps=area, level__in=[3, 4])
+                Q(shape__bboverlaps=area) | Q(centroid__within=area),
+                level__in=[3, 4])
         else:
             queryset = Polygon.objects.filter(
-                shape__bboverlaps=area, level=int(layer))
+                Q(shape__bboverlaps=area) | Q(centroid__within=area),
+                level=int(layer))
+
+        print(queryset)
 
         search = self.request.query_params.get('search', None)
         if search:

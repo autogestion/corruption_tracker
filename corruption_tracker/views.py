@@ -28,7 +28,8 @@ class MapPageView(View):
         resp_dict = {
             'login_error': request.GET.get('login_error', 0),
             'page': 'single',
-            'org_types': OrganizationType.objects.all().prefetch_related("claimtype_set"),
+            'org_types': OrganizationType.objects.all()
+                .prefetch_related("claimtype_set").order_by('name'),
             'test_alarm': False}
 
         claim_type_sets = {}
@@ -39,7 +40,7 @@ class MapPageView(View):
                                       'value': claim_type.name})
             claim_type_sets[org_type.type_id] = claim_type_set
 
-        resp_dict['claim_types'] = mark_safe(json.dumps(claim_type_sets))        
+        resp_dict['claim_types'] = mark_safe(json.dumps(claim_type_sets))
 
         if settings.RECAPTCHA_ENABLED is False:
             settings.RECAPTCHA_PUBLIC = ''
@@ -47,7 +48,7 @@ class MapPageView(View):
 
         if settings.TEST_SERVER:
             resp_dict['test_alarm'] = True
-        
+
         ip = get_client_ip(request)
         # cached_zoom = cache.get('lat_lon_for::%s' % ip)
 

@@ -68,7 +68,9 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     def retrieve(self, request, id=None):
         # queryset = self.queryset.filter(organization__id=id)
         organization = Organization.objects.get(id=id)
-        queryset = organization.moderation_filter().select_related().annotate(num_c=models.Count('complainer__claim')).order_by('created')
+        queryset = organization.moderation_filter(
+            ).select_related().annotate(num_c=models.Count(
+                'complainer__claim')).order_by('created')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -83,7 +85,6 @@ class ClaimViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             serializer.save(moderation='anonymous')
         else:
             serializer.save(complainer=self.request.user)
-
 
 
 class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
@@ -123,7 +124,6 @@ class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
     .
     """
 
-
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
 
@@ -153,6 +153,7 @@ class OrganizationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
         return Response(serializer.data)
 
     def create(self, request):
+        print('yo')
 
         parent_polygon_id = request.data.get('parent_polygon_id', None)
         polygon_id = request.data.get('polygon_id', None)
